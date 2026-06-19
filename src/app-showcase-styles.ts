@@ -1,0 +1,96 @@
+/**
+ * @license
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Generated from app-showcase.scss.
+ * Do not edit directly; run npm run build:scss.
+ */
+
+import {css} from 'lit';
+
+export const styles = css`
+:host {
+  display: block;
+  color: var(--md-sys-color-on-surface, #1d1b20);
+  font-family: 'Google Sans Flex', system-ui, sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: 'slnt' 0, 'wdth' 100, 'GRAD' 0, 'ROND' 0;
+}
+
+.showcase-section {
+  display: grid;
+  gap: 24px;
+  padding: 32px;
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container, #f3edf7);
+}
+
+.section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  line-height: 1;
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.app-card {
+  --md-outlined-card-container-shape: 24px;
+  display: grid;
+  min-height: 100%;
+  gap: 16px;
+  padding: 20px;
+}
+
+.app-icon {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--md-sys-color-primary-container, #eaddff);
+  color: var(--md-sys-color-on-primary-container, #21005d);
+}
+
+.app-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-content {
+  display: grid;
+  gap: 8px;
+}
+
+.app-category {
+  color: var(--md-sys-color-primary, #6750a4);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.showcase-loading,
+.showcase-error {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 96px;
+}
+`;
