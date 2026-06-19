@@ -1,32 +1,28 @@
 ---
 layout: page.11ty.cjs
-title: <my-element> ⌲ Install
+title: material-next-web-components ⌲ Install
 ---
 
 # Install
 
-`<my-element>` is distributed on npm, so you can install it locally or use it via npm CDNs like unpkg.com.
-
-## Local Installation
+Install the library and Material Web components from npm:
 
 ```bash
-npm i my-element
+npm install material-next-web-components @material/web
 ```
 
-## CDN
+## Import a component
 
-npm CDNs like [unpkg.com]() can directly serve files that have been published to npm. This works great for standard JavaScript modules that the browser can load natively.
+```ts
+import 'material-next-web-components/material-next-home.js';
+```
 
-For this element to work from unpkg.com specifically, you need to include the `?module` query parameter, which tells unpkg.com to rewrite "bare" module specifiers to full URLs.
-
-### HTML
+## Use it in HTML
 
 ```html
-<script type="module" src="https://unpkg.com/my-element?module"></script>
+<mnw-home docs-href="./install/"></mnw-home>
 ```
 
-### JavaScript
+## Material Web baseline
 
-```html
-import {MyElement} from 'https://unpkg.com/my-element?module';
-```
+This library tracks `@material/web` `^2.4.1`, which includes the Material Web component set used by Google Material Design for web components.

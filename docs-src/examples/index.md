@@ -1,34 +1,16 @@
 ---
-layout: example.11ty.cjs
-title: <my-element> ⌲ Examples ⌲ Basic
-tags: example
-name: Basic
-description: A basic example
+layout: page.11ty.cjs
+title: material-next-web-components ⌲ Examples
 ---
 
-<style>
-  my-element p {
-    border: solid 1px blue;
-    padding: 8px;
-  }
-</style>
-<my-element>
-  <p>This is child content</p>
-</my-element>
+# Examples
 
-<h3>CSS</h3>
+## Home view
 
-```css
-p {
-  border: solid 1px blue;
-  padding: 8px;
-}
-```
-
-<h3>HTML</h3>
+Use `<mnw-home>` to render the documentation and product-home hero with a Material Design filled button.
 
 ```html
-<my-element>
-  <p>This is child content</p>
-</my-element>
+<mnw-home docs-href="../install/"></mnw-home>
 ```
+
+<mnw-home docs-href="../install/"></mnw-home>

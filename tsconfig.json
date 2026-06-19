@@ -2,7 +2,11 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "es2020",
-    "lib": ["es2021", "DOM", "DOM.Iterable"],
+    "lib": [
+      "es2021",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -27,8 +31,13 @@
         "strict": true
       }
     ],
-    "types": ["mocha"]
+    "types": [
+      "mocha"
+    ],
+    "skipLibCheck": true
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": []
 }
