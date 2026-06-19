@@ -31,3 +31,13 @@ The home page below is rendered by the library's first custom element, `<mnw-hom
 ## Documentation source of truth
 
 Documentation is authored in `docs-src` and compiled into a GitHub Pages artifact by GitHub Actions. The generated `docs` directory is intentionally not committed.
+
+## App showcase
+
+The first reusable product component is `<mnw-app-showcase>`, based on the app list preview in `references/github-dev-tools`. It fetches promoted apps, maps the Android app API response, caches the result, and renders Material cards and actions from the design library.
+
+```html
+<mnw-app-showcase></mnw-app-showcase>
+```
+
+<mnw-app-showcase></mnw-app-showcase>

@@ -4,8 +4,10 @@
  */
 
 import '@material/web/button/filled-button.js';
-import {LitElement, css, html} from 'lit';
+import './app-showcase.js';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import {styles} from './material-next-home-styles.js';
 
 /**
  * Home hero for material-next-web-components.
@@ -15,44 +17,7 @@ import {customElement, property} from 'lit/decorators.js';
  */
 @customElement('mnw-home')
 export class MaterialNextHome extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-      color: var(--md-sys-color-on-surface, #1d1b20);
-      font-family: Roboto, system-ui, sans-serif;
-    }
-
-    .hero {
-      display: grid;
-      gap: 24px;
-      padding: 40px;
-      border-radius: 28px;
-      background: var(--md-sys-color-surface-container-high, #ece6f0);
-    }
-
-    .eyebrow {
-      margin: 0;
-      color: var(--md-sys-color-primary, #6750a4);
-      font-size: 0.875rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      max-width: 760px;
-      margin: 0;
-      font-size: clamp(2.5rem, 8vw, 5rem);
-      line-height: 0.95;
-    }
-
-    p {
-      max-width: 720px;
-      margin: 0;
-      font-size: 1.125rem;
-      line-height: 1.6;
-    }
-  `;
+  static override styles = styles;
 
   /** The main headline shown in the home hero. */
   @property()
