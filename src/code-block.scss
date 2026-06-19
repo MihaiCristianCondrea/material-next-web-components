@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  color: var(--md-sys-color-on-surface, #1d1b20);
+  font-family: 'Google Sans Code', ui-monospace, monospace;
+  font-optical-sizing: auto;
+  font-variation-settings: 'MONO' 1;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.source {
+  display: none;
+}
+
+.code-block {
+  display: grid;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+  border-radius: var(--md-sys-shape-corner-large, 16px);
+  background: var(--md-sys-color-surface-container, #f3edf7);
+}
+
+.header {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+}
+
+.language {
+  color: var(--md-sys-color-on-surface-variant, #49454f);
+  font-family: 'Google Sans Flex', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+pre {
+  overflow: auto;
+  margin: 0;
+  padding: 16px;
+}
+
+code {
+  color: var(--md-sys-color-on-surface, #1d1b20);
+  font-family: 'Google Sans Code', ui-monospace, monospace;
+  font-optical-sizing: auto;
+  font-size: 0.875rem;
+  font-variation-settings: 'MONO' 1;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.copy-button {
+  white-space: nowrap;
+}

@@ -4,7 +4,7 @@
  */
 
 import '@material/web/button/outlined-button.js';
-import '@material/web/card/outlined-card.js';
+import '@material/web/labs/card/outlined-card.js';
 import '@material/web/icon/icon.js';
 import '@material/web/progress/circular-progress.js';
 import {LitElement, html} from 'lit';

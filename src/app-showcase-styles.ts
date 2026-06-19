@@ -12,9 +12,9 @@ export const styles = css`
 :host {
   display: block;
   color: var(--md-sys-color-on-surface, #1d1b20);
-  font-family: 'Google Sans Flex', system-ui, sans-serif;
+  font-family: "Google Sans Flex", system-ui, sans-serif;
   font-optical-sizing: auto;
-  font-variation-settings: 'slnt' 0, 'wdth' 100, 'GRAD' 0, 'ROND' 0;
+  font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
 }
 
 .showcase-section {
@@ -92,5 +92,4 @@ h2 {
   gap: 12px;
   align-items: center;
   min-height: 96px;
-}
-`;
+}`;

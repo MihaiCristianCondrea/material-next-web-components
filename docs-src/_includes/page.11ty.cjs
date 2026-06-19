@@ -12,6 +12,13 @@ module.exports = function (data) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Built-in Material Design web components and reusable product views for web products.">
+    <meta name="theme-color" content="#6750A4">
+    <link rel="icon" href="${relative(
+      page.url,
+      '/favicon.svg'
+    )}" type="image/svg+xml">
+    <link rel="manifest" href="${relative(page.url, '/site.webmanifest')}">
     <title>${title}</title>
     <link rel="stylesheet" href="${relative(page.url, '/docs.css')}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
