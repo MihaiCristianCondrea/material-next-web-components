@@ -1,76 +1,33 @@
 ---
 layout: page.11ty.cjs
-title: <my-element> ⌲ Home
+title: material-next-web-components ⌲ Home
 ---
 
-# &lt;my-element>
+# material-next-web-components
 
-`<my-element>` is an awesome element. It's a great introduction to building web components with LitElement, with nice documentation site as well.
+`material-next-web-components` is a Lit library for built-in Material Design custom elements and reusable product views.
 
-## As easy as HTML
+The project starts with Google Material Web (`@material/web`) version `^2.4.1`, the latest release available for the Material Web package, and wraps those components into product-ready custom elements for your applications.
 
 <section class="columns">
   <div>
 
-`<my-element>` is just an HTML element. You can it anywhere you can use HTML!
+## Built with Material Design
+
+The home page below is rendered by the library's first custom element, `<mnw-home>`. It uses a Material Design filled button from `@material/web` so the documentation can show the same components that product pages will consume.
 
 ```html
-<my-element></my-element>
+<mnw-home docs-href="./install/"></mnw-home>
 ```
 
   </div>
   <div>
 
-<my-element></my-element>
+<mnw-home docs-href="./install/"></mnw-home>
 
   </div>
 </section>
 
-## Configure with attributes
+## Documentation source of truth
 
-<section class="columns">
-  <div>
-
-`<my-element>` can be configured with attributed in plain HTML.
-
-```html
-<my-element name="HTML"></my-element>
-```
-
-  </div>
-  <div>
-
-<my-element name="HTML"></my-element>
-
-  </div>
-</section>
-
-## Declarative rendering
-
-<section class="columns">
-  <div>
-
-`<my-element>` can be used with declarative rendering libraries like Angular, React, Vue, and lit-html
-
-```js
-import {html, render} from 'lit-html';
-
-const name = 'lit-html';
-
-render(
-  html`
-    <h2>This is a &lt;my-element&gt;</h2>
-    <my-element .name=${name}></my-element>
-  `,
-  document.body
-);
-```
-
-  </div>
-  <div>
-
-<h2>This is a &lt;my-element&gt;</h2>
-<my-element name="lit-html"></my-element>
-
-  </div>
-</section>
+Documentation is authored in `docs-src` and compiled into a GitHub Pages artifact by GitHub Actions. The generated `docs` directory is intentionally not committed.

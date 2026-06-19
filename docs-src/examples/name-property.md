@@ -1,15 +1,20 @@
 ---
-layout: example.11ty.cjs
-title: <my-element> ⌲ Examples ⌲ Name Property
-tags: example
-name: Name Property
-description: Setting the name property
+layout: page.11ty.cjs
+title: material-next-web-components ⌲ Home headline
 ---
 
-<my-element name="Earth"></my-element>
+# Custom home headline
 
-<h3>HTML</h3>
+The `<mnw-home>` component exposes a `headline` property/attribute for product-specific documentation pages.
 
 ```html
-<my-element name="Earth"></my-element>
+<mnw-home
+  headline="Document Material Design views once and reuse them everywhere"
+  docs-href="../../install/"
+></mnw-home>
 ```
+
+<mnw-home
+  headline="Document Material Design views once and reuse them everywhere"
+  docs-href="../../install/"
+></mnw-home>

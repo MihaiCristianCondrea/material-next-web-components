@@ -1,7 +1,7 @@
-module.exports = function (data) {
+module.exports = function () {
   return `
 <header>
-  <h1>&lt;my-element></h1>
-  <h2>A web component just for me.</h2>
+  <h1>material-next-web-components</h1>
+  <h2>Built-in Lit custom elements and product views powered by Material Design.</h2>
 </header>`;
 };
