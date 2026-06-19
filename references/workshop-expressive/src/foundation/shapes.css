@@ -1,0 +1,8 @@
+:root {
+  --ws-shape-extra-small: 4px;
+  --ws-shape-small: 6px;
+  --ws-shape-medium: 8px;
+  --ws-shape-large: 12px;
+  --ws-shape-extra-large: 16px;
+  --ws-shape-full: 999px;
+}

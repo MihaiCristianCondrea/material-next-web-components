@@ -1,0 +1,71 @@
+@import url('./colors.css');
+@import url('./spacing.css');
+@import url('./shapes.css');
+@import url('./typography.css');
+@import url('./motion.css');
+@import url('./elevation.css');
+
+:root {
+  color-scheme: light;
+}
+
+:root[data-ws-theme='dark'],
+[data-ws-theme='dark'] {
+  color-scheme: dark;
+  --ws-color-background: #0f172a;
+  --ws-color-surface: #1e293b;
+  --ws-color-surface-variant: #334155;
+
+  --ws-color-primary-container: #312e81;
+  --ws-color-secondary-container: #334155;
+
+  --ws-color-outline: #475569;
+  --ws-color-outline-variant: #334155;
+
+  --ws-color-on-primary: #f8fafc;
+  --ws-color-on-background: #f8fafc;
+  --ws-color-on-surface: #f8fafc;
+  --ws-color-on-surface-variant: #cbd5e1;
+  --ws-color-on-secondary-container: #f8fafc;
+}
+
+:root[data-ws-theme='light'],
+[data-ws-theme='light'] {
+  color-scheme: light;
+  --ws-color-background: #f8fafc;
+  --ws-color-surface: #ffffff;
+  --ws-color-surface-variant: #f1f5f9;
+
+  --ws-color-primary-container: #f5f3ff;
+  --ws-color-secondary-container: #f1f5f9;
+
+  --ws-color-outline: #e2e8f0;
+  --ws-color-outline-variant: #e2e8f0;
+
+  --ws-color-on-primary: #f8fafc;
+  --ws-color-on-background: #0f172a;
+  --ws-color-on-surface: #0f172a;
+  --ws-color-on-surface-variant: #64748b;
+  --ws-color-on-secondary-container: #0f172a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-ws-theme='light']) {
+    color-scheme: dark;
+    --ws-color-background: #0f172a;
+    --ws-color-surface: #1e293b;
+    --ws-color-surface-variant: #334155;
+
+    --ws-color-primary-container: #312e81;
+    --ws-color-secondary-container: #334155;
+
+    --ws-color-outline: #475569;
+    --ws-color-outline-variant: #334155;
+
+    --ws-color-on-primary: #f8fafc;
+    --ws-color-on-background: #f8fafc;
+    --ws-color-on-surface: #f8fafc;
+    --ws-color-on-surface-variant: #cbd5e1;
+    --ws-color-on-secondary-container: #f8fafc;
+  }
+}

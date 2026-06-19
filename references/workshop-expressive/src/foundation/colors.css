@@ -1,0 +1,30 @@
+:root {
+  --ws-purple: #6c5cff;
+  --ws-purple-dark: #4f46e5;
+  --ws-blue: #3b82f6;
+  --ws-green: #10b981;
+  --ws-orange: #f59e0b;
+  --ws-red: #ef4444;
+
+  --ws-color-background: #f8fafc;
+  --ws-color-surface: #ffffff;
+  --ws-color-surface-variant: #f1f5f9;
+
+  --ws-color-primary: #6c5cff;
+  --ws-color-secondary: #3b82f6;
+  --ws-color-tertiary: #10b981;
+
+  --ws-color-primary-container: #f5f3ff;
+  --ws-color-secondary-container: #f1f5f9;
+
+  --ws-color-outline: #e2e8f0;
+  --ws-color-outline-variant: #e2e8f0;
+
+  --ws-color-error: #ef4444;
+
+  --ws-color-on-primary: #f8fafc;
+  --ws-color-on-background: #0f172a;
+  --ws-color-on-surface: #0f172a;
+  --ws-color-on-surface-variant: #64748b;
+  --ws-color-on-secondary-container: #0f172a;
+}
