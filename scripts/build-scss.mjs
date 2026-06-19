@@ -13,6 +13,7 @@ const outputs = [
     output: 'src/app-showcase-styles.ts',
     lit: true,
   },
+  {input: 'src/code-block.scss', output: 'src/code-block-styles.ts', lit: true},
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 

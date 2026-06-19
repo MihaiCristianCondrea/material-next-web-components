@@ -1,0 +1,17 @@
+{
+  "name": "material-next-web-components",
+  "short_name": "MNW Components",
+  "description": "Built-in Material Design web components and reusable product views for web products.",
+  "start_url": "/material-next-web-components/",
+  "display": "standalone",
+  "background_color": "#FFFBFE",
+  "theme_color": "#6750A4",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

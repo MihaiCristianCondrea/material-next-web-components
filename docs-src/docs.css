@@ -2,12 +2,27 @@
   box-sizing: border-box;
 }
 
+:root {
+  color-scheme: light;
+  --md-sys-color-primary: #6750a4;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #eaddff;
+  --md-sys-color-on-primary-container: #21005d;
+  --md-sys-color-surface: #fffbfe;
+  --md-sys-color-on-surface: #1d1b20;
+  --md-sys-color-surface-container: #f3edf7;
+  --md-sys-color-surface-container-high: #ece6f0;
+  --md-sys-color-on-surface-variant: #49454f;
+  --md-sys-color-outline-variant: #cac4d0;
+}
+
 body {
   margin: 0;
-  color: #333;
-  font-family: 'Google Sans Flex', system-ui, sans-serif;
+  color: var(--md-sys-color-on-surface);
+  background: var(--md-sys-color-surface);
+  font-family: "Google Sans Flex", system-ui, sans-serif;
   font-optical-sizing: auto;
-  font-variation-settings: 'slnt' 0, 'wdth' 100, 'GRAD' 0, 'ROND' 0;
+  font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
   min-width: min-content;
   min-height: 100vh;
   font-size: 18px;
@@ -21,63 +36,61 @@ body {
 }
 
 main {
-  max-width: 1024px;
+  width: min(100% - 32px, 1120px);
   margin: 0 auto;
 }
 
+a {
+  color: var(--md-sys-color-primary);
+}
+
 a:visited {
-  color: inherit;
+  color: var(--md-sys-color-primary);
 }
 
 header {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 360px;
-  margin: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(9, 9, 121, 1) 0%,
-    rgba(0, 212, 255, 1) 100%
-  );
-  color: white;
+  width: min(100% - 32px, 1120px);
+  display: grid;
+  gap: 16px;
+  align-self: center;
+  margin: 32px 0 0;
+  padding: 40px;
+  border-radius: 28px;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 footer {
-  width: 100%;
-  min-height: 120px;
-  background: gray;
-  color: white;
+  width: min(100% - 32px, 1120px);
+  min-height: 96px;
+  align-self: center;
+  border-radius: 28px 28px 0 0;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface-variant);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 12px;
+  padding: 24px;
   margin-top: 64px;
 }
 
 h1 {
-  font-size: 2.5em;
-  font-weight: 400;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 500;
+  line-height: 0.95;
 }
 
 h2 {
   font-size: 1.6em;
-  font-weight: 300;
+  font-weight: 500;
   margin: 64px 0 12px;
 }
 
 h3 {
-  font-weight: 300;
+  font-weight: 500;
 }
 
-header h1 {
-  width: auto;
-  font-size: 2.8em;
-  margin: 0;
-}
-
+header h1,
 header h2 {
   width: auto;
   margin: 0;
@@ -85,29 +98,36 @@ header h2 {
 
 nav {
   display: grid;
-  width: 100%;
+  width: min(100% - 32px, 1120px);
+  align-self: center;
   max-width: 100%;
-  grid-template-columns: repeat(auto-fit, 240px);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   justify-content: center;
-  border-bottom: 1px solid #efefef;
+  margin: 16px 0 48px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 nav > a {
-  color: #444;
+  color: var(--md-sys-color-on-surface-variant);
   display: block;
   flex: 1;
   font-size: 18px;
-  padding: 20px 0;
+  padding: 16px;
   text-align: center;
   text-decoration: none;
 }
 
 nav > a:hover {
-  text-decoration: underline;
+  background: var(--md-sys-color-surface-container);
 }
 
 nav.collection {
   border: none;
+  border-radius: 0;
+  margin: 0;
+  width: auto;
 }
 
 nav.collection > ul {
@@ -133,13 +153,9 @@ nav.collection a:hover {
 
 section.columns {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 488px));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
   grid-gap: 48px;
-  justify-content: center;
-}
-
-section.columns > div {
-  flex: 1;
+  align-items: start;
 }
 
 section.examples {
@@ -153,17 +169,26 @@ section.examples h2:first-of-type {
   margin-top: 0;
 }
 
+code,
+pre,
+mnw-code-block {
+  font-family: "Google Sans Code", ui-monospace, monospace;
+  font-optical-sizing: auto;
+  font-variation-settings: "MONO" 1;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
 }
+
 th {
   font-weight: 600;
 }
 
 td,
 th {
-  border: solid 1px #aaa;
+  border: solid 1px var(--md-sys-color-outline-variant);
   padding: 4px;
   text-align: left;
   vertical-align: top;
