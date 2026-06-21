@@ -31,7 +31,8 @@
     "test:prod": "MODE=prod wtr",
     "test:prod:watch": "MODE=prod wtr --watch",
     "checksize": "rollup -c ; cat my-element.bundled.js | gzip -9 | wc -c ; rm my-element.bundled.js",
-    "build:scss": "node scripts/build-scss.mjs"
+    "build:scss": "node scripts/build-scss.mjs",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "web-components",
@@ -63,6 +64,7 @@
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "eslint": "^10.5.0",
     "lit-analyzer": "^2.0.3",
+    "patch-package": "^8.0.1",
     "prettier": "^3.8.4",
     "rimraf": "^6.1.3",
     "rollup": "^4.62.2",
@@ -70,5 +72,8 @@
     "sass": "^1.101.0",
     "typescript": "~6.0.3"
   },
-  "customElements": "custom-elements.json"
+  "customElements": "custom-elements.json",
+  "overrides": {
+    "js-yaml": "4.2.0"
+  }
 }
