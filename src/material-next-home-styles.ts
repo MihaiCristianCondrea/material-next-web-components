@@ -61,8 +61,12 @@ export const styles = css`
   justify-self: end;
 }
 
-main {
+.docs-content {
   padding: clamp(20px, 5vw, 64px);
+}
+
+.docs-content:focus {
+  outline: none;
 }
 
 .home-view,
@@ -71,7 +75,6 @@ main {
   gap: 24px;
 }
 
-.hero-card,
 .info-card,
 .example-panel,
 .example-nav {
@@ -81,11 +84,10 @@ main {
   box-shadow: 0 18px 48px rgba(29, 27, 32, 0.08);
 }
 
-.hero-card {
+.page-heading {
   display: grid;
-  gap: 24px;
-  padding: clamp(32px, 7vw, 72px);
-  background: radial-gradient(circle at 80% 20%, rgba(232, 222, 248, 0.85), transparent 32%), var(--md-sys-color-surface-container-high, #ece6f0);
+  gap: 12px;
+  padding-block: clamp(8px, 2vw, 24px);
 }
 
 .eyebrow,

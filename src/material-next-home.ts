@@ -48,6 +48,27 @@ export class MaterialNextHome extends LitElement {
   @state()
   private activeExampleIndex = 0;
 
+  private routeChangeController?: AbortController;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.syncRouteFromLocation({scroll: false});
+
+    this.routeChangeController = new AbortController();
+    window.addEventListener('hashchange', this.handleRouteChange, {
+      signal: this.routeChangeController.signal,
+    });
+    window.addEventListener('popstate', this.handleRouteChange, {
+      signal: this.routeChangeController.signal,
+    });
+  }
+
+  override disconnectedCallback() {
+    this.routeChangeController?.abort();
+    this.routeChangeController = undefined;
+    super.disconnectedCallback();
+  }
+
   override render() {
     return html`
       <section class="app-shell">
@@ -65,7 +86,7 @@ export class MaterialNextHome extends LitElement {
           ></md-expressive-tab-bar>
         </header>
 
-        <main>
+        <main class="docs-content" tabindex="-1">
           ${this.activeView === 'home'
             ? this.renderHomeView()
             : this.renderExamplesView()}
@@ -77,14 +98,13 @@ export class MaterialNextHome extends LitElement {
   private renderHomeView() {
     return html`
       <article class="home-view" id="home">
-        <section class="hero-card">
-          <p class="eyebrow">Material Next Web Components</p>
+        <header class="page-heading">
           <h1>${this.headline}</h1>
           <p class="tagline">
             Built-in Lit custom elements and product views powered by Material
             Design.
           </p>
-        </section>
+        </header>
 
         <section class="content-grid" aria-label="Home documentation">
           <article class="info-card">
@@ -178,9 +198,15 @@ import 'material-next-web-components/expressive-tab-bar.js';"
           <section id="table-of-contents" class="example-panel toc-panel">
             <h2>Table of contents</h2>
             <nav aria-label="Page table of contents">
-              <a href="#expressive-tab-bar">Expressive tab bar</a>
-              <a href="#app-showcase">App showcase</a>
-              <a href="#code-block">Code block</a>
+              <a href="#expressive-tab-bar" @click=${this.handleTocNavigation}
+                >Expressive tab bar</a
+              >
+              <a href="#app-showcase" @click=${this.handleTocNavigation}
+                >App showcase</a
+              >
+              <a href="#code-block" @click=${this.handleTocNavigation}
+                >Code block</a
+              >
             </nav>
           </section>
         </section>
@@ -190,28 +216,92 @@ import 'material-next-web-components/expressive-tab-bar.js';"
 
   private showHome(event: Event) {
     event.preventDefault();
-    this.activeView = 'home';
+    this.navigateToHash('#home');
   }
 
   private handleAppNavigation(event: CustomEvent) {
     event.preventDefault();
-    this.activeView = event.detail.index === 0 ? 'home' : 'examples';
+    const item = event.detail.item as {href?: string};
+    this.navigateToHash(
+      item.href ?? (event.detail.index === 0 ? '#home' : '#examples')
+    );
   }
 
   private handleExampleNavigation(event: CustomEvent) {
     event.preventDefault();
-    this.activeExampleIndex = event.detail.index;
     const item = event.detail.item as {href?: string};
     if (!item.href) {
       return;
     }
 
+    this.navigateToHash(item.href);
+  }
+
+  private handleTocNavigation(event: MouseEvent) {
+    const link = event.currentTarget as HTMLAnchorElement;
+    event.preventDefault();
+    this.navigateToHash(link.hash);
+  }
+
+  private readonly handleRouteChange = () => {
+    this.syncRouteFromLocation({scroll: true});
+  };
+
+  private navigateToHash(hash: string) {
+    const targetHash = hash || '#home';
+    if (window.location.hash !== targetHash) {
+      window.history.pushState(null, '', targetHash);
+    }
+
+    this.syncRouteFromLocation({scroll: true});
+  }
+
+  private syncRouteFromLocation({scroll}: {scroll: boolean}) {
+    const hash = window.location.hash || '#home';
+    const exampleIndex = exampleTabs.findIndex((tab) => tab.href === hash);
+
+    if (hash === '#examples' || exampleIndex >= 0) {
+      this.activeView = 'examples';
+      this.activeExampleIndex = exampleIndex >= 0 ? exampleIndex : 0;
+    } else {
+      this.activeView = 'home';
+      this.activeExampleIndex = 0;
+    }
+
+    if (!scroll) {
+      return;
+    }
+
     this.updateComplete.then(() => {
-      this.renderRoot.querySelector(item.href ?? '')?.scrollIntoView({
+      const target =
+        this.getHashTarget(hash) ??
+        (this.activeView === 'examples'
+          ? this.getHashTarget(exampleTabs[this.activeExampleIndex]?.href ?? '')
+          : null);
+
+      target?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
     });
+  }
+
+  private getHashTarget(hash: string) {
+    if (!hash.startsWith('#')) {
+      return null;
+    }
+
+    const id = decodeURIComponent(hash.slice(1));
+    const target = this.shadowRoot?.getElementById(id);
+    if (target) {
+      return target;
+    }
+
+    try {
+      return this.renderRoot.querySelector(hash);
+    } catch {
+      return null;
+    }
   }
 }
 

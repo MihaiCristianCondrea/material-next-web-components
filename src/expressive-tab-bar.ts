@@ -55,6 +55,8 @@ export class MdExpressiveTabBar extends LitElement {
   @property({attribute: false})
   tabs: ExpressiveTabItem[] = defaultTabs;
 
+  private skipNextMaterialTabsNavigation = false;
+
   override render() {
     const activeIndex = this.clampedActiveIndex;
     const iconPosition = this.normalizedIconPosition;
@@ -120,18 +122,36 @@ export class MdExpressiveTabBar extends LitElement {
 
   private handleMaterialTabsChange(event: Event) {
     const tabs = event.currentTarget as HTMLElement & {activeTabIndex: number};
-    this.activateTab(tabs.activeTabIndex);
+    if (this.skipNextMaterialTabsNavigation) {
+      this.skipNextMaterialTabsNavigation = false;
+      return;
+    }
+
+    this.activateAndNavigate(tabs.activeTabIndex);
   }
 
   private handleTabClick(event: MouseEvent, index: number) {
+    event.preventDefault();
+    this.skipNextMaterialTabsNavigation = true;
+    queueMicrotask(() => {
+      this.skipNextMaterialTabsNavigation = false;
+    });
+    this.activateAndNavigate(index, event);
+  }
+
+  private activateAndNavigate(index: number, event?: Event) {
     const item = this.tabs[index];
+    if (!item) {
+      return;
+    }
+
     this.activateTab(index);
 
     if (!item.href) {
       return;
     }
 
-    event.preventDefault();
+    event?.preventDefault();
     this.dispatchEvent(
       new CustomEvent('navigate', {
         bubbles: true,
