@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import '@material/web/button/text-button.js';
+import '@material/web/chips/assist-chip.js';
 import '@material/web/icon/icon.js';
 import {LitElement, html, nothing} from 'lit';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {
   customElement,
   property,
@@ -44,6 +45,25 @@ export class MaterialNextCodeBlock extends LitElement {
     return this.code || this.slottedCode;
   }
 
+  private get highlightedCode() {
+    const code = this.displayCode;
+    return highlightCode(code, this.normalizedLanguage);
+  }
+
+  private get normalizedLanguage() {
+    const language = this.language.toLowerCase().trim();
+    if (language === 'html') {
+      return 'markup';
+    }
+    if (language === 'js') {
+      return 'javascript';
+    }
+    if (language === 'ts') {
+      return 'typescript';
+    }
+    return language;
+  }
+
   override render() {
     return html`
       <slot class="source" @slotchange=${this.syncSlottedCode}></slot>
@@ -51,19 +71,20 @@ export class MaterialNextCodeBlock extends LitElement {
         <figcaption class="header">
           <span class="language">${this.language}</span>
           ${this.copy
-            ? html`<md-text-button
+            ? html`<md-assist-chip
                 class="copy-button"
-                type="button"
+                label=${this.copied ? 'Copied' : 'Copy'}
                 @click=${this.copyCode}
               >
                 <md-icon slot="icon"
                   >${this.copied ? 'done' : 'content_copy'}</md-icon
                 >
-                ${this.copied ? 'Copied' : 'Copy'}
-              </md-text-button>`
+              </md-assist-chip>`
             : nothing}
         </figcaption>
-        <pre><code>${this.displayCode}</code></pre>
+        <pre><code class="language-${this.normalizedLanguage}">${unsafeHTML(
+          this.highlightedCode
+        )}</code></pre>
       </figure>
     `;
   }
@@ -115,4 +136,75 @@ declare global {
   interface HTMLElementTagNameMap {
     'mnw-code-block': MaterialNextCodeBlock;
   }
+}
+
+function highlightCode(code: string, language: string) {
+  if (language === 'markup') {
+    return highlightMarkup(code);
+  }
+
+  return highlightScriptLikeCode(code);
+}
+
+function highlightMarkup(code: string) {
+  return escapeHtml(code).replace(
+    /(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g,
+    (_match, open: string, tag: string, attrs: string, close: string) =>
+      `<span class="token punctuation">${open}</span><span class="token tag">${tag}</span>${highlightAttributes(
+        attrs
+      )}<span class="token punctuation">${close}</span>`
+  );
+}
+
+function highlightScriptLikeCode(code: string) {
+  const tokenPattern =
+    /(\/\/.*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b(?:const|let|var|return|if|else|class|extends|import|from|export|function|async|await|new|type|interface|private|public|protected|readonly|true|false|null|undefined)\b|\b[A-Z][\w]*\b|\b\d+(?:\.\d+)?\b)/g;
+  let highlighted = '';
+  let lastIndex = 0;
+
+  for (const match of code.matchAll(tokenPattern)) {
+    const token = match[0];
+    const index = match.index ?? 0;
+    highlighted += escapeHtml(code.slice(lastIndex, index));
+    highlighted += wrapToken(token, tokenClass(token));
+    lastIndex = index + token.length;
+  }
+
+  return highlighted + escapeHtml(code.slice(lastIndex));
+}
+
+function tokenClass(token: string) {
+  if (token.startsWith('//') || token.startsWith('/*')) {
+    return 'comment';
+  }
+  if (token.startsWith('"') || token.startsWith("'") || token.startsWith('`')) {
+    return 'string';
+  }
+  if (/^\d/.test(token)) {
+    return 'number';
+  }
+  if (/^[A-Z]/.test(token)) {
+    return 'class-name';
+  }
+  return 'keyword';
+}
+
+function wrapToken(token: string, className: string) {
+  return `<span class="token ${className}">${escapeHtml(token)}</span>`;
+}
+
+function highlightAttributes(attributes: string) {
+  return attributes.replace(
+    /([\w-:]+)(=)(&quot;.*?&quot;|&#39;.*?&#39;|[^\s&]+)/g,
+    '<span class="token attr-name">$1</span><span class="token punctuation">$2</span><span class="token attr-value">$3</span>'
+  );
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
