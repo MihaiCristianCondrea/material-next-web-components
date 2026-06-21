@@ -18,10 +18,10 @@ export interface ExpressiveTabItem {
 }
 
 const defaultTabs: ExpressiveTabItem[] = [
-  {label: 'Overview', icon: 'info', href: '#overview'},
-  {label: 'Specs', icon: 'style', href: '#specs'},
-  {label: 'Guidelines', icon: 'design_services', href: '#guidelines'},
-  {label: 'Accessibility', icon: 'accessibility_new', href: '#accessibility'},
+  {label: 'Expressive tab bar', icon: 'tab', href: '#expressive-tab-bar'},
+  {label: 'App showcase', icon: 'apps', href: '#app-showcase'},
+  {label: 'Home view', icon: 'home', href: '#home-view'},
+  {label: 'Code block', icon: 'code', href: '#code-block'},
 ];
 
 /**
