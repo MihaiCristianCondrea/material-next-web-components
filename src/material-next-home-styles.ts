@@ -17,15 +17,79 @@ export const styles = css`
   font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
 }
 
-.hero {
-  display: grid;
-  gap: 24px;
-  padding: 40px;
-  border-radius: 28px;
-  background: var(--md-sys-color-surface-container-high, #ece6f0);
+.app-shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #fffbff 0%, #f7f2fa 100%);
 }
 
-.eyebrow {
+.top-app-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 24px;
+  align-items: center;
+  padding: 16px clamp(16px, 5vw, 64px);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+  background: color-mix(in srgb, var(--md-sys-color-surface, #fffbff) 92%, transparent);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: inline-grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--md-sys-color-primary, #6750a4);
+  color: var(--md-sys-color-on-primary, #ffffff);
+}
+
+.view-tabs {
+  --mnw-expressive-tab-bar-height: 56px;
+  --mnw-expressive-tab-min-width: 132px;
+  justify-self: end;
+}
+
+main {
+  padding: clamp(20px, 5vw, 64px);
+}
+
+.home-view,
+.example-content {
+  display: grid;
+  gap: 24px;
+}
+
+.hero-card,
+.info-card,
+.example-panel,
+.example-nav {
+  border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container-low, #f7f2fa);
+  box-shadow: 0 18px 48px rgba(29, 27, 32, 0.08);
+}
+
+.hero-card {
+  display: grid;
+  gap: 24px;
+  padding: clamp(32px, 7vw, 72px);
+  background: radial-gradient(circle at 80% 20%, rgba(232, 222, 248, 0.85), transparent 32%), var(--md-sys-color-surface-container-high, #ece6f0);
+}
+
+.eyebrow,
+.nav-heading {
   margin: 0;
   color: var(--md-sys-color-primary, #6750a4);
   font-size: 0.875rem;
@@ -34,16 +98,111 @@ export const styles = css`
   text-transform: uppercase;
 }
 
-h1 {
-  max-width: 760px;
+h1,
+h2,
+h3,
+p {
   margin: 0;
+}
+
+h1 {
+  max-width: 900px;
   font-size: clamp(2.5rem, 8vw, 5rem);
   line-height: 0.95;
 }
 
+h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+
 p {
-  max-width: 720px;
-  margin: 0;
-  font-size: 1.125rem;
-  line-height: 1.6;
+  max-width: 760px;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.tagline {
+  font-size: clamp(1.25rem, 3vw, 2rem);
+  font-weight: 600;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.info-card,
+.example-panel,
+.example-nav {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.notice-card {
+  background: var(--md-sys-color-tertiary-container, #ffd8e4);
+  color: var(--md-sys-color-on-tertiary-container, #31111d);
+}
+
+.install-card {
+  grid-column: span 2;
+}
+
+.examples-view {
+  display: grid;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.example-nav {
+  position: sticky;
+  top: 104px;
+}
+
+.tree-tabs {
+  --mnw-expressive-tab-bar-height: auto;
+  --mnw-expressive-tab-min-width: 100%;
+  --mnw-expressive-tab-padding-inline: 16px;
+}
+
+.tree-tabs::part(tabs) {
+  display: grid;
+}
+
+.example-content {
+  min-width: 0;
+}
+
+.example-panel {
+  scroll-margin-top: 112px;
+}
+
+.toc-panel nav {
+  display: grid;
+  gap: 8px;
+}
+
+.toc-panel a {
+  color: var(--md-sys-color-primary, #6750a4);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 860px) {
+  .top-app-bar,
+  .examples-view,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .view-tabs {
+    justify-self: stretch;
+  }
+  .install-card {
+    grid-column: auto;
+  }
+  .example-nav {
+    position: static;
+  }
 }`;

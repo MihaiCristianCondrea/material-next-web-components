@@ -8,8 +8,11 @@ import '@material/web/tabs/primary-tab.js';
 import '@material/web/tabs/tabs.js';
 import {LitElement, html, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {repeat} from 'lit/directives/repeat.js';
 import {styles} from './expressive-tab-bar-styles.js';
+
+export type ExpressiveTabIconPosition = 'top' | 'bottom' | 'start' | 'end';
 
 export interface ExpressiveTabItem {
   label: string;
@@ -44,12 +47,17 @@ export class MdExpressiveTabBar extends LitElement {
   @property({type: Number, attribute: 'active-index'})
   activeIndex = 0;
 
+  /** Places tab icons before, after, above, or below tab labels. */
+  @property({attribute: 'icon-position', reflect: true})
+  iconPosition: ExpressiveTabIconPosition = 'top';
+
   /** Tab item data. Set this property from JavaScript for custom labels. */
   @property({attribute: false})
   tabs: ExpressiveTabItem[] = defaultTabs;
 
   override render() {
     const activeIndex = this.clampedActiveIndex;
+    const iconPosition = this.normalizedIconPosition;
 
     return html`
       <nav aria-label=${this.ariaLabel} role="presentation">
@@ -66,15 +74,26 @@ export class MdExpressiveTabBar extends LitElement {
                 part="tab"
                 aria-label=${tab.label}
                 ?active=${index === activeIndex}
+                .inlineIcon=${iconPosition === 'start' ||
+                iconPosition === 'end'}
                 @click=${(event: MouseEvent) =>
                   this.handleTabClick(event, index)}
               >
-                ${tab.icon
-                  ? html`<md-icon slot="icon">${tab.icon}</md-icon>`
-                  : nothing}
-                ${tab.href
-                  ? html`<a class="tab-link" href=${tab.href}>${tab.label}</a>`
-                  : tab.label}
+                <span
+                  class=${classMap({
+                    'tab-content': true,
+                    [`icon-${iconPosition}`]: true,
+                  })}
+                >
+                  ${tab.icon
+                    ? html`<md-icon class="tab-icon">${tab.icon}</md-icon>`
+                    : nothing}
+                  ${tab.href
+                    ? html`<a class="tab-link" href=${tab.href}
+                        >${tab.label}</a
+                      >`
+                    : html`<span class="tab-label">${tab.label}</span>`}
+                </span>
               </md-primary-tab>
             `
           )}
@@ -85,6 +104,18 @@ export class MdExpressiveTabBar extends LitElement {
 
   private get clampedActiveIndex() {
     return Math.min(Math.max(this.activeIndex, 0), this.tabs.length - 1);
+  }
+
+  private get normalizedIconPosition(): ExpressiveTabIconPosition {
+    if (
+      this.iconPosition === 'bottom' ||
+      this.iconPosition === 'start' ||
+      this.iconPosition === 'end'
+    ) {
+      return this.iconPosition;
+    }
+
+    return 'top';
   }
 
   private handleMaterialTabsChange(event: Event) {
