@@ -7,12 +7,10 @@ title: material-next-web-components ⌲ Examples
 
 Browse the docs examples as focused component recipes: each section pairs a live preview, copy-ready markup, and an action table that explains when to use the element.
 
-<nav class="example-tabs" aria-label="Example sections">
-  <a href="#expressive-tab-bar">Expressive tab bar</a>
-  <a href="#app-showcase">App showcase</a>
-  <a href="#home-view">Home view</a>
-  <a href="#code-block">Code block</a>
-</nav>
+<md-expressive-tab-bar
+  class="example-tabs"
+  aria-label="Example sections"
+></md-expressive-tab-bar>
 
 <section id="expressive-tab-bar" class="example-panel">
 
