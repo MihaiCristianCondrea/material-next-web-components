@@ -61,8 +61,8 @@ md-tabs {
   --md-primary-tab-hover-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-label-text-color: var(--mnw-expressive-tab-bar-on-container);
-  --md-primary-tab-label-text-font:
-    'Google Sans Flex', 'Google Sans Text', system-ui, sans-serif;
+  --md-primary-tab-label-text-font: 'Google Sans Flex', 'Google Sans Text',
+    system-ui, sans-serif;
   --md-primary-tab-label-text-line-height: 1.5rem;
   --md-primary-tab-label-text-size: 1rem;
   --md-primary-tab-label-text-weight: 500;

@@ -20,11 +20,7 @@
   color: var(--mnw-expressive-tab-bar-on-container);
   font-family: 'Google Sans Flex', 'Google Sans Text', system-ui, sans-serif;
   font-optical-sizing: auto;
-  font-variation-settings:
-    'slnt' 0,
-    'wdth' 100,
-    'GRAD' 0,
-    'ROND' 0;
+  font-variation-settings: 'slnt' 0, 'wdth' 100, 'GRAD' 0, 'ROND' 0;
 }
 
 nav {
@@ -55,8 +51,8 @@ md-tabs {
   --md-primary-tab-hover-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-label-text-color: var(--mnw-expressive-tab-bar-on-container);
-  --md-primary-tab-label-text-font:
-    'Google Sans Flex', 'Google Sans Text', system-ui, sans-serif;
+  --md-primary-tab-label-text-font: 'Google Sans Flex', 'Google Sans Text',
+    system-ui, sans-serif;
   --md-primary-tab-label-text-line-height: 1.5rem;
   --md-primary-tab-label-text-size: 1rem;
   --md-primary-tab-label-text-weight: 500;
@@ -73,9 +69,7 @@ md-primary-tab {
   padding-inline: var(--mnw-expressive-tab-padding-inline, 24px);
   border: 0;
   box-shadow: none;
-  transition:
-    color 200ms ease,
-    background-color 200ms ease;
+  transition: color 200ms ease, background-color 200ms ease;
 }
 
 md-primary-tab[active] {

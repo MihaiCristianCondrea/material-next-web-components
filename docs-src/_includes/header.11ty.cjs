@@ -1,7 +1,12 @@
-module.exports = function () {
+const relative = require('./relative-path.cjs');
+
+module.exports = function ({page}) {
   return `
-<header>
-  <h1>material-next-web-components</h1>
-  <h2>Built-in Lit custom elements and product views powered by Material Design.</h2>
-</header>`;
+<a class="brand" href="${relative(page.url, '/')}">
+  <span class="brand-mark" aria-hidden="true">M</span>
+  <span class="brand-copy">
+    <span class="brand-title">material-next-web-components</span>
+    <span class="brand-subtitle">Material Design Lit components</span>
+  </span>
+</a>`;
 };

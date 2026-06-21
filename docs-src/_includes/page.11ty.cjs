@@ -34,8 +34,10 @@ module.exports = function (data) {
     )}"></script>
   </head>
   <body>
-    ${header()}
-    ${nav(data)}
+    <header class="top-app-bar">
+      ${header(data)}
+      ${nav(data)}
+    </header>
     <div id="main-wrapper">
       <main>
         ${content}

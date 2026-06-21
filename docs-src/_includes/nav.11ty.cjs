@@ -21,8 +21,8 @@ module.exports = function ({page}) {
         const selected = index === activeIndex;
         return `<md-primary-tab ${selected ? 'active' : ''}>
           <a class="site-tab-link" href="${relative(page.url, link.href)}" ${
-            selected ? 'aria-current="page"' : ''
-          }>${link.label}</a>
+          selected ? 'aria-current="page"' : ''
+        }>${link.label}</a>
         </md-primary-tab>`;
       })
       .join('')}
