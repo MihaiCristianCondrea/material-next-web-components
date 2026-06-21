@@ -87,13 +87,37 @@ md-primary-tab[active] {
   font-weight: 700;
 }
 
-md-icon {
+.tab-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.icon-top {
+  flex-direction: column;
+}
+
+.icon-bottom {
+  flex-direction: column-reverse;
+}
+
+.icon-start {
+  flex-direction: row;
+}
+
+.icon-end {
+  flex-direction: row-reverse;
+}
+
+.tab-icon {
   font-size: 24px;
   height: 24px;
   width: 24px;
 }
 
-.tab-link {
+.tab-link,
+.tab-label {
   color: inherit;
   text-decoration: none;
 }
