@@ -8,10 +8,29 @@ title: material-next-web-components ⌲ Examples
 Browse the docs examples as focused component recipes: each section pairs a live preview, copy-ready markup, and an action table that explains when to use the element.
 
 <nav class="example-tabs" aria-label="Example sections">
+  <a href="#expressive-tab-bar">Expressive tab bar</a>
   <a href="#app-showcase">App showcase</a>
   <a href="#home-view">Home view</a>
   <a href="#code-block">Code block</a>
 </nav>
+
+<section id="expressive-tab-bar" class="example-panel">
+
+## Expressive tab bar
+
+Use `<md-expressive-tab-bar>` for top app/article navigation that should feel like the rounded Material documentation tabs while still being built on Material Web tabs.
+
+<mnw-code-block language="html" copy code='<md-expressive-tab-bar active-index="2"></md-expressive-tab-bar>'></mnw-code-block>
+
+<md-expressive-tab-bar active-index="2"></md-expressive-tab-bar>
+
+| Action                   | Description                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| Show Material tabs       | Renders Material Web `<md-tabs>` and `<md-primary-tab>` inside a rounded expressive surface. |
+| Match article navigation | Uses 79px tab height, 24px icons, 24px inline padding, and pill-shaped active state.         |
+| Handle navigation        | Emits `change` and `navigate` events when a user selects a tab.                              |
+
+</section>
 
 <section id="app-showcase" class="example-panel">
 

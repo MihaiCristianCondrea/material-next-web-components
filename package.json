@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run build:scss && tsc",
     "build:watch": "tsc --watch",
-    "clean": "rimraf material-next-home.{d.ts,d.ts.map,js,js.map} material-next-home-styles.{d.ts,d.ts.map,js,js.map} my-element.{d.ts,d.ts.map,js,js.map} my-element-styles.{d.ts,d.ts.map,js,js.map} app-showcase.{d.ts,d.ts.map,js,js.map} app-showcase-styles.{d.ts,d.ts.map,js,js.map} code-block.{d.ts,d.ts.map,js,js.map} code-block-styles.{d.ts,d.ts.map,js,js.map} test/my-element.{d.ts,d.ts.map,js,js.map} test/my-element_test.{d.ts,d.ts.map,js,js.map}",
+    "clean": "rimraf material-next-home.{d.ts,d.ts.map,js,js.map} material-next-home-styles.{d.ts,d.ts.map,js,js.map} my-element.{d.ts,d.ts.map,js,js.map} my-element-styles.{d.ts,d.ts.map,js,js.map} app-showcase.{d.ts,d.ts.map,js,js.map} app-showcase-styles.{d.ts,d.ts.map,js,js.map} code-block.{d.ts,d.ts.map,js,js.map} code-block-styles.{d.ts,d.ts.map,js,js.map} expressive-tab-bar.{d.ts,d.ts.map,js,js.map} expressive-tab-bar-styles.{d.ts,d.ts.map,js,js.map} test/my-element.{d.ts,d.ts.map,js,js.map} test/my-element_test.{d.ts,d.ts.map,js,js.map}",
     "lint": "npm run lint:lit-analyzer && npm run lint:eslint",
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:lit-analyzer": "lit-analyzer",
