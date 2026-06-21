@@ -1,0 +1,109 @@
+/**
+ * @license
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Generated from expressive-tab-bar.scss.
+ * Do not edit directly; run npm run build:scss.
+ */
+
+import {css} from 'lit';
+
+export const styles = css`
+:host {
+  --mnw-expressive-tab-bar-container-color: var(
+    --md-sys-color-surface-container,
+    #f8f1f6
+  );
+  --mnw-expressive-tab-bar-on-container: var(
+    --md-sys-color-on-surface-variant,
+    #4d4256
+  );
+  --mnw-expressive-tab-bar-active-container: var(
+    --md-sys-color-primary-container,
+    #e8def8
+  );
+  --mnw-expressive-tab-bar-on-active-container: var(
+    --md-sys-color-on-primary-container,
+    #1d192b
+  );
+  display: block;
+  color: var(--mnw-expressive-tab-bar-on-container);
+  font-family: "Google Sans Flex", "Google Sans Text", system-ui, sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
+}
+
+nav {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--mnw-expressive-tab-bar-shape, 40px);
+  background: var(--mnw-expressive-tab-bar-container-color);
+}
+
+md-tabs {
+  --md-primary-tab-active-indicator-color: transparent;
+  --md-primary-tab-active-indicator-height: 0;
+  --md-primary-tab-active-label-text-color: var(
+    --mnw-expressive-tab-bar-on-active-container
+  );
+  --md-primary-tab-active-icon-color: var(
+    --mnw-expressive-tab-bar-on-active-container
+  );
+  --md-primary-tab-container-color: transparent;
+  --md-primary-tab-container-height: var(--mnw-expressive-tab-bar-height, 79px);
+  --md-primary-tab-container-shape: var(--mnw-expressive-tab-bar-shape, 40px);
+  --md-primary-tab-hover-label-text-color: var(
+    --mnw-expressive-tab-bar-on-container
+  );
+  --md-primary-tab-hover-icon-color: var(--mnw-expressive-tab-bar-on-container);
+  --md-primary-tab-icon-color: var(--mnw-expressive-tab-bar-on-container);
+  --md-primary-tab-label-text-color: var(--mnw-expressive-tab-bar-on-container);
+  --md-primary-tab-label-text-font: 'Google Sans Flex', 'Google Sans Text',
+    system-ui, sans-serif;
+  --md-primary-tab-label-text-line-height: 1.5rem;
+  --md-primary-tab-label-text-size: 1rem;
+  --md-primary-tab-label-text-weight: 500;
+  height: var(--mnw-expressive-tab-bar-height, 79px);
+  min-width: 100%;
+  background: var(--mnw-expressive-tab-bar-container-color);
+}
+
+md-primary-tab {
+  min-width: var(--mnw-expressive-tab-min-width, 180px);
+  padding-inline: var(--mnw-expressive-tab-padding-inline, 24px);
+  transition: color 200ms ease, background-color 200ms ease;
+}
+
+md-primary-tab[active] {
+  --md-primary-tab-container-color: var(
+    --mnw-expressive-tab-bar-active-container
+  );
+  --md-primary-tab-hover-state-layer-color: var(
+    --mnw-expressive-tab-bar-on-active-container
+  );
+  --md-primary-tab-pressed-state-layer-color: var(
+    --mnw-expressive-tab-bar-on-active-container
+  );
+  font-weight: 700;
+}
+
+md-icon {
+  font-size: 24px;
+  height: 24px;
+  width: 24px;
+}
+
+.tab-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (max-width: 720px) {
+  md-tabs {
+    --md-primary-tab-container-height: 64px;
+    height: 64px;
+  }
+  md-primary-tab {
+    min-width: 144px;
+  }
+}`;

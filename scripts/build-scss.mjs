@@ -14,6 +14,11 @@ const outputs = [
     lit: true,
   },
   {input: 'src/code-block.scss', output: 'src/code-block-styles.ts', lit: true},
+  {
+    input: 'src/expressive-tab-bar.scss',
+    output: 'src/expressive-tab-bar-styles.ts',
+    lit: true,
+  },
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 

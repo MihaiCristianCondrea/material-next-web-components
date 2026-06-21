@@ -6,6 +6,7 @@
 import '@material/web/button/filled-button.js';
 import './app-showcase.js';
 import './code-block.js';
+import './expressive-tab-bar.js';
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {styles} from './material-next-home-styles.js';
