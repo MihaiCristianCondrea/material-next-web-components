@@ -7,22 +7,17 @@ import '@material/web/button/filled-button.js';
 import '@material/web/icon/icon.js';
 import './app-showcase.js';
 import './code-block.js';
+import './docs-table-of-contents.js';
+import './docs-vertical-tabs.js';
 import './expressive-tab-bar.js';
 import {LitElement, html} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
+import {
+  appNavigationItems,
+  exampleNavigationItems,
+  exampleTableOfContentsItems,
+} from './docs-navigation.js';
 import {styles} from './material-next-home-styles.js';
-
-const appTabs = [
-  {label: 'Home', icon: 'home', href: '#home'},
-  {label: 'Examples', icon: 'widgets', href: '#examples'},
-];
-
-const exampleTabs = [
-  {label: 'Expressive tab bar', icon: 'tab', href: '#expressive-tab-bar'},
-  {label: 'App showcase', icon: 'apps', href: '#app-showcase'},
-  {label: 'Code block', icon: 'code', href: '#code-block'},
-  {label: 'Table of contents', icon: 'toc', href: '#table-of-contents'},
-];
 
 /**
  * Home and examples app shell for material-next-web-components.
@@ -47,6 +42,9 @@ export class MaterialNextHome extends LitElement {
 
   @state()
   private activeExampleIndex = 0;
+
+  @state()
+  private activeTocIndex = 0;
 
   private routeChangeController?: AbortController;
 
@@ -80,7 +78,7 @@ export class MaterialNextHome extends LitElement {
           <md-expressive-tab-bar
             class="view-tabs"
             icon-position="start"
-            .tabs=${appTabs}
+            .tabs=${appNavigationItems}
             .activeIndex=${this.activeView === 'home' ? 0 : 1}
             @navigate=${this.handleAppNavigation}
           ></md-expressive-tab-bar>
@@ -158,18 +156,22 @@ import 'material-next-web-components/expressive-tab-bar.js';"
   private renderExamplesView() {
     return html`
       <article class="examples-view" id="examples">
-        <aside class="example-nav" aria-label="Examples navigation">
-          <p class="nav-heading">Examples</p>
-          <md-expressive-tab-bar
-            class="tree-tabs"
-            icon-position="start"
-            .tabs=${exampleTabs}
+        <aside class="example-nav">
+          <mnw-docs-vertical-tabs
+            .items=${exampleNavigationItems}
             .activeIndex=${this.activeExampleIndex}
             @navigate=${this.handleExampleNavigation}
-          ></md-expressive-tab-bar>
+          ></mnw-docs-vertical-tabs>
         </aside>
 
         <section class="example-content">
+          <section id="examples-overview" class="example-panel">
+            <h2>Examples</h2>
+            <p>
+              Browse reusable Material Next Web Components with separated
+              library navigation and page contents.
+            </p>
+          </section>
           <section id="expressive-tab-bar" class="example-panel">
             <h2>Expressive tab bar</h2>
             <p>
@@ -194,22 +196,15 @@ import 'material-next-web-components/expressive-tab-bar.js';"
               code='<md-expressive-tab-bar icon-position="end"></md-expressive-tab-bar>'
             ></mnw-code-block>
           </section>
-
-          <section id="table-of-contents" class="example-panel toc-panel">
-            <h2>Table of contents</h2>
-            <nav aria-label="Page table of contents">
-              <a href="#expressive-tab-bar" @click=${this.handleTocNavigation}
-                >Expressive tab bar</a
-              >
-              <a href="#app-showcase" @click=${this.handleTocNavigation}
-                >App showcase</a
-              >
-              <a href="#code-block" @click=${this.handleTocNavigation}
-                >Code block</a
-              >
-            </nav>
-          </section>
         </section>
+
+        <aside class="toc-nav">
+          <mnw-docs-table-of-contents
+            .items=${exampleTableOfContentsItems}
+            .activeIndex=${this.activeTocIndex}
+            @navigate=${this.handleTocNavigation}
+          ></mnw-docs-table-of-contents>
+        </aside>
       </article>
     `;
   }
@@ -237,10 +232,12 @@ import 'material-next-web-components/expressive-tab-bar.js';"
     this.navigateToHash(item.href);
   }
 
-  private handleTocNavigation(event: MouseEvent) {
-    const link = event.currentTarget as HTMLAnchorElement;
+  private handleTocNavigation(event: CustomEvent) {
     event.preventDefault();
-    this.navigateToHash(link.hash);
+    const item = event.detail.item as {href?: string};
+    if (item.href) {
+      this.navigateToHash(item.href);
+    }
   }
 
   private readonly handleRouteChange = () => {
@@ -258,14 +255,22 @@ import 'material-next-web-components/expressive-tab-bar.js';"
 
   private syncRouteFromLocation({scroll}: {scroll: boolean}) {
     const hash = window.location.hash || '#home';
-    const exampleIndex = exampleTabs.findIndex((tab) => tab.href === hash);
+    const exampleIndex = exampleNavigationItems.findIndex(
+      (tab) => tab.href === hash
+    );
 
-    if (hash === '#examples' || exampleIndex >= 0) {
+    const tocIndex = exampleTableOfContentsItems.findIndex(
+      (item) => item.href === hash
+    );
+
+    if (hash === '#examples' || exampleIndex >= 0 || tocIndex >= 0) {
       this.activeView = 'examples';
       this.activeExampleIndex = exampleIndex >= 0 ? exampleIndex : 0;
+      this.activeTocIndex = tocIndex >= 0 ? tocIndex : 0;
     } else {
       this.activeView = 'home';
       this.activeExampleIndex = 0;
+      this.activeTocIndex = 0;
     }
 
     if (!scroll) {
@@ -276,7 +281,9 @@ import 'material-next-web-components/expressive-tab-bar.js';"
       const target =
         this.getHashTarget(hash) ??
         (this.activeView === 'examples'
-          ? this.getHashTarget(exampleTabs[this.activeExampleIndex]?.href ?? '')
+          ? this.getHashTarget(
+              exampleNavigationItems[this.activeExampleIndex]?.href ?? ''
+            )
           : null);
 
       target?.scrollIntoView({

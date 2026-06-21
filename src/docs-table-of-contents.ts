@@ -1,0 +1,78 @@
+/**
+ * @license
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+import {LitElement, html, nothing} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+import {ifDefined} from 'lit/directives/if-defined.js';
+import {repeat} from 'lit/directives/repeat.js';
+import {
+  type DocsNavigationItem,
+  exampleTableOfContentsItems,
+} from './docs-navigation.js';
+import {styles} from './docs-table-of-contents-styles.js';
+
+@customElement('mnw-docs-table-of-contents')
+export class MaterialNextDocsTableOfContents extends LitElement {
+  static override styles = styles;
+
+  @property({attribute: 'aria-label'})
+  override ariaLabel = 'Table of contents';
+
+  @property()
+  heading = 'On this page';
+
+  @property({type: Number, attribute: 'active-index'})
+  activeIndex = 0;
+
+  @property({attribute: false})
+  items: DocsNavigationItem[] = exampleTableOfContentsItems;
+
+  override render() {
+    return html`
+      <nav aria-label=${this.ariaLabel}>
+        ${this.heading ? html`<p class="heading">${this.heading}</p>` : nothing}
+        ${repeat(
+          this.items,
+          (item) => `${item.label}-${item.href}`,
+          (item, index) => html`
+            <a
+              href=${item.href}
+              aria-current=${ifDefined(
+                index === this.activeIndex ? 'page' : undefined
+              )}
+              @click=${(event: MouseEvent) =>
+                this.handleItemClick(event, index)}
+              >${item.label}</a
+            >
+          `
+        )}
+      </nav>
+    `;
+  }
+
+  private handleItemClick(event: MouseEvent, index: number) {
+    const item = this.items[index];
+    if (!item) {
+      return;
+    }
+
+    this.activeIndex = index;
+    const navigateEvent = new CustomEvent('navigate', {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      detail: {index, item},
+    });
+    if (!this.dispatchEvent(navigateEvent)) {
+      event.preventDefault();
+    }
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'mnw-docs-table-of-contents': MaterialNextDocsTableOfContents;
+  }
+}

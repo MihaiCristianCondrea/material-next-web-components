@@ -153,24 +153,23 @@ p {
 
 .examples-view {
   display: grid;
-  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(180px, 240px);
   gap: 24px;
   align-items: start;
 }
 
-.example-nav {
+.example-nav,
+.toc-nav {
   position: sticky;
   top: 104px;
+  align-self: start;
 }
 
-.tree-tabs {
-  --mnw-expressive-tab-bar-height: auto;
-  --mnw-expressive-tab-min-width: 100%;
-  --mnw-expressive-tab-padding-inline: 16px;
-}
-
-.tree-tabs::part(tabs) {
-  display: grid;
+.toc-nav {
+  border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container-low, #f7f2fa);
+  padding: 24px;
 }
 
 .example-content {
@@ -179,17 +178,6 @@ p {
 
 .example-panel {
   scroll-margin-top: 112px;
-}
-
-.toc-panel nav {
-  display: grid;
-  gap: 8px;
-}
-
-.toc-panel a {
-  color: var(--md-sys-color-primary, #6750a4);
-  font-weight: 600;
-  text-decoration: none;
 }
 
 @media (max-width: 860px) {
@@ -204,7 +192,8 @@ p {
   .install-card {
     grid-column: auto;
   }
-  .example-nav {
+  .example-nav,
+  .toc-nav {
     position: static;
   }
 }`;

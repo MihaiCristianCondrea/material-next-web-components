@@ -1,0 +1,43 @@
+/**
+ * @license
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Generated from docs-table-of-contents.scss.
+ * Do not edit directly; run npm run build:scss.
+ */
+
+import {css} from 'lit';
+
+export const styles = css`
+:host {
+  display: block;
+  color: var(--md-sys-color-on-surface-variant, #49454f);
+  font-family: "Google Sans Flex", system-ui, sans-serif;
+}
+
+nav {
+  display: grid;
+  gap: 8px;
+}
+
+.heading {
+  margin: 0 0 8px;
+  color: var(--md-sys-color-primary, #6750a4);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+a {
+  border-inline-start: 3px solid transparent;
+  color: inherit;
+  padding: 6px 0 6px 12px;
+  text-decoration: none;
+}
+
+a:hover,
+a[aria-current=page] {
+  border-inline-start-color: var(--md-sys-color-primary, #6750a4);
+  color: var(--md-sys-color-primary, #6750a4);
+}`;

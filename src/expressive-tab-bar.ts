@@ -10,22 +10,17 @@ import {LitElement, html, nothing} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {repeat} from 'lit/directives/repeat.js';
+import {
+  type DocsNavigationItem,
+  exampleNavigationItems,
+} from './docs-navigation.js';
 import {styles} from './expressive-tab-bar-styles.js';
 
 export type ExpressiveTabIconPosition = 'top' | 'bottom' | 'start' | 'end';
 
-export interface ExpressiveTabItem {
-  label: string;
-  icon?: string;
-  href?: string;
-}
+export type ExpressiveTabItem = DocsNavigationItem;
 
-const defaultTabs: ExpressiveTabItem[] = [
-  {label: 'Expressive tab bar', icon: 'tab', href: '#expressive-tab-bar'},
-  {label: 'App showcase', icon: 'apps', href: '#app-showcase'},
-  {label: 'Home view', icon: 'home', href: '#home-view'},
-  {label: 'Code block', icon: 'code', href: '#code-block'},
-];
+const defaultTabs: ExpressiveTabItem[] = exampleNavigationItems;
 
 /**
  * A Material 3 expressive top app tab bar styled with rounded app-navigation
@@ -131,7 +126,6 @@ export class MdExpressiveTabBar extends LitElement {
   }
 
   private handleTabClick(event: MouseEvent, index: number) {
-    event.preventDefault();
     this.skipNextMaterialTabsNavigation = true;
     queueMicrotask(() => {
       this.skipNextMaterialTabsNavigation = false;
@@ -151,14 +145,16 @@ export class MdExpressiveTabBar extends LitElement {
       return;
     }
 
-    event?.preventDefault();
-    this.dispatchEvent(
-      new CustomEvent('navigate', {
-        bubbles: true,
-        composed: true,
-        detail: {index, item},
-      })
-    );
+    const navigateEvent = new CustomEvent('navigate', {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      detail: {index, item},
+    });
+
+    if (!this.dispatchEvent(navigateEvent)) {
+      event?.preventDefault();
+    }
   }
 
   private activateTab(index: number) {

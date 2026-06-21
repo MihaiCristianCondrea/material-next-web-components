@@ -19,6 +19,16 @@ const outputs = [
     output: 'src/expressive-tab-bar-styles.ts',
     lit: true,
   },
+  {
+    input: 'src/docs-vertical-tabs.scss',
+    output: 'src/docs-vertical-tabs-styles.ts',
+    lit: true,
+  },
+  {
+    input: 'src/docs-table-of-contents.scss',
+    output: 'src/docs-table-of-contents-styles.ts',
+    lit: true,
+  },
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 
