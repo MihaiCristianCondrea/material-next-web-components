@@ -4,6 +4,29 @@
   font-family: 'Google Sans Code', ui-monospace, monospace;
   font-optical-sizing: auto;
   font-variation-settings: 'MONO' 1;
+  --mnw-code-background: var(--md-sys-color-code-background, #fffbfe);
+  --mnw-code-on-background: var(--md-sys-color-code-on-background, #1d1b20);
+  --mnw-code-comment: var(--md-sys-color-code-comment, #6f6676);
+  --mnw-code-punctuation: var(--md-sys-color-code-punctuation, #6750a4);
+  --mnw-code-tag: var(--md-sys-color-code-tag, #9a3412);
+  --mnw-code-string: var(--md-sys-color-code-string, #146c2e);
+  --mnw-code-keyword: var(--md-sys-color-code-keyword, #5b43a0);
+  --mnw-code-function: var(--md-sys-color-code-function, #984061);
+  --mnw-code-variable: var(--md-sys-color-code-variable, #7d5700);
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --mnw-code-background: var(--md-sys-color-code-background, #17151f);
+    --mnw-code-on-background: var(--md-sys-color-code-on-background, #f7f2fa);
+    --mnw-code-comment: var(--md-sys-color-code-comment, #b7a9c9);
+    --mnw-code-punctuation: var(--md-sys-color-code-punctuation, #d0bcff);
+    --mnw-code-tag: var(--md-sys-color-code-tag, #ffb4ab);
+    --mnw-code-string: var(--md-sys-color-code-string, #b8f397);
+    --mnw-code-keyword: var(--md-sys-color-code-keyword, #d0bcff);
+    --mnw-code-function: var(--md-sys-color-code-function, #efb8c8);
+    --mnw-code-variable: var(--md-sys-color-code-variable, #fdd663);
+  }
 }
 
 :host([hidden]) {
@@ -52,11 +75,11 @@ pre {
   overflow: auto;
   margin: 0;
   padding: 18px;
-  background: #17151f;
+  background: var(--mnw-code-background);
 }
 
 code {
-  color: #f7f2fa;
+  color: var(--mnw-code-on-background);
   font-family: 'Google Sans Code', ui-monospace, monospace;
   font-optical-sizing: auto;
   font-size: 0.875rem;
@@ -78,11 +101,11 @@ code {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #b7a9c9;
+  color: var(--mnw-code-comment);
 }
 
 .token.punctuation {
-  color: #d0bcff;
+  color: var(--mnw-code-punctuation);
 }
 
 .token.property,
@@ -92,7 +115,7 @@ code {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #ffb4ab;
+  color: var(--mnw-code-tag);
 }
 
 .token.selector,
@@ -101,7 +124,7 @@ code {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #b8f397;
+  color: var(--mnw-code-string);
 }
 
 .token.operator,
@@ -109,22 +132,22 @@ code {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #f2b8b5;
+  color: var(--mnw-code-tag);
 }
 
 .token.atrule,
 .token.attr-value,
 .token.keyword {
-  color: #d0bcff;
+  color: var(--mnw-code-keyword);
 }
 
 .token.function,
 .token.class-name {
-  color: #efb8c8;
+  color: var(--mnw-code-function);
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #fdd663;
+  color: var(--mnw-code-variable);
 }
