@@ -11,8 +11,8 @@ import {css} from 'lit';
 export const styles = css`
 :host {
   --mnw-expressive-tab-bar-container-color: var(
-    --md-sys-color-surface-container,
-    #f8f1f6
+    --md-sys-color-surface-container-low,
+    #f7f2fa
   );
   --mnw-expressive-tab-bar-on-container: var(
     --md-sys-color-on-surface-variant,
@@ -36,13 +36,16 @@ export const styles = css`
 nav {
   display: block;
   overflow: hidden;
-  border-radius: var(--mnw-expressive-tab-bar-shape, 40px);
+  border-radius: var(--mnw-expressive-tab-bar-shape, 28px);
   background: var(--mnw-expressive-tab-bar-container-color);
+  border: 0;
+  box-shadow: none;
 }
 
 md-tabs {
   --md-primary-tab-active-indicator-color: transparent;
   --md-primary-tab-active-indicator-height: 0;
+  --md-primary-tab-active-indicator-shape: 0;
   --md-primary-tab-active-label-text-color: var(
     --mnw-expressive-tab-bar-on-active-container
   );
@@ -51,26 +54,30 @@ md-tabs {
   );
   --md-primary-tab-container-color: transparent;
   --md-primary-tab-container-height: var(--mnw-expressive-tab-bar-height, 79px);
-  --md-primary-tab-container-shape: var(--mnw-expressive-tab-bar-shape, 40px);
+  --md-primary-tab-container-shape: var(--mnw-expressive-tab-bar-shape, 28px);
   --md-primary-tab-hover-label-text-color: var(
     --mnw-expressive-tab-bar-on-container
   );
   --md-primary-tab-hover-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-icon-color: var(--mnw-expressive-tab-bar-on-container);
   --md-primary-tab-label-text-color: var(--mnw-expressive-tab-bar-on-container);
-  --md-primary-tab-label-text-font: 'Google Sans Flex', 'Google Sans Text',
-    system-ui, sans-serif;
+  --md-primary-tab-label-text-font:
+    'Google Sans Flex', 'Google Sans Text', system-ui, sans-serif;
   --md-primary-tab-label-text-line-height: 1.5rem;
   --md-primary-tab-label-text-size: 1rem;
   --md-primary-tab-label-text-weight: 500;
   height: var(--mnw-expressive-tab-bar-height, 79px);
   min-width: 100%;
   background: var(--mnw-expressive-tab-bar-container-color);
+  border: 0;
+  box-shadow: none;
 }
 
 md-primary-tab {
   min-width: var(--mnw-expressive-tab-min-width, 180px);
   padding-inline: var(--mnw-expressive-tab-padding-inline, 24px);
+  border: 0;
+  box-shadow: none;
   transition: color 200ms ease, background-color 200ms ease;
 }
 
