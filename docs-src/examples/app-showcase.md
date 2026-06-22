@@ -8,7 +8,8 @@ icon: apps
 order: 2
 ---
 
-Use `<mnw-app-showcase>` when a page needs a responsive app collection with loading, error, empty, and cached request states handled by the component.
+Use `<mnw-app-showcase>` when a page needs a responsive app collection with loading, error, empty,
+and cached request states handled by the component.
 
 ## Live demo
 
@@ -18,12 +19,13 @@ Use `<mnw-app-showcase>` when a page needs a responsive app collection with load
 
 ## Code
 
-<mnw-code-block language="html" copy code='<mnw-app-showcase limit="3"></mnw-app-showcase>'></mnw-code-block>
+<mnw-code-block language="html" copy code='<mnw-app-showcase limit="3"></mnw-app-showcase>'><
+/mnw-code-block>
 
 ## API
 
 | Property        | Type     | Default                           | Description                               |
-| --------------- | -------- | --------------------------------- | ----------------------------------------- |
+|-----------------|----------|-----------------------------------|-------------------------------------------|
 | `apps-endpoint` | `string` | project API URL                   | Endpoint returning Android app metadata.  |
 | `store-href`    | `string` | Google Play developer URL         | Destination for the section-level action. |
 | `headline`      | `string` | `'More apps from Mihai-Cristian'` | Section heading.                          |
@@ -32,13 +34,13 @@ Use `<mnw-app-showcase>` when a page needs a responsive app collection with load
 ## Slots
 
 | Slot | Description                                |
-| ---- | ------------------------------------------ |
+|------|--------------------------------------------|
 | none | App cards are generated from fetched data. |
 
 ## Events
 
 | Event | Description                                             |
-| ----- | ------------------------------------------------------- |
+|-------|---------------------------------------------------------|
 | none  | Uses native anchor navigation for card and store links. |
 
 ## Accessibility notes

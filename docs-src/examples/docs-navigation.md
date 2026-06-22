@@ -8,7 +8,8 @@ icon: menu_book
 order: 5
 ---
 
-Use `<mnw-docs-vertical-tabs>` and `<mnw-docs-table-of-contents>` to separate examples navigation from page-local headings.
+Use `<mnw-docs-vertical-tabs>` and `<mnw-docs-table-of-contents>` to separate examples navigation
+from page-local headings.
 
 ## Live demo
 
@@ -25,7 +26,7 @@ Use `<mnw-docs-vertical-tabs>` and `<mnw-docs-table-of-contents>` to separate ex
 ## API
 
 | Property       | Type                   | Default            | Description                                    |
-| -------------- | ---------------------- | ------------------ | ---------------------------------------------- |
+|----------------|------------------------|--------------------|------------------------------------------------|
 | `heading`      | `string`               | component-specific | Heading shown above the links.                 |
 | `active-index` | `number`               | `0`                | Marks the active item.                         |
 | `items`        | `DocsNavigationItem[]` | example defaults   | JavaScript-only navigation items.              |
@@ -35,13 +36,13 @@ Use `<mnw-docs-vertical-tabs>` and `<mnw-docs-table-of-contents>` to separate ex
 ## Slots
 
 | Slot | Description                        |
-| ---- | ---------------------------------- |
+|------|------------------------------------|
 | none | Links are rendered from item data. |
 
 ## Events
 
 | Event      | Description                                         |
-| ---------- | --------------------------------------------------- |
+|------------|-----------------------------------------------------|
 | `navigate` | Cancelable event fired when a user selects an item. |
 
 ## Accessibility notes

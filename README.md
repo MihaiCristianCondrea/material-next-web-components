@@ -8,9 +8,10 @@ This library is written with Lit and starts with the latest Material Web compone
 
 Documentation is authored in [`docs-src`](./docs-src) and compiled by GitHub Actions for GitHub Pages. The generated `docs` directory is not committed.
 
-Build the docs locally:
+Install dependencies and build the docs locally:
 
 ```bash
+npm install
 npm run docs
 ```
 

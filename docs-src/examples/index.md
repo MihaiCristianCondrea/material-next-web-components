@@ -5,7 +5,8 @@ title: material-next-web-components ⌲ Examples
 
 # Examples
 
-Browse reusable Material Next Web Components as focused component recipes. Each page follows the same structure: live demo, code, API, slots, events, accessibility notes, and design notes.
+Browse reusable Material Next Web Components as focused component recipes. Each page follows the
+same structure: live demo, code, API, slots, events, accessibility notes, and design notes.
 
 <section class="examples-index">
   <article class="example-panel">

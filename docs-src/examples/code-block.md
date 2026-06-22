@@ -18,12 +18,13 @@ Use `<mnw-code-block>` for examples that should be readable, theme-aware, and ea
 
 ## Code
 
-<mnw-code-block language="html" copy code='<mnw-code-block language="ts" copy code="const ready = true;"></mnw-code-block>'></mnw-code-block>
+<mnw-code-block language="html" copy code='<mnw-code-block language="ts" copy code="const ready =
+true;"></mnw-code-block>'></mnw-code-block>
 
 ## API
 
 | Property   | Type      | Default  | Description                                  |
-| ---------- | --------- | -------- | -------------------------------------------- |
+|------------|-----------|----------|----------------------------------------------|
 | `language` | `string`  | `'text'` | Language label and syntax highlighting mode. |
 | `code`     | `string`  | `''`     | Code snippet to render.                      |
 | `copy`     | `boolean` | `false`  | Shows the copy-to-clipboard action.          |
@@ -31,13 +32,13 @@ Use `<mnw-code-block>` for examples that should be readable, theme-aware, and ea
 ## Slots
 
 | Slot    | Description                                                      |
-| ------- | ---------------------------------------------------------------- |
+|---------|------------------------------------------------------------------|
 | default | Alternative source for code when the `code` property is omitted. |
 
 ## Events
 
 | Event           | Description                                         |
-| --------------- | --------------------------------------------------- |
+|-----------------|-----------------------------------------------------|
 | `mnw-code-copy` | Fired after the snippet is copied to the clipboard. |
 
 ## Accessibility notes

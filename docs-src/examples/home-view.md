@@ -8,7 +8,8 @@ icon: home
 order: 3
 ---
 
-Use `<mnw-home>` to render a Material documentation home surface with built-in examples, install copy, and a primary documentation action.
+Use `<mnw-home>` to render a Material documentation home surface with built-in examples, install
+copy, and a primary documentation action.
 
 ## Live demo
 
@@ -18,25 +19,26 @@ Use `<mnw-home>` to render a Material documentation home surface with built-in e
 
 ## Code
 
-<mnw-code-block language="html" copy code='<mnw-home headline="Document Material Design views once" docs-href="../../install/"></mnw-home>'></mnw-code-block>
+<mnw-code-block language="html" copy code='<mnw-home headline="Document Material Design views once"
+docs-href="../../install/"></mnw-home>'></mnw-code-block>
 
 ## API
 
 | Property    | Type     | Default                          | Description                               |
-| ----------- | -------- | -------------------------------- | ----------------------------------------- |
+|-------------|----------|----------------------------------|-------------------------------------------|
 | `headline`  | `string` | `'material-next-web-components'` | Main hero headline.                       |
 | `docs-href` | `string` | `'./install/'`                   | URL for the install/documentation action. |
 
 ## Slots
 
 | Slot    | Description                                               |
-| ------- | --------------------------------------------------------- |
+|---------|-----------------------------------------------------------|
 | default | Optional supporting content rendered below the home view. |
 
 ## Events
 
 | Event | Description                                              |
-| ----- | -------------------------------------------------------- |
+|-------|----------------------------------------------------------|
 | none  | Internal navigation uses component state and URL hashes. |
 
 ## Accessibility notes
