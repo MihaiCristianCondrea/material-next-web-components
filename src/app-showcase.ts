@@ -94,6 +94,8 @@ export class MaterialNextAppShowcase extends LitElement {
 
   private allApps: AppItem[] = [];
 
+  private requestVersion = 0;
+
   override connectedCallback() {
     super.connectedCallback();
     void this.loadApps();
@@ -106,7 +108,7 @@ export class MaterialNextAppShowcase extends LitElement {
     }
 
     if (changedProperties.has('limit')) {
-      this.apps = this.allApps.slice(0, this.limit);
+      this.apps = this.allApps.slice(0, this.normalizedLimit);
     }
   }
 
@@ -119,6 +121,7 @@ export class MaterialNextAppShowcase extends LitElement {
             class="view-all-link"
             href=${this.storeHref}
             target="_blank"
+            rel="noopener noreferrer"
             aria-label="View all apps on Google Play"
           >
             <md-icon slot="icon">open_in_new</md-icon>
@@ -163,6 +166,7 @@ export class MaterialNextAppShowcase extends LitElement {
               class="play-link"
               href=${app.storeUrl}
               target="_blank"
+              rel="noopener noreferrer"
               aria-label="Open ${app.name} on Google Play"
             >
               <md-icon slot="icon">store</md-icon>
@@ -173,22 +177,45 @@ export class MaterialNextAppShowcase extends LitElement {
     </div>`;
   }
 
+  override disconnectedCallback() {
+    this.requestVersion += 1;
+    super.disconnectedCallback();
+  }
+
+  private get normalizedLimit() {
+    return Math.max(
+      0,
+      Math.floor(Number.isFinite(this.limit) ? this.limit : 0)
+    );
+  }
+
   private async loadApps() {
+    const endpoint = this.appsEndpoint;
+    const version = (this.requestVersion += 1);
     this.isLoading = true;
     this.errorMessage = '';
 
     try {
-      this.allApps = await fetchPromotedApps(this.appsEndpoint);
-      this.apps = this.allApps.slice(0, this.limit);
+      const apps = await fetchPromotedApps(endpoint);
+      if (this.appsEndpoint !== endpoint || this.requestVersion !== version) {
+        return;
+      }
+      this.allApps = apps;
+      this.apps = this.allApps.slice(0, this.normalizedLimit);
       if (this.apps.length === 0) {
         this.errorMessage = 'No apps are available right now.';
       }
     } catch (error) {
+      if (this.appsEndpoint !== endpoint || this.requestVersion !== version) {
+        return;
+      }
       console.error(error);
       this.errorMessage =
         'Could not load app recommendations. Please try again later.';
     } finally {
-      this.isLoading = false;
+      if (this.appsEndpoint === endpoint && this.requestVersion === version) {
+        this.isLoading = false;
+      }
     }
   }
 }

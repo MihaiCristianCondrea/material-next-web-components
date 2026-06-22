@@ -6,7 +6,6 @@
 import '@material/web/chips/assist-chip.js';
 import '@material/web/icon/icon.js';
 import {LitElement, html, nothing} from 'lit';
-import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {
   customElement,
   property,
@@ -48,6 +47,8 @@ export class MaterialNextCodeBlock extends LitElement {
     return this.code || this.slottedCode;
   }
 
+  private copyResetTimeout?: number;
+
   private get highlightedCode() {
     const code = this.displayCode;
     return highlightCode(code, this.normalizedLanguage);
@@ -86,8 +87,11 @@ export class MaterialNextCodeBlock extends LitElement {
             : nothing}
           <span class="copy-status" aria-live="polite">${this.copyStatus}</span>
         </figcaption>
-        <pre><code class="language-${this.normalizedLanguage}">${unsafeHTML(
-          this.highlightedCode
+        <pre><code class="language-${this
+          .normalizedLanguage}">${this.highlightedCode.map((token) =>
+          token.className
+            ? html`<span class="token ${token.className}">${token.text}</span>`
+            : token.text
         )}</code></pre>
       </figure>
     `;
@@ -118,9 +122,13 @@ export class MaterialNextCodeBlock extends LitElement {
 
     this.copied = true;
     this.copyStatus = 'Copied';
-    window.setTimeout(() => {
+    if (this.copyResetTimeout !== undefined) {
+      window.clearTimeout(this.copyResetTimeout);
+    }
+    this.copyResetTimeout = window.setTimeout(() => {
       this.copied = false;
       this.copyStatus = '';
+      this.copyResetTimeout = undefined;
     }, 1400);
     this.dispatchEvent(
       new CustomEvent('mnw-code-copy', {
@@ -129,6 +137,14 @@ export class MaterialNextCodeBlock extends LitElement {
         composed: true,
       })
     );
+  }
+
+  override disconnectedCallback() {
+    if (this.copyResetTimeout !== undefined) {
+      window.clearTimeout(this.copyResetTimeout);
+      this.copyResetTimeout = undefined;
+    }
+    super.disconnectedCallback();
   }
 
   private syncSlottedCode() {
@@ -160,7 +176,12 @@ declare global {
   }
 }
 
-function highlightCode(code: string, language: string) {
+interface HighlightToken {
+  text: string;
+  className?: string;
+}
+
+function highlightCode(code: string, language: string): HighlightToken[] {
   if (language === 'markup') {
     return highlightMarkup(code);
   }
@@ -168,31 +189,47 @@ function highlightCode(code: string, language: string) {
   return highlightScriptLikeCode(code);
 }
 
-function highlightMarkup(code: string) {
-  return escapeHtml(code).replace(
-    /(&lt;\/?)([\w-]+)([^&]*?)(\/?&gt;)/g,
-    (_match, open: string, tag: string, attrs: string, close: string) =>
-      `<span class="token punctuation">${open}</span><span class="token tag">${tag}</span>${highlightAttributes(
-        attrs
-      )}<span class="token punctuation">${close}</span>`
-  );
+function highlightMarkup(code: string): HighlightToken[] {
+  const tagPattern = /(<\/?)([\w-]+)([^<>]*?)(\/?>)/g;
+  const tokens: HighlightToken[] = [];
+  let lastIndex = 0;
+
+  for (const match of code.matchAll(tagPattern)) {
+    const index = match.index ?? 0;
+    pushText(tokens, code.slice(lastIndex, index));
+    tokens.push({text: match[1], className: 'punctuation'});
+    tokens.push({text: match[2], className: 'tag'});
+    tokens.push(...highlightAttributes(match[3]));
+    tokens.push({text: match[4], className: 'punctuation'});
+    lastIndex = index + match[0].length;
+  }
+
+  pushText(tokens, code.slice(lastIndex));
+  return tokens;
 }
 
-function highlightScriptLikeCode(code: string) {
+function highlightScriptLikeCode(code: string): HighlightToken[] {
   const tokenPattern =
     /(\/\/.*|\/\*[\s\S]*?\*\/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\b(?:const|let|var|return|if|else|class|extends|import|from|export|function|async|await|new|type|interface|private|public|protected|readonly|true|false|null|undefined)\b|\b[A-Z][\w]*\b|\b\d+(?:\.\d+)?\b)/g;
-  let highlighted = '';
+  const tokens: HighlightToken[] = [];
   let lastIndex = 0;
 
   for (const match of code.matchAll(tokenPattern)) {
     const token = match[0];
     const index = match.index ?? 0;
-    highlighted += escapeHtml(code.slice(lastIndex, index));
-    highlighted += wrapToken(token, tokenClass(token));
+    pushText(tokens, code.slice(lastIndex, index));
+    tokens.push({text: token, className: tokenClass(token)});
     lastIndex = index + token.length;
   }
 
-  return highlighted + escapeHtml(code.slice(lastIndex));
+  pushText(tokens, code.slice(lastIndex));
+  return tokens;
+}
+
+function pushText(tokens: HighlightToken[], text: string) {
+  if (text) {
+    tokens.push({text});
+  }
 }
 
 function tokenClass(token: string) {
@@ -211,22 +248,20 @@ function tokenClass(token: string) {
   return 'keyword';
 }
 
-function wrapToken(token: string, className: string) {
-  return `<span class="token ${className}">${escapeHtml(token)}</span>`;
-}
+function highlightAttributes(attributes: string): HighlightToken[] {
+  const attrPattern = /([\w-:]+)(=)(".*?"|'.*?'|[^\s]+)/g;
+  const tokens: HighlightToken[] = [];
+  let lastIndex = 0;
 
-function highlightAttributes(attributes: string) {
-  return attributes.replace(
-    /([\w-:]+)(=)(&quot;.*?&quot;|&#39;.*?&#39;|[^\s&]+)/g,
-    '<span class="token attr-name">$1</span><span class="token punctuation">$2</span><span class="token attr-value">$3</span>'
-  );
-}
+  for (const match of attributes.matchAll(attrPattern)) {
+    const index = match.index ?? 0;
+    pushText(tokens, attributes.slice(lastIndex, index));
+    tokens.push({text: match[1], className: 'attr-name'});
+    tokens.push({text: match[2], className: 'punctuation'});
+    tokens.push({text: match[3], className: 'attr-value'});
+    lastIndex = index + match[0].length;
+  }
 
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  pushText(tokens, attributes.slice(lastIndex));
+  return tokens;
 }

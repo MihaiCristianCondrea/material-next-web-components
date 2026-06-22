@@ -54,3 +54,10 @@ and cached request states handled by the component.
 - Use this component for curated collections, not arbitrary long lists.
 - Keep `limit` low on landing pages to avoid overwhelming readers.
 - Pair the showcase with surrounding copy that explains why these apps are relevant.
+
+## Theming and integration
+
+- Import `material-next-web-components/app-showcase.js` once before rendering the element.
+- Keep `limit` at `0` or greater; negative and fractional values are normalized before rendering.
+- Use `apps-endpoint` for the built-in fetch workflow, or wrap the component in an app-level data layer if you need authentication, retries, or analytics.
+- External store links open in a new tab and should point to trusted destinations.

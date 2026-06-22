@@ -43,6 +43,25 @@
     --md-sys-color-code-on-background: #f7f2fa;
   }
 }
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-160%);
+  border-radius: 999px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  padding: 10px 16px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 150ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 body {
   margin: 0;
   color: var(--md-sys-color-on-surface);
@@ -517,12 +536,21 @@ th {
   nav.site-tabs {
     justify-self: stretch;
   }
+  nav.site-tabs md-primary-tab {
+    min-width: max-content;
+  }
   .examples-nav,
   .examples-toc {
     position: static;
   }
 }
 @media (max-width: 760px) {
+  main {
+    width: min(100% - 20px, 1280px);
+  }
+  nav.site-tabs {
+    border-radius: 20px;
+  }
   footer {
     grid-template-columns: 1fr;
   }

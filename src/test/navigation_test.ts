@@ -38,4 +38,16 @@ suite('docs navigation', () => {
     const items = el.shadowRoot!.querySelectorAll('md-list-item');
     assert.equal(items[1].getAttribute('aria-current'), 'page');
   });
+
+  test('updates items when items-json changes', async () => {
+    const el = await fixture(
+      html`<mnw-docs-table-of-contents
+        items-json='[{"label":"Intro","href":"#intro"}]'
+      ></mnw-docs-table-of-contents>`
+    );
+    el.setAttribute('items-json', '[{"label":"API","href":"#api"}]');
+    await (el as HTMLElement & {updateComplete: Promise<unknown>})
+      .updateComplete;
+    assert.equal(el.shadowRoot!.querySelector('a')!.textContent, 'API');
+  });
 });
