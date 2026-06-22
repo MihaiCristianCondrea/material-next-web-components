@@ -11,14 +11,18 @@ import {css} from 'lit';
 export const styles = css`
 :host {
   display: block;
+  min-width: 0;
   color: var(--md-sys-color-on-surface, #1d1b20);
+  container-type: inline-size;
   font-family: "Google Sans Flex", system-ui, sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
 }
 
 .app-shell {
-  min-height: 100vh;
+  min-width: 0;
+  min-height: var(--mnw-home-min-height, 100vh);
+  overflow: hidden;
   background: linear-gradient(180deg, #fffbff 0%, #f7f2fa 100%);
 }
 
@@ -27,7 +31,7 @@ export const styles = css`
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 24px;
   align-items: center;
   padding: 16px clamp(16px, 5vw, 64px);
@@ -40,9 +44,17 @@ export const styles = css`
   display: inline-flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
   color: inherit;
   font-weight: 700;
   text-decoration: none;
+}
+
+.brand span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .brand-mark {
@@ -59,6 +71,9 @@ export const styles = css`
   --mnw-expressive-tab-bar-height: 56px;
   --mnw-expressive-tab-min-width: 132px;
   justify-self: end;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
 }
 
 .docs-content {
@@ -176,6 +191,19 @@ p {
   min-width: 0;
 }
 
+.example-panel,
+.info-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+mnw-code-block,
+md-expressive-tab-bar,
+mnw-app-showcase {
+  max-width: 100%;
+  min-width: 0;
+}
+
 .example-panel {
   scroll-margin-top: 112px;
 }
@@ -195,5 +223,28 @@ p {
   .example-nav,
   .toc-nav {
     position: static;
+  }
+}
+@container (max-width: 640px) {
+  .top-app-bar,
+  .examples-view,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .top-app-bar {
+    position: static;
+  }
+  .view-tabs {
+    justify-self: stretch;
+  }
+  .install-card {
+    grid-column: auto;
+  }
+  .example-nav,
+  .toc-nav {
+    position: static;
+  }
+  h1 {
+    font-size: clamp(2rem, 13cqi, 3.5rem);
   }
 }`;
