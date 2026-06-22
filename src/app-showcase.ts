@@ -59,8 +59,8 @@ const defaultAppsEndpoint =
 const defaultStoreUrl =
   'https://play.google.com/store/apps/dev?id=5390214922640123642';
 
-let cachedApps: AppItem[] | undefined;
-let inFlightRequest: Promise<AppItem[]> | undefined;
+const cachedApps = new Map<string, AppItem[]>();
+const inFlightRequests = new Map<string, Promise<AppItem[]>>();
 
 /** A Material app showcase that fetches and renders promoted Android apps. */
 @customElement('mnw-app-showcase')
@@ -92,9 +92,22 @@ export class MaterialNextAppShowcase extends LitElement {
   @state()
   private errorMessage = '';
 
+  private allApps: AppItem[] = [];
+
   override connectedCallback() {
     super.connectedCallback();
     void this.loadApps();
+  }
+
+  override updated(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has('appsEndpoint')) {
+      void this.loadApps();
+      return;
+    }
+
+    if (changedProperties.has('limit')) {
+      this.apps = this.allApps.slice(0, this.limit);
+    }
   }
 
   override render() {
@@ -134,27 +147,28 @@ export class MaterialNextAppShowcase extends LitElement {
 
     return html`<div class="apps-grid">
       ${this.apps.map(
-        (app) => html`<md-outlined-card class="app-card">
-          <div class="app-icon">
-            ${app.iconUrl
-              ? html`<img src=${app.iconUrl} alt="" loading="lazy" />`
-              : html`<md-icon class="app-icon-placeholder">apps</md-icon>`}
-          </div>
-          <div class="app-content">
-            <h3>${app.name}</h3>
-            <p class="app-category">${app.category}</p>
-            <p>${app.description}</p>
-          </div>
-          <md-outlined-button
-            class="play-link"
-            href=${app.storeUrl}
-            target="_blank"
-            aria-label="Open ${app.name} on Google Play"
-          >
-            <md-icon slot="icon">store</md-icon>
-            Google Play
-          </md-outlined-button>
-        </md-outlined-card>`
+        (app) =>
+          html`<md-outlined-card class="app-card">
+            <div class="app-icon">
+              ${app.iconUrl
+                ? html`<img src=${app.iconUrl} alt="" loading="lazy" />`
+                : html`<md-icon class="app-icon-placeholder">apps</md-icon>`}
+            </div>
+            <div class="app-content">
+              <h3>${app.name}</h3>
+              <p class="app-category">${app.category}</p>
+              <p>${app.description}</p>
+            </div>
+            <md-outlined-button
+              class="play-link"
+              href=${app.storeUrl}
+              target="_blank"
+              aria-label="Open ${app.name} on Google Play"
+            >
+              <md-icon slot="icon">store</md-icon>
+              Google Play
+            </md-outlined-button>
+          </md-outlined-card>`
       )}
     </div>`;
   }
@@ -164,8 +178,8 @@ export class MaterialNextAppShowcase extends LitElement {
     this.errorMessage = '';
 
     try {
-      const apps = await fetchPromotedApps(this.appsEndpoint);
-      this.apps = apps.slice(0, this.limit);
+      this.allApps = await fetchPromotedApps(this.appsEndpoint);
+      this.apps = this.allApps.slice(0, this.limit);
       if (this.apps.length === 0) {
         this.errorMessage = 'No apps are available right now.';
       }
@@ -180,15 +194,17 @@ export class MaterialNextAppShowcase extends LitElement {
 }
 
 async function fetchPromotedApps(endpoint: string): Promise<AppItem[]> {
-  if (cachedApps) {
-    return cachedApps;
+  const cached = cachedApps.get(endpoint);
+  if (cached) {
+    return cached;
   }
 
-  if (inFlightRequest) {
-    return inFlightRequest;
+  const inFlight = inFlightRequests.get(endpoint);
+  if (inFlight) {
+    return inFlight;
   }
 
-  inFlightRequest = fetch(endpoint, {headers: {Accept: 'application/json'}})
+  const request = fetch(endpoint, {headers: {Accept: 'application/json'}})
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Apps API returned ${response.status}`);
@@ -196,12 +212,14 @@ async function fetchPromotedApps(endpoint: string): Promise<AppItem[]> {
       return response.json() as Promise<AndroidAppsApiDto>;
     })
     .then(mapAndroidApps);
+  inFlightRequests.set(endpoint, request);
 
   try {
-    cachedApps = await inFlightRequest;
-    return cachedApps;
+    const apps = await request;
+    cachedApps.set(endpoint, apps);
+    return apps;
   } finally {
-    inFlightRequest = undefined;
+    inFlightRequests.delete(endpoint);
   }
 }
 

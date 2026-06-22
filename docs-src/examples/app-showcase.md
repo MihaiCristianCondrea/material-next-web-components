@@ -5,6 +5,7 @@ tags: example
 name: App showcase
 description: Data-backed Material cards for promoted Android applications
 icon: apps
+tagName: mnw-app-showcase
 order: 2
 ---
 
@@ -19,13 +20,12 @@ and cached request states handled by the component.
 
 ## Code
 
-<mnw-code-block language="html" copy code='<mnw-app-showcase limit="3"></mnw-app-showcase>'><
-/mnw-code-block>
+<mnw-code-block language="html" copy code='<mnw-app-showcase limit="3"></mnw-app-showcase>'></mnw-code-block>
 
 ## API
 
 | Property        | Type     | Default                           | Description                               |
-|-----------------|----------|-----------------------------------|-------------------------------------------|
+| --------------- | -------- | --------------------------------- | ----------------------------------------- |
 | `apps-endpoint` | `string` | project API URL                   | Endpoint returning Android app metadata.  |
 | `store-href`    | `string` | Google Play developer URL         | Destination for the section-level action. |
 | `headline`      | `string` | `'More apps from Mihai-Cristian'` | Section heading.                          |
@@ -34,13 +34,13 @@ and cached request states handled by the component.
 ## Slots
 
 | Slot | Description                                |
-|------|--------------------------------------------|
+| ---- | ------------------------------------------ |
 | none | App cards are generated from fetched data. |
 
 ## Events
 
 | Event | Description                                             |
-|-------|---------------------------------------------------------|
+| ----- | ------------------------------------------------------- |
 | none  | Uses native anchor navigation for card and store links. |
 
 ## Accessibility notes

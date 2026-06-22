@@ -5,6 +5,7 @@ tags: example
 name: Home view
 description: Product-ready documentation hero and install call to action
 icon: home
+tagName: mnw-home
 order: 3
 ---
 
@@ -25,20 +26,20 @@ docs-href="../../install/"></mnw-home>'></mnw-code-block>
 ## API
 
 | Property    | Type     | Default                          | Description                               |
-|-------------|----------|----------------------------------|-------------------------------------------|
+| ----------- | -------- | -------------------------------- | ----------------------------------------- |
 | `headline`  | `string` | `'material-next-web-components'` | Main hero headline.                       |
 | `docs-href` | `string` | `'./install/'`                   | URL for the install/documentation action. |
 
 ## Slots
 
 | Slot    | Description                                               |
-|---------|-----------------------------------------------------------|
+| ------- | --------------------------------------------------------- |
 | default | Optional supporting content rendered below the home view. |
 
 ## Events
 
 | Event | Description                                              |
-|-------|----------------------------------------------------------|
+| ----- | -------------------------------------------------------- |
 | none  | Internal navigation uses component state and URL hashes. |
 
 ## Accessibility notes

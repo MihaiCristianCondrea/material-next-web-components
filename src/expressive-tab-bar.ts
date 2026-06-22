@@ -57,7 +57,7 @@ export class MdExpressiveTabBar extends LitElement {
     const iconPosition = this.normalizedIconPosition;
 
     return html`
-      <nav aria-label=${this.ariaLabel} role="presentation">
+      <nav aria-label=${this.ariaLabel}>
         <md-tabs
           part="tabs"
           .activeTabIndex=${activeIndex}

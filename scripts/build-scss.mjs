@@ -2,7 +2,6 @@ import {mkdir, writeFile} from 'node:fs/promises';
 import {dirname, relative} from 'node:path';
 
 const outputs = [
-  {input: 'src/my-element.scss', output: 'src/my-element-styles.ts', lit: true},
   {
     input: 'src/material-next-home.scss',
     output: 'src/material-next-home-styles.ts',

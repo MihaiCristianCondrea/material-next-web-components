@@ -1,22 +1,28 @@
 <!doctype html>
-
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>&lt;my-element> Demo</title>
-    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <script src="../node_modules/lit/polyfill-support.js"></script>
-    <script type="module" src="../my-element.js"></script>
+    <title>material-next-web-components demos</title>
+    <script type="module" src="../dist/code-block.js"></script>
+    <script type="module" src="../dist/expressive-tab-bar.js"></script>
+    <script type="module" src="../dist/app-showcase.js"></script>
     <style>
-      p {
-        border: solid 1px blue;
-        padding: 8px;
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 2rem;
+        display: grid;
+        gap: 2rem;
       }
     </style>
   </head>
   <body>
-    <my-element>
-      <p>This is child content</p>
-    </my-element>
+    <h1>material-next-web-components demos</h1>
+    <md-expressive-tab-bar></md-expressive-tab-bar>
+    <mnw-code-block
+      language="html"
+      copy
+      code="<md-expressive-tab-bar></md-expressive-tab-bar>"
+    ></mnw-code-block>
+    <mnw-app-showcase limit="3"></mnw-app-showcase>
   </body>
 </html>

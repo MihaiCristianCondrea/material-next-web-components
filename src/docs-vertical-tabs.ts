@@ -13,6 +13,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {
   type DocsNavigationItem,
   exampleNavigationItems,
+  toDocsNavigationItems,
 } from './docs-navigation.js';
 import {styles} from './docs-vertical-tabs-styles.js';
 
@@ -38,8 +39,8 @@ export class MaterialNextDocsVerticalTabs extends LitElement {
   override willUpdate(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('itemsJson') && this.itemsJson) {
       try {
-        const items = JSON.parse(this.itemsJson) as DocsNavigationItem[];
-        if (Array.isArray(items)) {
+        const items = toDocsNavigationItems(JSON.parse(this.itemsJson));
+        if (items.length) {
           this.items = items;
         }
       } catch {

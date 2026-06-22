@@ -32,6 +32,10 @@ export class MaterialNextHome extends LitElement {
   @property({attribute: 'docs-href'})
   docsHref = './install/';
 
+  /** Main hero headline. */
+  @property()
+  headline = 'material-next-web-components';
+
   @state()
   private activeView: 'home' | 'examples' = 'home';
 
@@ -65,11 +69,11 @@ export class MaterialNextHome extends LitElement {
   override render() {
     return html`
       <section class="app-shell">
-        <main class="docs-content" tabindex="-1">
+        <section class="docs-content" tabindex="-1">
           ${this.activeView === 'home'
             ? this.renderHomeView()
             : this.renderExamplesView()}
-        </main>
+        </section>
       </section>
     `;
   }
@@ -123,7 +127,7 @@ import 'material-next-web-components/expressive-tab-bar.js';"
         </section>
 
         <footer class="home-summary">
-          <h1>material-next-web-components</h1>
+          <h1>${this.headline}</h1>
           <p class="tagline">
             Built-in Lit custom elements and product views powered by Material
             Design.

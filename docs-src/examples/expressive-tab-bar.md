@@ -5,6 +5,7 @@ tags: example
 name: Expressive tab bar
 description: Rounded Material Web tabs for app, article, and docs navigation
 icon: tab
+tagName: md-expressive-tab-bar
 order: 1
 ---
 
@@ -20,15 +21,13 @@ rounded navigation while still using Material Web tabs internally.
 
 ## Code
 
-<mnw-code-block language="html" copy code='<md-expressive-tab-bar active-index="1"><
-/md-expressive-tab-bar>
-<md-expressive-tab-bar icon-position="end" active-index="2"></md-expressive-tab-bar>'><
-/mnw-code-block>
+<mnw-code-block language="html" copy code='<md-expressive-tab-bar active-index="1"></md-expressive-tab-bar>
+<md-expressive-tab-bar icon-position="end" active-index="2"></md-expressive-tab-bar>'></mnw-code-block>
 
 ## API
 
 | Property        | Type                                    | Default          | Description                                                |
-|-----------------|-----------------------------------------|------------------|------------------------------------------------------------|
+| --------------- | --------------------------------------- | ---------------- | ---------------------------------------------------------- |
 | `active-index`  | `number`                                | `0`              | Selects the active tab by index.                           |
 | `icon-position` | `'top' \| 'bottom' \| 'start' \| 'end'` | `'top'`          | Places icons around labels.                                |
 | `tabs`          | `DocsNavigationItem[]`                  | example items    | JavaScript-only item data for custom tab labels and links. |
@@ -37,13 +36,13 @@ rounded navigation while still using Material Web tabs internally.
 ## Slots
 
 | Slot | Description                                 |
-|------|---------------------------------------------|
+| ---- | ------------------------------------------- |
 | none | Tabs are rendered from the `tabs` property. |
 
 ## Events
 
 | Event      | Description                                      |
-|------------|--------------------------------------------------|
+| ---------- | ------------------------------------------------ |
 | `change`   | Fired when the selected tab changes.             |
 | `navigate` | Cancelable event fired before anchor navigation. |
 

@@ -9,6 +9,36 @@ export interface DocsNavigationItem {
   href: string;
 }
 
+export function toDocsNavigationItems(value: unknown): DocsNavigationItem[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.flatMap((item) => {
+    if (
+      !item ||
+      typeof item !== 'object' ||
+      typeof (item as {label?: unknown}).label !== 'string' ||
+      typeof (item as {href?: unknown}).href !== 'string'
+    ) {
+      return [];
+    }
+
+    const {label, href, icon} = item as {
+      label: string;
+      href: string;
+      icon?: unknown;
+    };
+    return [
+      {
+        label,
+        href,
+        ...(typeof icon === 'string' ? {icon} : {}),
+      },
+    ];
+  });
+}
+
 export const appNavigationItems: DocsNavigationItem[] = [
   {label: 'Home', icon: 'home', href: '#home'},
   {label: 'Examples', icon: 'widgets', href: '#examples'},

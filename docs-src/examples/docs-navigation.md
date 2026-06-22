@@ -5,6 +5,7 @@ tags: example
 name: Docs navigation
 description: Material vertical navigation and table-of-contents components
 icon: menu_book
+tagName: mnw-docs-vertical-tabs
 order: 5
 ---
 
@@ -26,7 +27,7 @@ from page-local headings.
 ## API
 
 | Property       | Type                   | Default            | Description                                    |
-|----------------|------------------------|--------------------|------------------------------------------------|
+| -------------- | ---------------------- | ------------------ | ---------------------------------------------- |
 | `heading`      | `string`               | component-specific | Heading shown above the links.                 |
 | `active-index` | `number`               | `0`                | Marks the active item.                         |
 | `items`        | `DocsNavigationItem[]` | example defaults   | JavaScript-only navigation items.              |
@@ -36,13 +37,13 @@ from page-local headings.
 ## Slots
 
 | Slot | Description                        |
-|------|------------------------------------|
+| ---- | ---------------------------------- |
 | none | Links are rendered from item data. |
 
 ## Events
 
 | Event      | Description                                         |
-|------------|-----------------------------------------------------|
+| ---------- | --------------------------------------------------- |
 | `navigate` | Cancelable event fired when a user selects an item. |
 
 ## Accessibility notes
