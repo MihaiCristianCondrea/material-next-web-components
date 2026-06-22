@@ -3,73 +3,75 @@ layout: page.11ty.cjs
 title: material-next-web-components ⌲ Home
 ---
 
-# material-next-web-components
-
-`material-next-web-components` is a Lit library for built-in Material Design custom elements and reusable product views.
-
-The project starts with Google Material Web (`@material/web`) version `^2.4.1`, and wraps those components into product-ready custom elements for your applications.
-
-## Built with Material Design
-
-The home page below is rendered by the library's `<mnw-home>` custom element and keeps the documentation surface on Material tokens and Material Web components.
-
-<div class="code-block-demo">
-<mnw-code-block language="html" copy><template>
-<mnw-home></mnw-home>
-</template></mnw-code-block>
-</div>
-
-<section class="home-demo" aria-label="material-next-web-components home preview">
-  <mnw-home></mnw-home>
+<section class="hero-panel">
+  <p class="eyebrow">Material Design Lit components</p>
+  <h1>Build Material-inspired product surfaces with web components.</h1>
+  <p class="lede">`material-next-web-components` packages focused Lit custom elements for documentation, navigation, code presentation, and product showcases. Start here, then use the examples pages for detailed recipes.</p>
+  <div class="hero-actions">
+    <a class="button-link button-link--filled" href="./install/">Get started</a>
+    <a class="button-link" href="./examples/">View examples</a>
+    <a class="button-link" href="https://github.com/MihaiCristianCondrea/material-next-web-components">GitHub</a>
+  </div>
 </section>
 
-## Google Sans typography
+## Install
 
-Load Google Sans Flex for product and documentation text, and Google Sans Code for code blocks and inline code. The docs site includes both font families in the document `<head>`.
+Install the component package next to Material Web:
+
+<div class="code-block-demo">
+<mnw-code-block language="bash" copy><template>
+npm install material-next-web-components @material/web
+</template></mnw-code-block>
+</div>
+
+> Package publishing is still being prepared in this repository. Until the package is published to npm, clone the GitHub repository and use the local build workflow from the README.
+
+## Quick start
+
+Import only the component modules you need, then use the custom element in HTML:
+
+<div class="code-block-demo">
+<mnw-code-block language="ts" copy><template>
+import 'material-next-web-components/code-block.js';
+</template></mnw-code-block>
+</div>
 
 <div class="code-block-demo">
 <mnw-code-block language="html" copy><template>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap"
-  rel="stylesheet"
-/>
+<mnw-code-block language="ts" copy>
+  <template>console.log('Hello Material Next');</template>
+</mnw-code-block>
 </template></mnw-code-block>
 </div>
 
-Use Google Sans Code for every code presentation surface:
+## What is included?
 
-<div class="code-block-demo">
-<mnw-code-block language="scss" copy><template>
-.google-sans-code-snippet {
-  font-family: 'Google Sans Code', monospace;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  font-variation-settings: 'MONO' 1;
-}
-</template></mnw-code-block>
-</div>
+<section class="feature-grid">
+  <article class="feature-card">
+    <h2>Product views</h2>
+    <p>Reusable app and documentation surfaces such as the home view and app showcase.</p>
+    <a href="./examples/home-view/">Explore home view</a>
+  </article>
+  <article class="feature-card">
+    <h2>Navigation</h2>
+    <p>Expressive tabs, vertical examples navigation, and table-of-contents patterns.</p>
+    <a href="./examples/docs-navigation/">Explore navigation</a>
+  </article>
+  <article class="feature-card">
+    <h2>Documentation utilities</h2>
+    <p>Copy-ready code blocks and generated API pages for web component documentation.</p>
+    <a href="./api/">View API</a>
+  </article>
+</section>
 
-Google Sans Flex remains the default text face:
+## Design baseline
 
-<div class="code-block-demo">
-<mnw-code-block language="scss" copy><template>
-.google-sans-flex-body {
-  font-family: 'Google Sans Flex', sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings:
-    'slnt' 0,
-    'wdth' 100,
-    'GRAD' 0,
-    'ROND' 0;
-}
-</template></mnw-code-block>
-</div>
+The library builds on Lit, Material Web, Material Design tokens, and Google Sans typography. Detailed typography and styling guidance lives in the install and examples pages so this home page can stay focused on onboarding.
 
-## Documentation source of truth
+## Project links
 
-Documentation is authored in `docs-src` and compiled into a GitHub Pages artifact by GitHub Actions. The generated `docs` directory is intentionally not committed.
+- [GitHub repository](https://github.com/MihaiCristianCondrea/material-next-web-components)
+- [Install guide](./install/)
+- [Examples](./examples/)
+- [API reference](./api/)
+- [Roadmap and status](./roadmap/)

@@ -32,6 +32,10 @@ const sameDocument = (url: URL, base = currentPageUrl) =>
   url.pathname === base.pathname &&
   url.search === base.search;
 
+const setNavigating = (navigating: boolean) => {
+  document.documentElement.toggleAttribute('data-docs-navigating', navigating);
+};
+
 const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -75,12 +79,13 @@ const updateSiteTabs = (url: URL) => {
     );
     let activeIndex = 0;
     tabLinks.forEach((link, index) => {
-      const tabUrl = new URL(link.href, window.location.href);
-      const isHome = link.textContent?.trim() === 'Home';
-      const selected = isHome
-        ? sameDocument(tabUrl, url)
-        : tabUrl.pathname === url.pathname ||
-          url.pathname.startsWith(tabUrl.pathname);
+      const routePrefix = link.dataset.routePrefix;
+      const tabUrl = new URL(routePrefix ?? link.href, window.location.href);
+      const selected =
+        routePrefix === '/'
+          ? url.pathname === tabUrl.pathname
+          : url.pathname === tabUrl.pathname ||
+            url.pathname.startsWith(tabUrl.pathname);
       link.toggleAttribute('aria-current', selected);
       link.closest('md-primary-tab')?.toggleAttribute('active', selected);
       if (selected) activeIndex = index;
@@ -165,6 +170,7 @@ const navigateTo = async (url: URL, options: {replace?: boolean} = {}) => {
   activeController?.abort();
   const controller = new AbortController();
   activeController = controller;
+  setNavigating(true);
   try {
     const response = await fetch(url.href, {
       headers: {'X-Requested-With': 'fetch'},
@@ -183,10 +189,16 @@ const navigateTo = async (url: URL, options: {replace?: boolean} = {}) => {
   } catch (error) {
     if ((error as DOMException).name !== 'AbortError') {
       console.error('Unable to load documentation page.', error);
+      document.dispatchEvent(
+        new CustomEvent('docs-navigation-error', {
+          detail: {url: url.href, error},
+        })
+      );
     }
     return (error as DOMException).name === 'AbortError';
   } finally {
     if (activeController === controller) activeController = undefined;
+    setNavigating(false);
   }
 };
 

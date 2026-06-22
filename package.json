@@ -118,6 +118,26 @@
     "./docs-table-of-contents.js": {
       "types": "./dist/docs-table-of-contents.d.ts",
       "default": "./dist/docs-table-of-contents.js"
+    },
+    "./docs/docs-page.js": {
+      "types": "./dist/docs-page.d.ts",
+      "default": "./dist/docs-page.js"
+    },
+    "./docs/docs-shell.js": {
+      "types": "./dist/docs-shell.d.ts",
+      "default": "./dist/docs-shell.js"
+    },
+    "./docs/docs-top-app-bar.js": {
+      "types": "./dist/docs-top-app-bar.d.ts",
+      "default": "./dist/docs-top-app-bar.js"
+    },
+    "./docs/docs-vertical-tabs.js": {
+      "types": "./dist/docs-vertical-tabs.d.ts",
+      "default": "./dist/docs-vertical-tabs.js"
+    },
+    "./docs/docs-table-of-contents.js": {
+      "types": "./dist/docs-table-of-contents.d.ts",
+      "default": "./dist/docs-table-of-contents.js"
     }
   },
   "files": [
