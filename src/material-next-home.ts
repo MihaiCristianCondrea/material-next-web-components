@@ -13,7 +13,6 @@ import './expressive-tab-bar.js';
 import {LitElement, html} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {
-  appNavigationItems,
   exampleNavigationItems,
   exampleTableOfContentsItems,
 } from './docs-navigation.js';
@@ -66,16 +65,6 @@ export class MaterialNextHome extends LitElement {
   override render() {
     return html`
       <section class="app-shell">
-        <header class="top-app-bar">
-          <md-expressive-tab-bar
-            class="view-tabs"
-            icon-position="start"
-            .tabs=${appNavigationItems}
-            .activeIndex=${this.activeView === 'home' ? 0 : 1}
-            @navigate=${this.handleAppNavigation}
-          ></md-expressive-tab-bar>
-        </header>
-
         <main class="docs-content" tabindex="-1">
           ${this.activeView === 'home'
             ? this.renderHomeView()
@@ -199,14 +188,6 @@ import 'material-next-web-components/expressive-tab-bar.js';"
         </aside>
       </article>
     `;
-  }
-
-  private handleAppNavigation(event: CustomEvent) {
-    event.preventDefault();
-    const item = event.detail.item as {href?: string};
-    this.navigateToHash(
-      item.href ?? (event.detail.index === 0 ? '#home' : '#examples')
-    );
   }
 
   private handleExampleNavigation(event: CustomEvent) {
