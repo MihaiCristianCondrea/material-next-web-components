@@ -26,31 +26,6 @@ export const styles = css`
   background: linear-gradient(180deg, #fffbff 0%, #f7f2fa 100%);
 }
 
-.top-app-bar {
-  --mnw-top-app-bar-height: 64px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-  min-height: var(--mnw-top-app-bar-height);
-  padding-inline: clamp(16px, 5vw, 64px);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
-  background: color-mix(in srgb, var(--md-sys-color-surface, #fffbff) 92%, transparent);
-  backdrop-filter: blur(18px);
-}
-
-.view-tabs {
-  --mnw-expressive-tab-bar-height: var(--mnw-top-app-bar-height);
-  --mnw-expressive-tab-bar-container-color: transparent;
-  --mnw-expressive-tab-min-width: 124px;
-  flex: 0 1 auto;
-  max-width: 100%;
-  min-width: 0;
-  overflow-x: auto;
-}
-
 .docs-content {
   padding: clamp(20px, 5vw, 64px);
 }
@@ -194,9 +169,6 @@ mnw-app-showcase {
   .content-grid {
     grid-template-columns: 1fr;
   }
-  .top-app-bar {
-    overflow-x: auto;
-  }
   .install-card {
     grid-column: auto;
   }
@@ -209,10 +181,6 @@ mnw-app-showcase {
   .examples-view,
   .content-grid {
     grid-template-columns: 1fr;
-  }
-  .top-app-bar {
-    position: static;
-    overflow-x: auto;
   }
   .install-card {
     grid-column: auto;

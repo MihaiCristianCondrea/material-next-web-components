@@ -37,7 +37,7 @@ Load Google Sans Flex for product and documentation text, and Google Sans Code f
 
 Use Google Sans Code for every code presentation surface:
 
-<mnw-code-block language="css" copy code='.google-sans-code-snippet {
+<mnw-code-block language="scss" copy code='.google-sans-code-snippet {
   font-family: "Google Sans Code", monospace;
   font-optical-sizing: auto;
   font-weight: 500;
@@ -47,7 +47,7 @@ Use Google Sans Code for every code presentation surface:
 
 Google Sans Flex remains the default text face:
 
-<mnw-code-block language="css" copy code='.google-sans-flex-body {
+<mnw-code-block language="scss" copy code='.google-sans-flex-body {
   font-family: "Google Sans Flex", sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
