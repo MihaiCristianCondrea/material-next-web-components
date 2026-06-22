@@ -12,6 +12,7 @@ export const styles = css`
 :host {
   display: block;
   color: var(--md-sys-color-on-surface, #1d1b20);
+  background: var(--mnw-docs-vertical-tabs-container-color, transparent);
   font-family: "Google Sans Flex", system-ui, sans-serif;
 }
 
@@ -31,7 +32,8 @@ nav {
 
 .item {
   --md-list-list-item-container-shape: 999px;
-  --md-list-list-item-label-text-font: 'Google Sans Flex', system-ui, sans-serif;
+  --md-list-list-item-label-text-font:
+    'Google Sans Flex', system-ui, sans-serif;
   border-radius: 999px;
   color: var(--md-sys-color-on-surface-variant, #49454f);
   text-decoration: none;
