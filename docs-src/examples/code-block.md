@@ -1,0 +1,53 @@
+---
+layout: example.11ty.cjs
+title: material-next-web-components ⌲ Examples ⌲ Code block
+tags: example
+name: Code block
+description: Copy-ready code presentation with Google Sans Code typography
+icon: code
+order: 4
+---
+
+Use `<mnw-code-block>` for examples that should be readable, theme-aware, and easy to copy.
+
+## Live demo
+
+<div class="demo-panel">
+  <mnw-code-block language="ts" copy code="const ready = true;"></mnw-code-block>
+</div>
+
+## Code
+
+<mnw-code-block language="html" copy code='<mnw-code-block language="ts" copy code="const ready = true;"></mnw-code-block>'></mnw-code-block>
+
+## API
+
+| Property   | Type      | Default  | Description                                  |
+| ---------- | --------- | -------- | -------------------------------------------- |
+| `language` | `string`  | `'text'` | Language label and syntax highlighting mode. |
+| `code`     | `string`  | `''`     | Code snippet to render.                      |
+| `copy`     | `boolean` | `false`  | Shows the copy-to-clipboard action.          |
+
+## Slots
+
+| Slot    | Description                                                      |
+| ------- | ---------------------------------------------------------------- |
+| default | Alternative source for code when the `code` property is omitted. |
+
+## Events
+
+| Event           | Description                                         |
+| --------------- | --------------------------------------------------- |
+| `mnw-code-copy` | Fired after the snippet is copied to the clipboard. |
+
+## Accessibility notes
+
+- Use the language label to give readers context.
+- Keep snippets focused so copied output is useful.
+- Do not rely on syntax color alone to communicate meaning.
+
+## Design notes
+
+- Use Google Sans Code for all code presentation surfaces.
+- Enable `copy` for install commands and multi-line examples.
+- Pair long snippets with explanatory text before the block.

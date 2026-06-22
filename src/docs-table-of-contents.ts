@@ -29,6 +29,22 @@ export class MaterialNextDocsTableOfContents extends LitElement {
   @property({attribute: false})
   items: DocsNavigationItem[] = exampleTableOfContentsItems;
 
+  @property({attribute: 'items-json'})
+  itemsJson = '';
+
+  override willUpdate(changedProperties: Map<string, unknown>) {
+    if (changedProperties.has('itemsJson') && this.itemsJson) {
+      try {
+        const items = JSON.parse(this.itemsJson) as DocsNavigationItem[];
+        if (Array.isArray(items)) {
+          this.items = items;
+        }
+      } catch {
+        // Ignore malformed declarative data and keep the current items.
+      }
+    }
+  }
+
   override render() {
     return html`
       <nav aria-label=${this.ariaLabel}>
