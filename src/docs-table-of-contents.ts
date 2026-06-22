@@ -10,6 +10,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {
   type DocsNavigationItem,
   exampleTableOfContentsItems,
+  toDocsNavigationItems,
 } from './docs-navigation.js';
 import {styles} from './docs-table-of-contents-styles.js';
 
@@ -35,8 +36,8 @@ export class MaterialNextDocsTableOfContents extends LitElement {
   override willUpdate(changedProperties: Map<string, unknown>) {
     if (changedProperties.has('itemsJson') && this.itemsJson) {
       try {
-        const items = JSON.parse(this.itemsJson) as DocsNavigationItem[];
-        if (Array.isArray(items)) {
+        const items = toDocsNavigationItems(JSON.parse(this.itemsJson));
+        if (items.length) {
           this.items = items;
         }
       } catch {

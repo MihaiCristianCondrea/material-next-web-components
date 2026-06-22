@@ -5,15 +5,15 @@
 
 import '@material/web/tabs/primary-tab.js';
 import '@material/web/tabs/tabs.js';
-import './app-showcase.js';
-import './code-block.js';
-import './docs-page.js';
-import './docs-shell.js';
-import './docs-table-of-contents.js';
-import './docs-top-app-bar.js';
-import './docs-vertical-tabs.js';
-import './expressive-tab-bar.js';
-import './material-next-home.js';
+import '../app-showcase.js';
+import '../code-block.js';
+import '../docs-page.js';
+import '../docs-shell.js';
+import '../docs-table-of-contents.js';
+import '../docs-top-app-bar.js';
+import '../docs-vertical-tabs.js';
+import '../expressive-tab-bar.js';
+import '../material-next-home.js';
 
 const linkSelector =
   'a[href]:not([target]):not([download]), md-primary-tab a[href], mnw-docs-vertical-tabs, mnw-docs-table-of-contents';
@@ -140,6 +140,11 @@ const replaceContent = (html: string, url: URL) => {
   currentContent.replaceWith(imported);
   updateSiteTabs(url);
   enhanceExampleToc();
+  const focusTarget =
+    document.querySelector<HTMLElement>('.docs-content h1') ??
+    document.querySelector<HTMLElement>('.docs-content');
+  focusTarget?.setAttribute('tabindex', '-1');
+  focusTarget?.focus({preventScroll: true});
   return true;
 };
 

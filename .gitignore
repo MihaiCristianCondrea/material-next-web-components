@@ -1,14 +1,10 @@
 /node_modules/
 /lib/
+/dist/
 /test/
 custom-elements.json
 # top level source
-my-element.js
-my-element.js.map
-my-element.d.ts
-my-element.d.ts.map
 # only generated for size check
-my-element.bundled.js
 # generated documentation output
 /docs/
 
@@ -29,10 +25,6 @@ material-next-home-styles.js
 material-next-home-styles.js.map
 material-next-home-styles.d.ts
 material-next-home-styles.d.ts.map
-my-element-styles.js
-my-element-styles.js.map
-my-element-styles.d.ts
-my-element-styles.d.ts.map
 code-block.js
 code-block.js.map
 code-block.d.ts

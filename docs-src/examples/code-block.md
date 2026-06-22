@@ -5,10 +5,13 @@ tags: example
 name: Code block
 description: Copy-ready code presentation with Google Sans Code typography
 icon: code
+tagName: mnw-code-block
 order: 4
 ---
 
 Use `<mnw-code-block>` for examples that should be readable, theme-aware, and easy to copy.
+
+Syntax highlighting is intentionally lightweight and dependency-free. It supports focused examples for markup and script-like snippets; use plain text for languages that need exact tokenization beyond the built-in highlighter.
 
 ## Live demo
 
@@ -24,7 +27,7 @@ true;"></mnw-code-block>'></mnw-code-block>
 ## API
 
 | Property   | Type      | Default  | Description                                  |
-|------------|-----------|----------|----------------------------------------------|
+| ---------- | --------- | -------- | -------------------------------------------- |
 | `language` | `string`  | `'text'` | Language label and syntax highlighting mode. |
 | `code`     | `string`  | `''`     | Code snippet to render.                      |
 | `copy`     | `boolean` | `false`  | Shows the copy-to-clipboard action.          |
@@ -32,13 +35,13 @@ true;"></mnw-code-block>'></mnw-code-block>
 ## Slots
 
 | Slot    | Description                                                      |
-|---------|------------------------------------------------------------------|
+| ------- | ---------------------------------------------------------------- |
 | default | Alternative source for code when the `code` property is omitted. |
 
 ## Events
 
 | Event           | Description                                         |
-|-----------------|-----------------------------------------------------|
+| --------------- | --------------------------------------------------- |
 | `mnw-code-copy` | Fired after the snippet is copied to the clipboard. |
 
 ## Accessibility notes

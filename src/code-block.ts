@@ -38,6 +38,9 @@ export class MaterialNextCodeBlock extends LitElement {
   @state()
   private slottedCode = '';
 
+  @state()
+  private copyStatus = '';
+
   @queryAssignedNodes({flatten: true})
   private codeNodes!: Node[];
 
@@ -81,6 +84,7 @@ export class MaterialNextCodeBlock extends LitElement {
                 >
               </md-assist-chip>`
             : nothing}
+          <span class="copy-status" aria-live="polite">${this.copyStatus}</span>
         </figcaption>
         <pre><code class="language-${this.normalizedLanguage}">${unsafeHTML(
           this.highlightedCode
@@ -95,10 +99,28 @@ export class MaterialNextCodeBlock extends LitElement {
       return;
     }
 
-    await navigator.clipboard.writeText(code);
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API is unavailable.');
+      }
+      await navigator.clipboard.writeText(code);
+    } catch (error) {
+      this.copyStatus = 'Copy failed';
+      this.dispatchEvent(
+        new CustomEvent('mnw-code-copy-error', {
+          detail: {code, error},
+          bubbles: true,
+          composed: true,
+        })
+      );
+      return;
+    }
+
     this.copied = true;
+    this.copyStatus = 'Copied';
     window.setTimeout(() => {
       this.copied = false;
+      this.copyStatus = '';
     }, 1400);
     this.dispatchEvent(
       new CustomEvent('mnw-code-copy', {

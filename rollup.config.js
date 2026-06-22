@@ -10,7 +10,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'docs-entry.js',
+  input: 'dist/docs/docs-entry.js',
   output: {
     file: 'docs/material-next-docs.bundled.js',
     format: 'esm',

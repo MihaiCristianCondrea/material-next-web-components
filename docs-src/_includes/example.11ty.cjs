@@ -40,7 +40,79 @@ module.exports = function (data) {
   });
 };
 
-const renderExample = ({name, description, content, collections, page}) => {
+const getManifestElements = (customElements) =>
+  (customElements?.modules ?? []).flatMap((module) =>
+    (module.declarations ?? []).filter(
+      (declaration) => declaration.customElement
+    )
+  );
+
+const renderGeneratedApi = (tagName, customElements) => {
+  if (!tagName) return '';
+  const element = getManifestElements(customElements).find(
+    (declaration) => declaration.tagName === tagName
+  );
+  if (!element) return '';
+  return `
+    <section class="generated-api" aria-labelledby="generated-api">
+      <h2 id="generated-api">Generated API reference</h2>
+      ${renderApiTable(
+        'Properties',
+        ['name', 'attribute', 'description', 'type.text', 'default'],
+        element.members?.filter((member) => member.kind === 'field')
+      )}
+      ${renderApiTable('Attributes', ['name', 'description', 'type.text', 'default'], element.attributes)}
+      ${renderApiTable('Events', ['name', 'description'], element.events)}
+      ${renderApiTable('Slots', [['name', '(default)'], 'description'], element.slots)}
+      ${renderApiTable('CSS parts', ['name', 'description'], element.cssParts)}
+    </section>
+  `;
+};
+
+const get = (obj, path) => {
+  let fallback = '';
+  if (Array.isArray(path)) {
+    [path, fallback] = path;
+  }
+  const parts = path.split('.');
+  while (obj && parts.length) {
+    obj = obj[parts.shift()];
+  }
+  return obj == null || obj === '' ? fallback : obj;
+};
+
+const renderApiTable = (heading, columns, rows = []) => {
+  if (!rows.length) return '';
+  return `
+    <h3>${heading}</h3>
+    <table>
+      <thead><tr>${columns
+        .map(
+          (column) =>
+            `<th>${escapeHtml((Array.isArray(column) ? column[0] : column).split('.')[0])}</th>`
+        )
+        .join('')}</tr></thead>
+      <tbody>${rows
+        .map(
+          (row) =>
+            `<tr>${columns
+              .map((column) => `<td>${escapeHtml(get(row, column))}</td>`)
+              .join('')}</tr>`
+        )
+        .join('')}</tbody>
+    </table>
+  `;
+};
+
+const renderExample = ({
+  name,
+  description,
+  content,
+  collections,
+  page,
+  tagName,
+  customElements,
+}) => {
   const examples = (collections.example ?? [])
     .slice()
     .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0));
@@ -66,6 +138,7 @@ const renderExample = ({name, description, content, collections, page}) => {
       </aside>
       <article class="examples-content example-content">
         ${addHeadingIds(content)}
+        ${renderGeneratedApi(tagName, customElements)}
       </article>
       <aside class="examples-toc">
         <mnw-docs-table-of-contents items-json="${attrJson(tocItems)}"></mnw-docs-table-of-contents>
