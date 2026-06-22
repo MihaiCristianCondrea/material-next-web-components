@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {fixture, assert} from '@open-wc/testing';
+import {fixture, assert, waitUntil} from '@open-wc/testing';
 import {html} from 'lit/static-html.js';
 import '../app-showcase.js';
 
@@ -32,7 +32,10 @@ suite('mnw-app-showcase', () => {
         limit="1"
       ></mnw-app-showcase>`
     );
-    await new Promise((resolve) => setTimeout(resolve));
+    await waitUntil(
+      () => el.shadowRoot!.querySelectorAll('md-outlined-card').length === 1,
+      'app cards rendered'
+    );
     assert.lengthOf(el.shadowRoot!.querySelectorAll('md-outlined-card'), 1);
   });
 
@@ -51,13 +54,13 @@ suite('mnw-app-showcase', () => {
         apps-endpoint="https://example.com/gamma.json"
       ></mnw-app-showcase>`
     );
-    await new Promise((resolve) => setTimeout(resolve));
+    await waitUntil(() => calls.includes('https://example.com/gamma.json'));
     await fixture(
       html`<mnw-app-showcase
         apps-endpoint="https://example.com/delta.json"
       ></mnw-app-showcase>`
     );
-    await new Promise((resolve) => setTimeout(resolve));
+    await waitUntil(() => calls.includes('https://example.com/delta.json'));
     assert.sameMembers(calls, [
       'https://example.com/gamma.json',
       'https://example.com/delta.json',
