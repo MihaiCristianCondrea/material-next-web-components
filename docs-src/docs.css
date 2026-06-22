@@ -43,7 +43,7 @@ body {
   font-family: "Google Sans Flex", system-ui, sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
-  min-width: min-content;
+  min-width: 0;
   min-height: 100vh;
   font-size: 18px;
   display: flex;
@@ -58,6 +58,11 @@ body {
 main {
   width: min(100% - 32px, 1120px);
   margin: 0 auto;
+  min-width: 0;
+}
+
+:where(h1, h2, h3, [id]) {
+  scroll-margin-top: 104px;
 }
 
 a {
@@ -237,9 +242,17 @@ section.columns {
   align-items: start;
 }
 
+section.columns > * {
+  min-width: 0;
+}
+
+section.columns mnw-home {
+  --mnw-home-min-height: auto;
+}
+
 section.examples-layout {
   display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(180px, 240px);
+  grid-template-columns: minmax(180px, 280px) minmax(0, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -252,6 +265,11 @@ section.examples-layout {
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 28px;
   background: var(--md-sys-color-surface-container);
+}
+
+.examples-toc {
+  grid-column: 1;
+  grid-row: 2;
 }
 
 .examples-content {
@@ -278,11 +296,22 @@ nav.collection > ul > li.selected a {
 .example-panel {
   display: grid;
   gap: 20px;
+  min-width: 0;
   margin: 24px 0;
   padding: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 24px;
   background: var(--md-sys-color-surface-container);
+}
+
+.example-panel > *,
+.demo-panel > *,
+mnw-code-block,
+md-expressive-tab-bar,
+mnw-home,
+mnw-app-showcase {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .example-panel h2,
@@ -377,10 +406,16 @@ th {
 .demo-panel {
   display: grid;
   gap: 20px;
+  min-width: 0;
+  overflow-x: auto;
   padding: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 28px;
   background: var(--md-sys-color-surface);
+}
+
+.demo-panel md-expressive-tab-bar {
+  --mnw-expressive-tab-min-width: 120px;
 }
 
 .navigation-demo {
