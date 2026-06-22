@@ -55,3 +55,10 @@ true;"></mnw-code-block>'></mnw-code-block>
 - Use Google Sans Code for all code presentation surfaces.
 - Enable `copy` for install commands and multi-line examples.
 - Pair long snippets with explanatory text before the block.
+
+## Theming and integration
+
+- Import `material-next-web-components/code-block.js` once for every page or bundle that uses the element.
+- The component inherits Material color tokens and uses Google Sans Code for snippet content.
+- Prefer the `code` property for short snippets and the default slot with a nested `<template>` for multi-line HTML examples.
+- The highlighter is intentionally lightweight; use `language="text"` for snippets where exact tokenization matters more than color.

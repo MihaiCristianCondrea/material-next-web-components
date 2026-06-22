@@ -1,19 +1,19 @@
 const relative = require('./relative-path.cjs');
 
-const links = [
+const defaultLinks = [
   {href: '/', label: 'Home', route: 'home'},
   {href: '/install/', label: 'Install', route: 'install'},
   {href: '/examples/', label: 'Examples', route: 'examples'},
   {href: '/api/', label: 'API', route: 'api'},
   {href: '/roadmap/', label: 'Roadmap', route: 'roadmap'},
 ];
-
 const isActive = (pageUrl, link) =>
   link.href === '/'
     ? pageUrl === '/'
     : pageUrl === link.href || pageUrl.startsWith(link.href);
 
-module.exports = function ({page}) {
+module.exports = function ({page, navigation}) {
+  const links = navigation?.topLevel ?? defaultLinks;
   const activeIndex = Math.max(
     0,
     links.findIndex((link) => isActive(page.url, link))

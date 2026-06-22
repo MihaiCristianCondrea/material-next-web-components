@@ -54,4 +54,36 @@ suite('mnw-code-block', () => {
       value: originalClipboard,
     });
   });
+
+  test('renders highlighted code without injecting markup from source text', async () => {
+    const el = await fixture(
+      html`<mnw-code-block
+        language="html"
+        code='<img src=x onerror="alert(1)"><script>bad()</script>'
+      ></mnw-code-block>`
+    );
+    const code = el.shadowRoot!.querySelector('code')!;
+    assert.include(code.textContent, '<img src=x onerror="alert(1)">');
+    assert.isNull(code.querySelector('img'));
+    assert.isNull(code.querySelector('script'));
+  });
+
+  test('clears the copy reset timer when disconnected', async () => {
+    const originalClipboard = navigator.clipboard;
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: {writeText: async () => undefined},
+    });
+    const el = await fixture(
+      html`<mnw-code-block copy code="const ready = true;"></mnw-code-block>`
+    );
+    el.shadowRoot!.querySelector<HTMLElement>('md-assist-chip')!.click();
+    await oneEvent(el, 'mnw-code-copy');
+    el.remove();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: originalClipboard,
+    });
+  });
 });

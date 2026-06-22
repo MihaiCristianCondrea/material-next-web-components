@@ -17,7 +17,7 @@ import '../material-next-home.js';
 
 const linkSelector =
   'a[href]:not([target]):not([download]), md-primary-tab a[href], mnw-docs-vertical-tabs, mnw-docs-table-of-contents';
-const contentSelector = '.docs-content';
+const contentSelector = '.docs-route-content';
 let currentPageUrl = new URL(window.location.href);
 let activeController: AbortController | undefined;
 let tocObserver: IntersectionObserver | undefined;
@@ -106,6 +106,20 @@ const setCurrentTocLink = (id?: string) => {
           'aria-current',
           decodeURIComponent(element.hash.slice(1)) === id
         );
+        return;
+      }
+
+      const toc = element as HTMLElement & {
+        activeIndex?: number;
+        items?: Array<{href?: string}>;
+      };
+      const index =
+        toc.items?.findIndex((item) => {
+          if (!item.href?.startsWith('#')) return false;
+          return decodeURIComponent(item.href.slice(1)) === id;
+        }) ?? -1;
+      if (index >= 0) {
+        toc.activeIndex = index;
       }
     });
 };
@@ -146,8 +160,8 @@ const replaceContent = (html: string, url: URL) => {
   updateSiteTabs(url);
   enhanceExampleToc();
   const focusTarget =
-    document.querySelector<HTMLElement>('.docs-content h1') ??
-    document.querySelector<HTMLElement>('.docs-content');
+    document.querySelector<HTMLElement>('.docs-route-content h1') ??
+    document.querySelector<HTMLElement>('.docs-route-content');
   focusTarget?.setAttribute('tabindex', '-1');
   focusTarget?.focus({preventScroll: true});
   return true;

@@ -112,6 +112,7 @@ const renderExample = ({
   page,
   tagName,
   customElements,
+  generatedApi = false,
 }) => {
   const examples = (collections.example ?? [])
     .slice()
@@ -138,7 +139,7 @@ const renderExample = ({
       </aside>
       <article class="examples-content example-content">
         ${addHeadingIds(content)}
-        ${renderGeneratedApi(tagName, customElements)}
+        ${generatedApi ? renderGeneratedApi(tagName, customElements) : ''}
       </article>
       <aside class="examples-toc">
         <mnw-docs-table-of-contents items-json="${attrJson(tocItems)}"></mnw-docs-table-of-contents>

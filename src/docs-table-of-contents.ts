@@ -10,8 +10,11 @@ import {repeat} from 'lit/directives/repeat.js';
 import {
   type DocsNavigationItem,
   exampleTableOfContentsItems,
-  toDocsNavigationItems,
 } from './docs-navigation.js';
+import {
+  createNavigationEvent,
+  parseNavigationItemsJson,
+} from './docs-navigation-controller.js';
 import {styles} from './docs-table-of-contents-styles.js';
 
 @customElement('mnw-docs-table-of-contents')
@@ -34,15 +37,8 @@ export class MaterialNextDocsTableOfContents extends LitElement {
   itemsJson = '';
 
   override willUpdate(changedProperties: Map<string, unknown>) {
-    if (changedProperties.has('itemsJson') && this.itemsJson) {
-      try {
-        const items = toDocsNavigationItems(JSON.parse(this.itemsJson));
-        if (items.length) {
-          this.items = items;
-        }
-      } catch {
-        // Ignore malformed declarative data and keep the current items.
-      }
+    if (changedProperties.has('itemsJson')) {
+      this.items = parseNavigationItemsJson(this.itemsJson, this.items);
     }
   }
 
@@ -76,12 +72,7 @@ export class MaterialNextDocsTableOfContents extends LitElement {
     }
 
     this.activeIndex = index;
-    const navigateEvent = new CustomEvent('navigate', {
-      bubbles: true,
-      cancelable: true,
-      composed: true,
-      detail: {index, item},
-    });
+    const navigateEvent = createNavigationEvent(index, item);
     if (!this.dispatchEvent(navigateEvent)) {
       event.preventDefault();
     }
