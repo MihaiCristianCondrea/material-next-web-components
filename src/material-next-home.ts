@@ -100,30 +100,6 @@ export class MaterialNextHome extends LitElement {
               upgrades centralized here.
             </p>
           </article>
-
-          <article class="info-card install-card">
-            <h2>Install</h2>
-            <p>Install the package and its Material Web peer dependency.</p>
-            <mnw-code-block
-              language="bash"
-              copy
-              code="npm install material-next-web-components @material/web lit"
-            ></mnw-code-block>
-          </article>
-
-          <article class="info-card">
-            <h2>npm usage</h2>
-            <p>Import the custom elements once, then use them in HTML.</p>
-            <mnw-code-block
-              language="ts"
-              copy
-              code="import 'material-next-web-components/material-next-home.js';
-import 'material-next-web-components/expressive-tab-bar.js';"
-            ></mnw-code-block>
-            <md-filled-button href=${this.docsHref} part="action">
-              Open install docs
-            </md-filled-button>
-          </article>
         </section>
 
         <footer class="home-summary">

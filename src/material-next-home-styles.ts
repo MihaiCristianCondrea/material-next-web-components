@@ -118,10 +118,6 @@ p {
   color: var(--md-sys-color-on-tertiary-container, #31111d);
 }
 
-.install-card {
-  grid-column: span 2;
-}
-
 .examples-view {
   display: grid;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(180px, 240px);
@@ -169,9 +165,6 @@ mnw-app-showcase {
   .content-grid {
     grid-template-columns: 1fr;
   }
-  .install-card {
-    grid-column: auto;
-  }
   .example-nav,
   .toc-nav {
     position: static;
@@ -181,9 +174,6 @@ mnw-app-showcase {
   .examples-view,
   .content-grid {
     grid-template-columns: 1fr;
-  }
-  .install-card {
-    grid-column: auto;
   }
   .example-nav,
   .toc-nav {
