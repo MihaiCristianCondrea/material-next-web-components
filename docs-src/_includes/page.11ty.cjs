@@ -14,10 +14,7 @@ module.exports = function (data) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Built-in Material Design web components and reusable product views for web products.">
     <meta name="theme-color" content="#6750A4">
-    <link rel="icon" href="${relative(
-      page.url,
-      '/favicon.svg'
-    )}" type="image/svg+xml">
+    <link rel="icon" href="${relative(page.url, '/favicon.svg')}" type="image/svg+xml">
     <link rel="manifest" href="${relative(page.url, '/site.webmanifest')}">
     <title>${title}</title>
     <link rel="stylesheet" href="${relative(page.url, '/docs.css')}">
@@ -28,22 +25,21 @@ module.exports = function (data) {
     <link href="${relative(page.url, '/prism-okaidia.css')}" rel="stylesheet" />
     <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script src="/node_modules/lit/polyfill-support.js"></script>
-    <script type="module" src="${relative(
-      page.url,
-      '/material-next-home.bundled.js'
-    )}"></script>
+    <script type="module" src="${relative(page.url, '/material-next-docs.bundled.js')}"></script>
   </head>
   <body>
-    <header class="top-app-bar">
-      ${header(data)}
-      ${nav(data)}
-    </header>
-    <div id="main-wrapper">
-      <main>
-        ${content}
-      </main>
-    </div>
-    ${footer()}
+    <mnw-docs-shell>
+      <mnw-docs-top-app-bar slot="nav">
+        <div slot="leading">${header(data)}</div>
+        ${nav(data)}
+      </mnw-docs-top-app-bar>
+      <mnw-docs-page>
+        <div class="docs-content">
+          ${content}
+        </div>
+      </mnw-docs-page>
+      <div slot="footer">${footer()}</div>
+    </mnw-docs-shell>
   </body>
 </html>`;
 };

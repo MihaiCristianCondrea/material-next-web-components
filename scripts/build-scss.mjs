@@ -29,6 +29,21 @@ const outputs = [
     output: 'src/docs-table-of-contents-styles.ts',
     lit: true,
   },
+  {
+    input: 'src/docs-page.scss',
+    output: 'src/docs-page-styles.ts',
+    lit: true,
+  },
+  {
+    input: 'src/docs-shell.scss',
+    output: 'src/docs-shell-styles.ts',
+    lit: true,
+  },
+  {
+    input: 'src/docs-top-app-bar.scss',
+    output: 'src/docs-top-app-bar-styles.ts',
+    lit: true,
+  },
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 

@@ -10,9 +10,9 @@ import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'material-next-home.js',
+  input: 'docs-entry.js',
   output: {
-    file: 'material-next-home.bundled.js',
+    file: 'docs/material-next-docs.bundled.js',
     format: 'esm',
   },
   onwarn(warning) {

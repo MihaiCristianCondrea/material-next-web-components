@@ -43,7 +43,11 @@ body {
   background: var(--md-sys-color-surface);
   font-family: 'Google Sans Flex', system-ui, sans-serif;
   font-optical-sizing: auto;
-  font-variation-settings: 'slnt' 0, 'wdth' 100, 'GRAD' 0, 'ROND' 0;
+  font-variation-settings:
+    'slnt' 0,
+    'wdth' 100,
+    'GRAD' 0,
+    'ROND' 0;
   min-width: min-content;
   min-height: 100vh;
   font-size: 18px;
@@ -337,4 +341,43 @@ th {
     align-items: flex-start;
     flex-direction: column;
   }
+}
+
+.example-header {
+  margin: 32px 0;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--md-sys-color-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lede {
+  max-width: 760px;
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.examples-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 24px;
+}
+
+.demo-panel {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 28px;
+  background: var(--md-sys-color-surface);
+}
+
+.navigation-demo {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
 }
