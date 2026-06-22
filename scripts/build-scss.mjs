@@ -59,7 +59,10 @@ for (const item of outputs) {
       )}.\n * Do not edit directly; run npm run build:scss.\n */\n\nimport {css} from 'lit';\n\nexport const styles = css\`\n${cssText}\`;\n`
     );
   } else {
-    await writeFile(item.output, result.css);
+    await writeFile(
+      item.output,
+      `/**\n * Generated from ${item.input}.\n * Do not edit directly; run npm run build:scss.\n */\n\n${result.css}`
+    );
   }
 }
 
