@@ -67,14 +67,6 @@ export class MaterialNextHome extends LitElement {
     return html`
       <section class="app-shell">
         <header class="top-app-bar">
-          <a
-            class="brand"
-            href="#home"
-            aria-label="material-next-web-components home"
-            @click=${this.showHome}
-          >
-            <img class="brand-logo" src="./public/logo.svg" alt="" />
-          </a>
           <md-expressive-tab-bar
             class="view-tabs"
             icon-position="start"
@@ -207,11 +199,6 @@ import 'material-next-web-components/expressive-tab-bar.js';"
         </aside>
       </article>
     `;
-  }
-
-  private showHome(event: Event) {
-    event.preventDefault();
-    this.navigateToHash('#home');
   }
 
   private handleAppNavigation(event: CustomEvent) {
