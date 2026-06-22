@@ -35,24 +35,6 @@
   backdrop-filter: blur(18px);
 }
 
-.brand {
-  display: inline-flex;
-  flex: 0 0 auto;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  padding-inline-end: 8px;
-  color: inherit;
-  line-height: 0;
-  text-decoration: none;
-}
-
-.brand-logo {
-  display: block;
-  width: 40px;
-  height: 40px;
-}
-
 .view-tabs {
   --mnw-expressive-tab-bar-height: var(--mnw-top-app-bar-height);
   --mnw-expressive-tab-bar-container-color: transparent;
