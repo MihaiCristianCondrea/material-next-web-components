@@ -12,6 +12,7 @@ export const styles = css`
 :host {
   display: block;
   color: var(--md-sys-color-on-surface-variant, #49454f);
+  background: var(--mnw-docs-table-of-contents-container-color, transparent);
   font-family: "Google Sans Flex", system-ui, sans-serif;
 }
 

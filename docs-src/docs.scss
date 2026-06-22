@@ -10,6 +10,7 @@
   --md-sys-color-on-primary-container: #21005d;
   --md-sys-color-surface: #fffbfe;
   --md-sys-color-on-surface: #1d1b20;
+  --md-sys-color-surface-container-low: #f7f2fa;
   --md-sys-color-surface-container: #f3edf7;
   --md-sys-color-surface-container-high: #ece6f0;
   --md-sys-color-on-surface-variant: #49454f;
@@ -27,6 +28,7 @@
     --md-sys-color-on-primary-container: #eaddff;
     --md-sys-color-surface: #141218;
     --md-sys-color-on-surface: #e6e0e9;
+    --md-sys-color-surface-container-low: #1d1b20;
     --md-sys-color-surface-container: #211f26;
     --md-sys-color-surface-container-high: #2b2930;
     --md-sys-color-on-surface-variant: #cac4d0;
@@ -61,7 +63,7 @@ body {
 }
 
 main {
-  width: min(100% - 32px, 1120px);
+  width: min(100% - 32px, 1280px);
   margin: 0 auto;
   min-width: 0;
 }
@@ -248,9 +250,17 @@ section.columns mnw-home {
 
 section.examples-layout {
   display: grid;
-  grid-template-columns: minmax(180px, 280px) minmax(0, 1fr);
+  grid-template-areas: 'nav content toc';
+  grid-template-columns: minmax(180px, 280px) minmax(0, 1fr) minmax(
+      180px,
+      240px
+    );
   gap: 24px;
   align-items: start;
+}
+
+section.examples-layout > * {
+  min-width: 0;
 }
 
 .examples-nav,
@@ -260,18 +270,22 @@ section.examples-layout {
   padding: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 28px;
-  background: var(--md-sys-color-surface-container);
+  background: var(--md-sys-color-surface-container-low);
 }
 
-.examples-toc {
-  grid-column: 1;
-  grid-row: 2;
+.examples-nav {
+  grid-area: nav;
 }
 
 .examples-content {
+  grid-area: content;
   display: grid;
   gap: 24px;
   min-width: 0;
+}
+
+.examples-toc {
+  grid-area: toc;
 }
 
 nav.collection a {
@@ -295,7 +309,7 @@ nav.collection > ul > li.selected a {
   padding: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 24px;
-  background: var(--md-sys-color-surface-container);
+  background: var(--md-sys-color-surface-container-low);
 }
 
 .example-panel > *,
@@ -306,6 +320,20 @@ mnw-home,
 mnw-app-showcase {
   max-width: 100%;
   min-width: 0;
+}
+
+.demo-panel mnw-home {
+  --mnw-home-min-height: auto;
+  justify-self: center;
+  width: min(100%, 960px);
+}
+
+.demo-panel mnw-docs-vertical-tabs,
+.demo-panel mnw-docs-table-of-contents {
+  align-self: stretch;
+  padding: 24px;
+  border-radius: 24px;
+  background: var(--md-sys-color-surface-container-low);
 }
 .example-panel h2,
 .example-panel h3 {
@@ -350,6 +378,10 @@ th {
 @media (max-width: 960px) {
   header.top-app-bar,
   section.examples-layout {
+    grid-template-areas:
+      'nav'
+      'content'
+      'toc';
     grid-template-columns: 1fr;
   }
 
@@ -404,7 +436,7 @@ th {
   padding: 24px;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 28px;
-  background: var(--md-sys-color-surface);
+  background: var(--md-sys-color-surface-container-low);
 }
 
 .demo-panel md-expressive-tab-bar {
