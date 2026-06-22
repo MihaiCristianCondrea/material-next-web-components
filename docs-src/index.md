@@ -13,9 +13,11 @@ The project starts with Google Material Web (`@material/web`) version `^2.4.1`, 
 
 The home page below is rendered by the library's `<mnw-home>` custom element and keeps the documentation surface on Material tokens and Material Web components.
 
-```html
+<div class="code-block-demo">
+<mnw-code-block language="html" copy><template>
 <mnw-home></mnw-home>
-```
+</template></mnw-code-block>
+</div>
 
 <section class="home-demo" aria-label="material-next-web-components home preview">
   <mnw-home></mnw-home>
@@ -25,18 +27,21 @@ The home page below is rendered by the library's `<mnw-home>` custom element and
 
 Load Google Sans Flex for product and documentation text, and Google Sans Code for code blocks and inline code. The docs site includes both font families in the document `<head>`.
 
-```html
+<div class="code-block-demo">
+<mnw-code-block language="html" copy><template>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
   href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap"
   rel="stylesheet"
 />
-```
+</template></mnw-code-block>
+</div>
 
 Use Google Sans Code for every code presentation surface:
 
-```scss
+<div class="code-block-demo">
+<mnw-code-block language="scss" copy><template>
 .google-sans-code-snippet {
   font-family: 'Google Sans Code', monospace;
   font-optical-sizing: auto;
@@ -44,11 +49,13 @@ Use Google Sans Code for every code presentation surface:
   font-style: normal;
   font-variation-settings: 'MONO' 1;
 }
-```
+</template></mnw-code-block>
+</div>
 
 Google Sans Flex remains the default text face:
 
-```scss
+<div class="code-block-demo">
+<mnw-code-block language="scss" copy><template>
 .google-sans-flex-body {
   font-family: 'Google Sans Flex', sans-serif;
   font-optical-sizing: auto;
@@ -60,7 +67,8 @@ Google Sans Flex remains the default text face:
     'GRAD' 0,
     'ROND' 0;
 }
-```
+</template></mnw-code-block>
+</div>
 
 ## Documentation source of truth
 

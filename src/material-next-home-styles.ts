@@ -23,7 +23,7 @@ export const styles = css`
   min-width: 0;
   min-height: var(--mnw-home-min-height, 100vh);
   overflow: hidden;
-  background: linear-gradient(180deg, #fffbff 0%, #f7f2fa 100%);
+  background: transparent;
 }
 
 .docs-content {
@@ -45,8 +45,8 @@ export const styles = css`
 .example-nav {
   border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
   border-radius: 28px;
-  background: var(--md-sys-color-surface-container-low, #f7f2fa);
-  box-shadow: 0 18px 48px rgba(29, 27, 32, 0.08);
+  background: var(--md-sys-color-surface, #fffbfe);
+  box-shadow: none;
 }
 
 .home-summary {
@@ -114,8 +114,8 @@ p {
 }
 
 .notice-card {
-  background: var(--md-sys-color-tertiary-container, #ffd8e4);
-  color: var(--md-sys-color-on-tertiary-container, #31111d);
+  background: var(--md-sys-color-surface, #fffbfe);
+  color: var(--md-sys-color-on-surface, #1d1b20);
 }
 
 .examples-view {
