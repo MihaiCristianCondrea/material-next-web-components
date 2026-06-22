@@ -27,14 +27,15 @@ export const styles = css`
 }
 
 .top-app-bar {
+  --mnw-top-app-bar-height: 64px;
   position: sticky;
   top: 0;
   z-index: 10;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 24px;
-  align-items: center;
-  padding: 16px clamp(16px, 5vw, 64px);
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  min-height: var(--mnw-top-app-bar-height);
+  padding-inline: clamp(16px, 5vw, 64px);
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
   background: color-mix(in srgb, var(--md-sys-color-surface, #fffbff) 92%, transparent);
   backdrop-filter: blur(18px);
@@ -42,35 +43,27 @@ export const styles = css`
 
 .brand {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   min-width: 0;
+  padding-inline-end: 8px;
   color: inherit;
-  font-weight: 700;
+  line-height: 0;
   text-decoration: none;
 }
 
-.brand span:last-child {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.brand-mark {
-  display: inline-grid;
+.brand-logo {
+  display: block;
   width: 40px;
   height: 40px;
-  place-items: center;
-  border-radius: 14px;
-  background: var(--md-sys-color-primary, #6750a4);
-  color: var(--md-sys-color-on-primary, #ffffff);
 }
 
 .view-tabs {
-  --mnw-expressive-tab-bar-height: 56px;
-  --mnw-expressive-tab-min-width: 132px;
-  justify-self: end;
+  --mnw-expressive-tab-bar-height: var(--mnw-top-app-bar-height);
+  --mnw-expressive-tab-bar-container-color: transparent;
+  --mnw-expressive-tab-min-width: 124px;
+  flex: 0 1 auto;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
@@ -99,10 +92,14 @@ export const styles = css`
   box-shadow: 0 18px 48px rgba(29, 27, 32, 0.08);
 }
 
-.page-heading {
+.home-summary {
   display: grid;
+  justify-items: center;
   gap: 12px;
-  padding-block: clamp(8px, 2vw, 24px);
+  max-width: 900px;
+  margin-inline: auto;
+  padding-block: clamp(24px, 5vw, 64px);
+  text-align: center;
 }
 
 .eyebrow,
@@ -147,6 +144,8 @@ p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  width: min(100%, 1120px);
+  margin-inline: auto;
 }
 
 .info-card,
@@ -209,13 +208,12 @@ mnw-app-showcase {
 }
 
 @media (max-width: 860px) {
-  .top-app-bar,
   .examples-view,
   .content-grid {
     grid-template-columns: 1fr;
   }
-  .view-tabs {
-    justify-self: stretch;
+  .top-app-bar {
+    overflow-x: auto;
   }
   .install-card {
     grid-column: auto;
@@ -226,16 +224,13 @@ mnw-app-showcase {
   }
 }
 @container (max-width: 640px) {
-  .top-app-bar,
   .examples-view,
   .content-grid {
     grid-template-columns: 1fr;
   }
   .top-app-bar {
     position: static;
-  }
-  .view-tabs {
-    justify-self: stretch;
+    overflow-x: auto;
   }
   .install-card {
     grid-column: auto;

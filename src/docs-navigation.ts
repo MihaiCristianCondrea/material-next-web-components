@@ -17,7 +17,6 @@ export const appNavigationItems: DocsNavigationItem[] = [
 export const exampleNavigationItems: DocsNavigationItem[] = [
   {label: 'Expressive tab bar', icon: 'tab', href: '#expressive-tab-bar'},
   {label: 'App showcase', icon: 'apps', href: '#app-showcase'},
-  {label: 'Home view', icon: 'home', href: '#home-view'},
   {label: 'Code block', icon: 'code', href: '#code-block'},
 ];
 
@@ -25,6 +24,5 @@ export const exampleTableOfContentsItems: DocsNavigationItem[] = [
   {label: 'Overview', href: '#examples-overview'},
   {label: 'Expressive tab bar', href: '#expressive-tab-bar'},
   {label: 'App showcase', href: '#app-showcase'},
-  {label: 'Home view', href: '#home-view'},
   {label: 'Code block', href: '#code-block'},
 ];

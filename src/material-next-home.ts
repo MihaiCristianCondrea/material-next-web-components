@@ -29,10 +29,6 @@ import {styles} from './material-next-home-styles.js';
 export class MaterialNextHome extends LitElement {
   static override styles = styles;
 
-  /** The main headline shown in the home hero. */
-  @property()
-  headline = 'material-next-web-components';
-
   /** The URL opened by the install call-to-action button. */
   @property({attribute: 'docs-href'})
   docsHref = './install/';
@@ -71,9 +67,13 @@ export class MaterialNextHome extends LitElement {
     return html`
       <section class="app-shell">
         <header class="top-app-bar">
-          <a class="brand" href="#home" @click=${this.showHome}>
-            <span class="brand-mark">M</span>
-            <span>material-next-web-components</span>
+          <a
+            class="brand"
+            href="#home"
+            aria-label="material-next-web-components home"
+            @click=${this.showHome}
+          >
+            <img class="brand-logo" src="./public/logo.svg" alt="" />
           </a>
           <md-expressive-tab-bar
             class="view-tabs"
@@ -96,14 +96,6 @@ export class MaterialNextHome extends LitElement {
   private renderHomeView() {
     return html`
       <article class="home-view" id="home">
-        <header class="page-heading">
-          <h1>${this.headline}</h1>
-          <p class="tagline">
-            Built-in Lit custom elements and product views powered by Material
-            Design.
-          </p>
-        </header>
-
         <section class="content-grid" aria-label="Home documentation">
           <article class="info-card">
             <h2>Introduction</h2>
@@ -148,6 +140,14 @@ import 'material-next-web-components/expressive-tab-bar.js';"
             </md-filled-button>
           </article>
         </section>
+
+        <footer class="home-summary">
+          <h1>material-next-web-components</h1>
+          <p class="tagline">
+            Built-in Lit custom elements and product views powered by Material
+            Design.
+          </p>
+        </footer>
         <slot></slot>
       </article>
     `;
