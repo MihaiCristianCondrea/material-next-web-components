@@ -60,7 +60,7 @@
     "@typescript-eslint/parser": "^8.61.1",
     "@web/dev-server": "^0.4.6",
     "@web/dev-server-legacy": "^2.1.1",
-    "@web/test-runner": "^0.20.2",
+    "@web/test-runner": "^1.0.0",
     "@web/test-runner-playwright": "^0.11.1",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "eslint": "^10.5.0",
