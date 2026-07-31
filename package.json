@@ -71,7 +71,7 @@
     "rollup": "^4.62.2",
     "rollup-plugin-summary": "^3.0.1",
     "sass": "^1.101.0",
-    "typescript": "~6.0.3"
+    "typescript": "~7.0.2"
   },
   "customElements": "custom-elements.json",
   "overrides": {
