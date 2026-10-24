@@ -1,5 +1,5 @@
-import {mkdir, writeFile} from 'node:fs/promises';
-import {dirname, relative} from 'node:path';
+import {mkdir, readdir, writeFile} from 'node:fs/promises';
+import {dirname, join, relative} from 'node:path';
 
 const outputs = [
   {
@@ -45,6 +45,21 @@ const outputs = [
   },
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
+
+// Marketing modules compile every non-partial stylesheet next to its element.
+for (const entry of await readdir('src/marketing', {
+  recursive: true,
+  withFileTypes: true,
+})) {
+  if (!entry.isFile() || !entry.name.endsWith('.scss')) continue;
+  if (entry.name.startsWith('_')) continue;
+  const input = join(entry.parentPath, entry.name).replaceAll('\\', '/');
+  outputs.push({
+    input,
+    output: input.replace(/\.scss$/, '-styles.ts'),
+    lit: true,
+  });
+}
 
 for (const item of outputs) {
   const result = await compileScss(item.input);

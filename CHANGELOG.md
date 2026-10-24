@@ -1,4 +1,18 @@
-# @lit/lit-starter-ts
+# Changelog
+
+## 0.2.0
+
+- Marketing hub (`material-next-web-components/marketing.js`, experimental): the gallery and prototype pages,
+  the embed API for videos, `ScreenHost`, the shell and its parts, `<mnw-device-frame>` with Google's device art,
+  `<mnw-play-badge>` and `<mnw-github-badge>`, and App Toolkit's window rules. Assets ship in `assets/marketing/`
+  with the `mnw-marketing-assets` command to copy them.
+- Published to npm: a GitHub release runs `.github/workflows/publish.yml`.
+- `lit` and `@material/web` are peer dependencies, so an app and the library share one copy of each.
+- `patch-package` runs on `prepare`, in this repository only, instead of on every install.
+
+## Lit starter history
+
+The entries below come from the Lit starter this repository began from.
 
 ## 2.0.3
 

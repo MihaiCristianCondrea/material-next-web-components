@@ -8,6 +8,7 @@ const entries = [
   'docs-top-app-bar.js',
   'docs-vertical-tabs.js',
   'docs-table-of-contents.js',
+  'marketing/index.js',
 ];
 
 for (const entry of entries) {

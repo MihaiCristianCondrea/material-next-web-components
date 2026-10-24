@@ -1,8 +1,7 @@
 {
   "name": "material-next-web-components",
-  "private": true,
-  "version": "0.1.0",
-  "description": "Built-in Material Design web components and views for web products.",
+  "version": "0.2.0",
+  "description": "Material Design web components for product pages, documentation and Android app marketing hubs, built with Lit and Material Web.",
   "main": "dist/material-next-home.js",
   "module": "dist/material-next-home.js",
   "type": "module",
@@ -32,25 +31,27 @@
     "test:prod:watch": "MODE=prod wtr --watch",
     "checksize": "npm run build && rollup dist/material-next-home.js --file material-next-home.bundled.js --format esm --plugin @rollup/plugin-node-resolve | cat material-next-home.bundled.js | gzip -9 | wc -c ; rm -f material-next-home.bundled.js",
     "build:scss": "node scripts/build-scss.mjs",
-    "postinstall": "patch-package",
-    "smoke:exports": "npm run build && node scripts/smoke-exports.mjs"
+    "smoke:exports": "npm run build && node scripts/smoke-exports.mjs",
+    "prepublishOnly": "npm run build && npm run analyze",
+    "prepare": "patch-package"
   },
   "keywords": [
     "web-components",
     "lit-element",
     "typescript",
-    "lit"
+    "lit",
+    "material-design",
+    "material-web",
+    "marketing",
+    "android"
   ],
-  "author": "Google LLC",
+  "author": "Mihai-Cristian Condrea",
   "license": "BSD-3-Clause",
-  "dependencies": {
-    "@material/web": "^2.4.1",
-    "lit": "^3.3.3"
-  },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.6",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
     "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@material/web": "^2.4.1",
     "@open-wc/testing": "^5.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-replace": "^6.0.3",
@@ -64,6 +65,7 @@
     "@web/test-runner-playwright": "^1.0.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "eslint": "^10.7.0",
+    "lit": "^3.3.3",
     "lit-analyzer": "^2.0.3",
     "patch-package": "^8.0.1",
     "prettier": "^3.9.5",
@@ -138,13 +140,48 @@
     "./docs/docs-table-of-contents.js": {
       "types": "./dist/docs-table-of-contents.d.ts",
       "default": "./dist/docs-table-of-contents.js"
-    }
+    },
+    "./marketing.js": {
+      "types": "./dist/marketing/index.d.ts",
+      "default": "./dist/marketing/index.js"
+    },
+    "./marketing/*.js": {
+      "types": "./dist/marketing/*.d.ts",
+      "default": "./dist/marketing/*.js"
+    },
+    "./marketing/assets/*": "./assets/marketing/*",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist/",
+    "!dist/test/",
+    "assets/",
+    "bin/",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
     "custom-elements.json"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MihaiCristianCondrea/material-next-web-components.git"
+  },
+  "homepage": "https://github.com/MihaiCristianCondrea/material-next-web-components#readme",
+  "bugs": {
+    "url": "https://github.com/MihaiCristianCondrea/material-next-web-components/issues"
+  },
+  "bin": {
+    "mnw-marketing-assets": "bin/mnw-marketing-assets.mjs"
+  },
+  "sideEffects": [
+    "dist/**/*.js"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "peerDependencies": {
+    "@material/web": "^2.4.1",
+    "lit": "^3.3.3"
+  }
 }
