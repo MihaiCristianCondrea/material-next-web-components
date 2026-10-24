@@ -11,7 +11,7 @@ import {css} from 'lit';
 export const styles = css`
 :host {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: 360px minmax(0, 1fr);
   gap: 24px;
   min-height: 100vh;
   padding: 24px;

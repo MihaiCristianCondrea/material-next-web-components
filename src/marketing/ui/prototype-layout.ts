@@ -8,7 +8,8 @@ import {customElement} from 'lit/decorators.js';
 import {styles} from './prototype-layout-styles.js';
 
 /**
- * The prototype page's frame: a stage for the live screen and a side panel.
+ * The prototype page's frame: a side panel on the leading side, where the
+ * back button and the controls start, and a stage for the live screen.
  *
  * @slot stage - Light-DOM container the screen hosts render into.
  * @slot panel - Usually an `mnw-screen-inspector`.
@@ -19,10 +20,10 @@ export class MaterialNextPrototypeLayout extends LitElement {
 
   override render() {
     return html`
+      <aside class="panel"><slot name="panel"></slot></aside>
       <section class="stage" aria-label="Screen preview">
         <slot name="stage"></slot>
       </section>
-      <aside class="panel"><slot name="panel"></slot></aside>
     `;
   }
 }
