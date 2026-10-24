@@ -1,9 +1,12 @@
 const path = require('path').posix;
 
-module.exports = (base, p) => {
-  const relativePath = path.relative(base, p);
-  if (p.endsWith('/') && !relativePath.endsWith('/') && relativePath !== '') {
-    return relativePath + '/';
+/** `target` (a site path such as "/install/") relative to the page at `base`. */
+module.exports = (base, target) => {
+  const [pathname, hash = ''] = target.split('#');
+  let relativePath = path.relative(base, pathname);
+  if (pathname.endsWith('/') && relativePath !== '' && !relativePath.endsWith('/')) {
+    relativePath += '/';
   }
-  return relativePath;
+  if (relativePath === '') relativePath = './';
+  return hash ? `${relativePath}#${hash}` : relativePath;
 };

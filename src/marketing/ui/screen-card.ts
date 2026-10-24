@@ -20,14 +20,19 @@ export type CardToggleEvent = CustomEvent<{selected: boolean}>;
  * @slot - The screen's mount element.
  * @fires card-theme-toggle - `{selected}`: dark theme on this card only.
  * @fires card-nav-toggle - `{selected}`: 3-button navigation on this card only.
+ * @cssprop --mnw-card-preview-height - Height of a frameless preview. Default `clamp(560px, 75dvh, 760px)`.
+ * @cssprop --mnw-card-device-zoom - Scale of a framed preview. Default `0.66`.
+ * @cssprop --mnw-card-index - Position in the grid, staggering the entrance animation (capped at 6).
  */
 @customElement('mnw-screen-card')
 export class MaterialNextScreenCard extends LitElement {
   static override styles = styles;
 
+  /** The screen's title, linked to `href`. */
   @property()
   heading = '';
 
+  /** One or two sentences under the title. */
   @property()
   description = '';
 
@@ -43,9 +48,11 @@ export class MaterialNextScreenCard extends LitElement {
   @property({type: Boolean, reflect: true})
   framed = false;
 
+  /** State of the dark theme toggle. */
   @property({type: Boolean})
   dark = false;
 
+  /** State of the 3-button navigation toggle. */
   @property({type: Boolean, attribute: 'three-button'})
   threeButton = false;
 

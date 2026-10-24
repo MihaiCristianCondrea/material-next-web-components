@@ -48,15 +48,19 @@ type Switchable = HTMLElement & {selected: boolean};
 export class MaterialNextScreenInspector extends LitElement {
   static override styles = styles;
 
+  /** The screen shown. Nothing renders without it. */
   @property({attribute: false})
   screen?: MarketingScreen;
 
+  /** Every screen, for the screen picker. */
   @property({attribute: false})
   screens: readonly MarketingScreen[] = [];
 
+  /** The prototype view: mode, theme, navigation, window, palettes, frame. */
   @property({attribute: false})
   view: PrototypeView = DEFAULT_PROTOTYPE_VIEW;
 
+  /** The app's palette names; empty hides the palette selects. */
   @property({attribute: false})
   palettes: readonly string[] = [];
 
@@ -64,6 +68,7 @@ export class MaterialNextScreenInspector extends LitElement {
   @property({attribute: false})
   state: ScreenState = {};
 
+  /** Where "All screens" links. */
   @property({attribute: 'gallery-href'})
   galleryHref = './';
 

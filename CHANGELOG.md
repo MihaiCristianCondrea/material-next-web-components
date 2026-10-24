@@ -9,6 +9,16 @@
 - Published to npm: a GitHub release runs `.github/workflows/publish.yml`.
 - `lit` and `@material/web` are peer dependencies, so an app and the library share one copy of each.
 - `patch-package` runs on `prepare`, in this repository only, instead of on every install.
+- `<mnw-home>` renders its **Get started** button (`part="action"`, linking to `docs-href`), which its API
+  documented but did not draw.
+- `<mnw-docs-top-app-bar>` keeps the brand and actions on one row below 960px, with the navigation scrolling on
+  a row of its own, and scrolls away with the page below 600px.
+- JSDoc for every public property, event, slot and CSS custom property, so `custom-elements.json` is complete;
+  the manifest no longer lists tests, the docs site or generated style modules.
+- Documentation site: a page per element with a live demo, copyable code and the generated API, the marketing hub
+  guide with a sample app, a Marketing API page, corrected install instructions, and `npm run docs:check`
+  (coverage, links, assets, console errors, navigation, phone layouts and demos under the Pages path), which the
+  Pages and CI workflows run.
 
 ## Lit starter history
 

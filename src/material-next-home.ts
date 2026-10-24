@@ -19,10 +19,13 @@ import {
 import {styles} from './material-next-home-styles.js';
 
 /**
- * Home and examples app shell for material-next-web-components.
+ * Home and examples app shell for material-next-web-components. It switches
+ * between a home view and an examples view from `location.hash` (`#home`,
+ * `#examples` or an example's anchor), so use one per page.
  *
  * @slot - Optional supporting content displayed below the home content.
- * @csspart action - The Material Design call-to-action button.
+ * @csspart action - The "Get started" button, linking to `docs-href`.
+ * @cssprop --mnw-home-min-height - Minimum height of the view. Default `100vh`.
  */
 @customElement('mnw-home')
 export class MaterialNextHome extends LitElement {
@@ -70,9 +73,11 @@ export class MaterialNextHome extends LitElement {
     return html`
       <section class="app-shell">
         <section class="docs-content" tabindex="-1">
-          ${this.activeView === 'home'
-            ? this.renderHomeView()
-            : this.renderExamplesView()}
+          ${
+            this.activeView === 'home'
+              ? this.renderHomeView()
+              : this.renderExamplesView()
+          }
         </section>
       </section>
     `;
@@ -108,6 +113,10 @@ export class MaterialNextHome extends LitElement {
             Built-in Lit custom elements and product views powered by Material
             Design.
           </p>
+          <md-filled-button part="action" href=${this.docsHref}>
+            <md-icon slot="icon">download</md-icon>
+            Get started
+          </md-filled-button>
         </footer>
         <slot></slot>
       </article>

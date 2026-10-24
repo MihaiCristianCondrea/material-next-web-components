@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import '@material/web/tabs/primary-tab.js';
-import '@material/web/tabs/tabs.js';
+// The documentation site's script: registers every public element, wires the
+// live demos and enhances plain links with client-side navigation. Pages work
+// without it; links are ordinary links.
 import '../app-showcase.js';
 import '../code-block.js';
 import '../docs-page.js';
@@ -14,169 +15,167 @@ import '../docs-top-app-bar.js';
 import '../docs-vertical-tabs.js';
 import '../expressive-tab-bar.js';
 import '../material-next-home.js';
+import '../marketing/index.js';
+import {configureMarketingAssets} from '../marketing/index.js';
+import {runDemos} from './demos/index.js';
 
-const linkSelector =
-  'a[href]:not([target]):not([download]), md-primary-tab a[href], mnw-docs-vertical-tabs, mnw-docs-table-of-contents';
+// The site root is where this bundle is served, which keeps every URL working
+// under the GitHub Pages repository subpath.
+const siteRoot = new URL('./', import.meta.url);
+configureMarketingAssets({base: new URL('material-next/', siteRoot).href});
+
 const contentSelector = '.docs-route-content';
 let currentPageUrl = new URL(window.location.href);
 let activeController: AbortController | undefined;
 let tocObserver: IntersectionObserver | undefined;
+let disposeDemos: () => void = () => {};
 
 const isDocsPageUrl = (url: URL) =>
   url.origin === window.location.origin &&
-  url.protocol.startsWith('http') &&
-  !url.pathname.match(/\.[a-z0-9]+$/i);
+  url.pathname.startsWith(siteRoot.pathname) &&
+  !/\.[a-z0-9]+$/i.test(url.pathname);
 
 const sameDocument = (url: URL, base = currentPageUrl) =>
   url.origin === base.origin &&
   url.pathname === base.pathname &&
   url.search === base.search;
 
-const setNavigating = (navigating: boolean) => {
-  document.documentElement.toggleAttribute('data-docs-navigating', navigating);
-};
-
 const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-const getUrl = (element: Element) => {
-  const href = element.getAttribute('href');
-  return href ? new URL(href, window.location.href) : null;
-};
-
-const findLink = (event: Event) =>
-  event
-    .composedPath()
-    .find(
-      (target): target is Element =>
-        target instanceof Element && target.matches(linkSelector)
-    );
-
-const getHashTarget = (hash: string) => {
-  if (!hash) return null;
-  const id = decodeURIComponent(hash.slice(1));
-  const target = document.getElementById(id);
-  if (target) return target;
-  try {
-    return document.querySelector(hash);
-  } catch {
-    return null;
+/**
+ * The top app bar, footer and <head> stay in place across navigations, but
+ * their URLs are relative to the first page. Making them absolute once keeps
+ * them right on every later page.
+ */
+const absolutizePersistentUrls = () => {
+  const content = document.querySelector(contentSelector);
+  for (const el of document.querySelectorAll<HTMLElement>('[href], [src]')) {
+    if (content?.contains(el)) continue;
+    for (const attr of ['href', 'src']) {
+      const value = el.getAttribute(attr);
+      if (value && !/^(#|[a-z]+:)/i.test(value)) {
+        el.setAttribute(attr, new URL(value, currentPageUrl).href);
+      }
+    }
   }
 };
 
-const scrollToHash = (hash: string) => {
-  getHashTarget(hash)?.scrollIntoView({
+const updateSiteNav = (url: URL) => {
+  const path = url.pathname.slice(siteRoot.pathname.length - 1);
+  const links = [
+    ...document.querySelectorAll<HTMLAnchorElement>('.site-tab-link'),
+  ];
+  let matched = false;
+  for (const link of links) {
+    const prefix = link.dataset.routePrefix ?? '/';
+    const selected =
+      !matched && (prefix === '/' ? path === '/' : path.startsWith(prefix));
+    if (selected) matched = true;
+    if (selected) link.setAttribute('aria-current', 'page');
+    else link.removeAttribute('aria-current');
+  }
+};
+
+/** Opens the side navigation on wide windows, folds it on narrow ones. */
+const syncSideNav = () => {
+  for (const details of document.querySelectorAll<HTMLDetailsElement>(
+    'details[data-collapse-below]'
+  )) {
+    const below = Number(details.dataset.collapseBelow);
+    details.open = window.innerWidth > below;
+  }
+};
+
+let lastWide = window.innerWidth > 1100;
+window.addEventListener('resize', () => {
+  const wide = window.innerWidth > 1100;
+  if (wide !== lastWide) {
+    lastWide = wide;
+    syncSideNav();
+  }
+});
+
+const getHashTarget = (hash: string) =>
+  hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
+
+const scrollToHash = (hash: string, {focus = false} = {}) => {
+  const target = getHashTarget(hash);
+  if (!target) return;
+  target.scrollIntoView({
     behavior: prefersReducedMotion() ? 'auto' : 'smooth',
     block: 'start',
   });
-};
-
-const updateSiteTabs = (url: URL) => {
-  const tabs = Array.from(document.querySelectorAll('md-tabs.site-tabs'));
-  for (const tabsElement of tabs) {
-    const tabLinks = Array.from(
-      tabsElement.querySelectorAll<HTMLAnchorElement>('md-primary-tab a[href]')
-    );
-    let activeIndex = 0;
-    tabLinks.forEach((link, index) => {
-      const routePrefix = link.dataset.routePrefix;
-      const tabUrl = new URL(routePrefix ?? link.href, window.location.href);
-      const selected =
-        routePrefix === '/'
-          ? url.pathname === tabUrl.pathname
-          : url.pathname === tabUrl.pathname ||
-            url.pathname.startsWith(tabUrl.pathname);
-      link.toggleAttribute('aria-current', selected);
-      link.closest('md-primary-tab')?.toggleAttribute('active', selected);
-      if (selected) activeIndex = index;
-    });
-    (tabsElement as HTMLElement & {activeTabIndex?: number}).activeTabIndex =
-      activeIndex;
-    tabsElement.setAttribute('active-tab-index', String(activeIndex));
+  // As a native jump to an anchor does, move keyboard focus there (skip link,
+  // table of contents), so the next Tab continues from the target.
+  if (focus) {
+    if (
+      !target.matches('a[href], button, input, select, textarea, [tabindex]')
+    ) {
+      target.tabIndex = -1;
+    }
+    target.focus({preventScroll: true});
   }
 };
 
-const setCurrentTocLink = (id?: string) => {
-  if (!id) return;
-  document
-    .querySelectorAll('.examples-toc a, mnw-docs-table-of-contents')
-    .forEach((element) => {
-      if (element instanceof HTMLAnchorElement) {
-        element.toggleAttribute(
-          'aria-current',
-          decodeURIComponent(element.hash.slice(1)) === id
-        );
-        return;
-      }
+type Toc = HTMLElement & {activeIndex: number; items: Array<{href: string}>};
 
-      const toc = element as HTMLElement & {
-        activeIndex?: number;
-        items?: Array<{href?: string}>;
-      };
-      const index =
-        toc.items?.findIndex((item) => {
-          if (!item.href?.startsWith('#')) return false;
-          return decodeURIComponent(item.href.slice(1)) === id;
-        }) ?? -1;
-      if (index >= 0) {
-        toc.activeIndex = index;
-      }
-    });
+const setCurrentTocLink = (id: string) => {
+  for (const toc of document.querySelectorAll<Toc>(
+    'mnw-docs-table-of-contents'
+  )) {
+    const index = toc.items.findIndex(
+      (item) => decodeURIComponent(item.href.slice(1)) === id
+    );
+    if (index >= 0) toc.activeIndex = index;
+  }
 };
 
-const enhanceExampleToc = () => {
+const trackToc = () => {
   tocObserver?.disconnect();
-  tocObserver = undefined;
-  const headings = Array.from(
-    document.querySelectorAll<HTMLElement>(
-      '.example-content h2[id], .example-content h3[id], .examples-content h2[id], .examples-content h3[id]'
-    )
-  );
+  const headings = [
+    ...document.querySelectorAll<HTMLElement>(
+      `${contentSelector} .prose > h2[id]`
+    ),
+  ];
   if (!headings.length || !('IntersectionObserver' in window)) return;
   tocObserver = new IntersectionObserver(
     (entries) => {
       const visible = entries
-        .filter((entry) => entry.isIntersecting)
+        .filter((e) => e.isIntersecting)
         .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (visible?.target instanceof HTMLElement) {
-        setCurrentTocLink(visible.target.id);
-      }
+      if (visible) setCurrentTocLink(visible.target.id);
     },
-    {rootMargin: '0px 0px -70% 0px', threshold: 0.1}
+    {rootMargin: '0px 0px -70% 0px'}
   );
-  headings.forEach((heading) => tocObserver?.observe(heading));
-  setCurrentTocLink(headings[0]?.id);
+  headings.forEach((h) => tocObserver!.observe(h));
 };
 
-const replaceContent = (html: string, url: URL) => {
-  const nextDocument = new DOMParser().parseFromString(html, 'text/html');
-  const currentContent = document.querySelector(contentSelector);
-  const nextContent = nextDocument.querySelector(contentSelector);
-  if (!currentContent || !nextContent) return false;
-  const imported = document.importNode(nextContent, true);
-  document.title = nextDocument.title;
-  currentPageUrl = new URL(url.href);
-  currentContent.replaceWith(imported);
-  updateSiteTabs(url);
-  enhanceExampleToc();
-  const focusTarget =
-    document.querySelector<HTMLElement>('.docs-route-content h1') ??
-    document.querySelector<HTMLElement>('.docs-route-content');
-  focusTarget?.setAttribute('tabindex', '-1');
-  focusTarget?.focus({preventScroll: true});
+/** Everything a freshly shown page needs: demos, the TOC tracker, the side nav. */
+const enhancePage = () => {
+  disposeDemos();
+  const content = document.querySelector<HTMLElement>(contentSelector);
+  disposeDemos = content ? runDemos(content) : () => {};
+  trackToc();
+  syncSideNav();
+};
+
+const replaceContent = (html: string) => {
+  const next = new DOMParser().parseFromString(html, 'text/html');
+  const current = document.querySelector(contentSelector);
+  const incoming = next.querySelector(contentSelector);
+  if (!current || !incoming) return false;
+  document.title = next.title;
+  current.replaceWith(document.importNode(incoming, true));
   return true;
 };
 
-const navigateTo = async (url: URL, options: {replace?: boolean} = {}) => {
+const navigateTo = async (url: URL, {push = true} = {}) => {
   if (!isDocsPageUrl(url)) return false;
   if (sameDocument(url)) {
+    if (push) history.pushState(null, '', url.href);
     if (url.hash) {
-      window.history[options.replace ? 'replaceState' : 'pushState'](
-        null,
-        '',
-        url.href
-      );
-      scrollToHash(url.hash);
+      scrollToHash(url.hash, {focus: push});
       setCurrentTocLink(decodeURIComponent(url.hash.slice(1)));
     }
     return true;
@@ -184,37 +183,49 @@ const navigateTo = async (url: URL, options: {replace?: boolean} = {}) => {
   activeController?.abort();
   const controller = new AbortController();
   activeController = controller;
-  setNavigating(true);
+  document.documentElement.toggleAttribute('data-docs-navigating', true);
   try {
-    const response = await fetch(url.href, {
-      headers: {'X-Requested-With': 'fetch'},
-      signal: controller.signal,
-    });
+    const response = await fetch(url.href, {signal: controller.signal});
     if (!response.ok) return false;
-    if (!replaceContent(await response.text(), url)) return false;
-    window.history[options.replace ? 'replaceState' : 'pushState'](
-      null,
-      '',
-      url.href
-    );
-    window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+    const html = await response.text();
+    if (controller.signal.aborted) return true;
+    // The history entry first, so the new content's relative URLs resolve
+    // against the page they were written for.
+    if (push) history.pushState(null, '', url.href);
+    currentPageUrl = new URL(url.href);
+    if (!replaceContent(html)) return false;
+    updateSiteNav(url);
+    enhancePage();
     if (url.hash) scrollToHash(url.hash);
+    else window.scrollTo({top: 0, left: 0, behavior: 'instant'});
+    const heading = document.querySelector<HTMLElement>(
+      `${contentSelector} h1`
+    );
+    if (heading) {
+      heading.tabIndex = -1;
+      heading.focus({preventScroll: true});
+    }
     return true;
   } catch (error) {
-    if ((error as DOMException).name !== 'AbortError') {
-      console.error('Unable to load documentation page.', error);
-      document.dispatchEvent(
-        new CustomEvent('docs-navigation-error', {
-          detail: {url: url.href, error},
-        })
-      );
-    }
-    return (error as DOMException).name === 'AbortError';
+    if ((error as DOMException).name === 'AbortError') return true;
+    console.warn('Falling back to a full page load:', error);
+    return false;
   } finally {
     if (activeController === controller) activeController = undefined;
-    setNavigating(false);
+    document.documentElement.toggleAttribute('data-docs-navigating', false);
   }
 };
+
+const linkFromEvent = (event: Event) =>
+  event
+    .composedPath()
+    .find(
+      (target): target is HTMLAnchorElement =>
+        target instanceof HTMLAnchorElement &&
+        target.hasAttribute('href') &&
+        !target.hasAttribute('download') &&
+        (!target.target || target.target === '_self')
+    );
 
 document.addEventListener('click', (event) => {
   if (
@@ -227,24 +238,29 @@ document.addEventListener('click', (event) => {
   ) {
     return;
   }
-  const element = findLink(event);
-  if (!element || !('getAttribute' in element)) return;
-  const url = getUrl(element);
-  if (!url || !isDocsPageUrl(url)) return;
-  if (sameDocument(url) && !url.hash) return;
+  const link = linkFromEvent(event);
+  if (!link) return;
+  const url = new URL(link.href, window.location.href);
+  if (!isDocsPageUrl(url)) return;
+  // Links inside live demos belong to the demo (an iframe, a component's own
+  // routing), except ordinary page links.
+  if (link.closest('[data-demo]') && !link.hasAttribute('data-docs-link'))
+    return;
   event.preventDefault();
   void navigateTo(url).then((handled) => {
-    if (!handled) window.location.href = url.href;
+    if (!handled) window.location.assign(url.href);
   });
 });
 
 window.addEventListener('popstate', () => {
-  void navigateTo(new URL(window.location.href), {replace: true}).then(
-    (handled) => {
-      if (!handled) window.location.reload();
-    }
-  );
+  const url = new URL(window.location.href);
+  void navigateTo(url, {push: false}).then((handled) => {
+    if (!handled) window.location.reload();
+  });
 });
 
-updateSiteTabs(currentPageUrl);
-enhanceExampleToc();
+absolutizePersistentUrls();
+updateSiteNav(currentPageUrl);
+enhancePage();
+if (currentPageUrl.hash)
+  requestAnimationFrame(() => scrollToHash(currentPageUrl.hash));

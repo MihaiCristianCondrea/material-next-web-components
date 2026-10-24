@@ -34,7 +34,7 @@ export interface ScreenHostOptions {
   fill?: boolean;
   /** Navigation out of the screen. Without it the host loads the target itself. */
   onGo?: (id: string, state: ScreenState | undefined, host: ScreenHost) => void;
-  /** After every state change, for panels that show the state. */
+  /** After set() and reset(), for panels that show the state. load() and go() do not call it. */
   onChange?: (host: ScreenHost) => void;
 }
 

@@ -1,0 +1,20 @@
+{
+  "apps": [
+    {
+      "appName": "Smart Cleaner",
+      "packageName": "com.d4rk.cleaner",
+      "category": "Tools",
+      "shortDescription": "See what fills your phone's storage and clear what you don't need.",
+      "icon": "../../demos/assets/smart-cleaner-icon.svg",
+      "storeUrl": "https://play.google.com/store/apps/details?id=com.d4rk.cleaner"
+    },
+    {
+      "appName": "Android Insider",
+      "packageName": "com.mihaicristiancondrea.android.apps.androidstudiotutorials",
+      "category": "Education",
+      "shortDescription": "Android news and development guides, with Studio Bot for questions.",
+      "icon": "../../demos/assets/android-insider-icon.svg",
+      "storeUrl": "https://play.google.com/store/apps/details?id=com.mihaicristiancondrea.android.apps.androidstudiotutorials"
+    }
+  ]
+}

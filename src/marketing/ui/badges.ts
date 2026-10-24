@@ -13,6 +13,8 @@ import {styles} from './badges-styles.js';
  * `--mnw-play-badge-height`; Google's guidelines allow scaling the artwork
  * whole, never redrawing, recolouring, cropping or animating it. Pages that
  * show it carry the trademark line (the marketing shell's footer does).
+ *
+ * @cssprop --mnw-play-badge-height - Badge height, clear space included. Default `56px`.
  */
 @customElement('mnw-play-badge')
 export class MaterialNextPlayBadge extends LitElement {
@@ -51,6 +53,7 @@ export class MaterialNextGithubBadge extends LitElement {
   @property()
   href = '';
 
+  /** Link text; with `compact`, the accessible name and tooltip. */
   @property()
   label = 'View source';
 

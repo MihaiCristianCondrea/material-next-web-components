@@ -1,52 +1,57 @@
 ---
-layout: page.11ty.cjs
-title: material-next-web-components ⌲ Install
+layout: docs.11ty.cjs
+sidebar: false
+title: Install
+heading: Install
+description: Add Material Next to a project, import the modules you use, and load the fonts the components expect.
 ---
 
-# Install
-
-Install the library next to Material Web:
+## Package
 
 ```bash
-npm install material-next-web-components @material/web
+npm install material-next-web-components lit @material/web
 ```
 
-> Publishing note: this repository currently marks the package as private while the public API is being stabilized. If the package is not available in your registry yet, clone [MihaiCristianCondrea/material-next-web-components](https://github.com/MihaiCristianCondrea/material-next-web-components), run `npm install`, and build from source.
+The package is public and published to npm from GitHub releases. Until the first release (0.2.0) is out, install from a clone instead: see [Build from source](#build-from-source).
 
-## Import one component
+`lit` (^3.3.3) and `@material/web` (^2.4.1) are **peer dependencies**: your app installs them, and the library uses the same copies, so there is one Lit and one set of Material Web elements on the page. npm 7 and later install peer dependencies automatically; listing them yourself keeps their versions explicit.
 
-Import the module for each custom element you use:
+The package ships ES modules with TypeScript declarations (`.d.ts`) and a custom elements manifest (`custom-elements.json`). Use it with a bundler or dev server that resolves bare imports and package `exports`, such as Vite, Rollup, webpack or `@web/dev-server`.
+
+## Imports
+
+Import each module once, anywhere in your app's bundle. Importing an element's module registers its tag.
+
+| Module | Registers | Status |
+| --- | --- | --- |
+| `material-next-web-components/code-block.js` | `<mnw-code-block>` | Stable |
+| `material-next-web-components/expressive-tab-bar.js` | `<mnw-expressive-tab-bar>`, and `<md-expressive-tab-bar>` as an alias | Experimental |
+| `material-next-web-components/app-showcase.js` | `<mnw-app-showcase>` | Experimental |
+| `material-next-web-components/material-next-home.js` | `<mnw-home>` (and the elements it uses) | Experimental |
+| `material-next-web-components/marketing.js` | The eight marketing hub elements, and exports the [marketing API](../guides/marketing-api/) | Experimental |
+| `material-next-web-components/docs-shell.js`, `docs-top-app-bar.js`, `docs-page.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js` | The documentation layout elements | Internal candidate |
+
+The root import, `material-next-web-components`, is the same as `material-next-home.js`. The documentation layout modules are also exported as `material-next-web-components/docs/<name>.js`; those paths are compatibility aliases. Every element module also exports its class (for example `MaterialNextCodeBlock`) for typing and `instanceof` checks.
 
 ```ts
 import 'material-next-web-components/code-block.js';
 import 'material-next-web-components/expressive-tab-bar.js';
+import type {MaterialNextExpressiveTabBar} from 'material-next-web-components/expressive-tab-bar.js';
 ```
-
-## Use it in HTML
 
 ```html
-<mnw-code-block language="ts" copy>
-  <template>console.log('Hello Material Next');</template>
-</mnw-code-block>
+<mnw-code-block language="ts" copy code="console.log('Hello, Material Next');"></mnw-code-block>
 ```
 
-## Local source workflow
+## What the library provides, and what you provide
 
-```bash
-git clone https://github.com/MihaiCristianCondrea/material-next-web-components.git
-cd material-next-web-components
-npm install
-npm run build
-npm run docs
-```
+**The library provides** the custom elements, their styles (in shadow DOM), the Material Web components they use (imported for you), and the marketing hub's controllers, device art and badge images.
 
-## Material Web baseline
+**You provide:**
 
-This library tracks `@material/web` `^2.4.1`, which includes the Material Web component set used by Google Material Design for web components.
-
-## Typography
-
-All first-party components and documentation pages use Google Sans Flex as their default typeface. Add the Google Fonts preconnects and stylesheet once in your application `<head>` before rendering the components:
+- **Fonts.** The components use Google Sans Flex, with Google Sans Code for code, and Material Symbols Outlined for icons. Load them once in your page's `<head>`. Without them, text falls back to the system font and icons show their names.
+- **Colours.** The components read Material colour roles (`--md-sys-color-*`) from the page, with light defaults. Define your scheme on `:root` (Material Theme Builder exports these) to match your brand and dark mode.
+- **Marketing assets.** For the device frames and the Play badge, copy the images with `npx mnw-marketing-assets public/material-next`. See [Assets](../guides/marketing-hub/#assets).
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,16 +60,33 @@ All first-party components and documentation pages use Google Sans Flex as their
   href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap"
   rel="stylesheet"
 />
+<link
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0"
+  rel="stylesheet"
+/>
 ```
 
-Components set `font-family: 'Google Sans Flex', system-ui, sans-serif` internally, so the font is applied consistently once the stylesheet is loaded. Use Google Sans Code for code-specific surfaces only.
+Material Web's own components read `--md-ref-typeface-brand` and `--md-ref-typeface-plain`; set them to Google Sans Flex so the controls inside Material Next match its text:
 
-## Public component imports
+```css
+:root {
+  --md-ref-typeface-brand: 'Google Sans Flex', system-ui, sans-serif;
+  --md-ref-typeface-plain: 'Google Sans Flex', system-ui, sans-serif;
+}
+```
 
-| Component           | Import path                                          | Status             |
-| ------------------- | ---------------------------------------------------- | ------------------ |
-| Code block          | `material-next-web-components/code-block.js`         | Stable             |
-| App showcase        | `material-next-web-components/app-showcase.js`       | Experimental       |
-| Expressive tab bar  | `material-next-web-components/expressive-tab-bar.js` | Experimental       |
-| Home view           | `material-next-web-components/material-next-home.js` | Experimental       |
-| Docs infrastructure | `material-next-web-components/docs/docs-page.js`     | Internal candidate |
+## Browser support
+
+The elements use standard custom elements, shadow DOM and modern CSS (`color-mix()`, `:has()`, container queries in `<mnw-home>`). They work in current Chrome, Edge, Firefox and Safari. The test suite runs in Chromium, Firefox and WebKit.
+
+## Build from source
+
+```bash
+git clone https://github.com/MihaiCristianCondrea/material-next-web-components.git
+cd material-next-web-components
+npm install
+npm run build      # compiles to dist/
+npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-0.2.0.tgz
+```
+
+`npm run docs` builds this site into `docs/`, and `npm run docs:check` checks it in a browser under the GitHub Pages path.

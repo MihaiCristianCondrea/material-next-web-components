@@ -41,21 +41,27 @@ export type CategoryChangeEvent = CustomEvent<{category: string}>;
 export class MaterialNextMarketingShell extends LitElement {
   static override styles = styles;
 
+  /** The app the page presents. Required: nothing renders without it. */
   @property({attribute: false})
   product?: MarketingProduct;
 
+  /** Current preview settings, shown by the preview controls. */
   @property({attribute: false})
   settings: PreviewSettings = DEFAULT_PREVIEW_SETTINGS;
 
+  /** Settings that Reset returns to. */
   @property({attribute: false})
   defaults: PreviewSettings = DEFAULT_PREVIEW_SETTINGS;
 
+  /** The app's palette names; empty hides the palette select. */
   @property({attribute: false})
   palettes: readonly string[] = [];
 
+  /** Catalog filter chips, as `{id, label}`; shown with two or more. */
   @property({attribute: false})
   categories: ReadonlyArray<{id: string; label: string}> = [];
 
+  /** Selected category id; `""` is All. */
   @property()
   category = ALL_CATEGORIES;
 

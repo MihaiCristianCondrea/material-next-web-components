@@ -14,26 +14,34 @@ export const styles = css`
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "leading nav trailing";
   gap: 24px;
   align-items: center;
   width: 100%;
-  padding: 14px clamp(16px, 5vw, 64px);
+  min-height: 64px;
+  padding: 8px clamp(16px, 4vw, 48px);
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
   background: color-mix(in srgb, var(--md-sys-color-surface, #fffbfe) 92%, transparent);
   color: var(--md-sys-color-on-surface, #1d1b20);
   backdrop-filter: blur(18px);
 }
 
+.leading {
+  grid-area: leading;
+  min-width: 0;
+}
+
 .nav {
+  grid-area: nav;
   justify-self: end;
   max-width: 100%;
-  overflow: hidden;
-  border-radius: 999px;
-  background: var(--md-sys-color-surface-container, #f3edf7);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .trailing {
+  grid-area: trailing;
   justify-self: end;
 }
 
@@ -44,10 +52,17 @@ export const styles = css`
 
 @media (max-width: 960px) {
   :host {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "leading trailing" "nav nav";
+    gap: 4px 16px;
+    padding-block: 8px 4px;
   }
-  .nav,
-  .trailing {
+  .nav {
     justify-self: stretch;
+  }
+}
+@media (max-width: 600px) {
+  :host {
+    position: static;
   }
 }`;

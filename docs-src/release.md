@@ -1,34 +1,34 @@
 ---
-layout: page.11ty.cjs
-title: material-next-web-components ⌲ Release checklist
+layout: docs.11ty.cjs
+sidebar: false
+title: Release checklist
+heading: Release checklist
+description: The checks before publishing a version to npm.
 ---
 
-# Release checklist
+## How a release publishes
 
-Use this checklist before publishing the package or cutting a public release.
+Publishing a GitHub release runs `.github/workflows/publish.yml`. It checks that the tag is the `package.json` version with a `v` (`v0.2.0` for `0.2.0`), then lints, builds, tests in Chromium, checks the package exports, and runs `npm publish --provenance` with the `NPM_KEY` repository secret. A release marked as a pre-release publishes under the `next` dist-tag. Running the workflow by hand with **dry-run** on builds and packs without publishing.
 
-## Package readiness
+## Before tagging
 
-- Decide whether `private` should remain `true` or be removed for npm publishing.
-- Verify every public export in `package.json` has matching JavaScript and declaration output in `dist/`.
-- Keep docs infrastructure exports marked as internal-candidate until the API is stable.
-- Confirm `files` includes the built output, README, license, changelog, and custom elements manifest.
-
-## Required checks
+1. `version` in `package.json` and a matching entry at the top of `CHANGELOG.md`, on `main`.
+2. The local checks pass:
 
 ```bash
-npm run clean
 npm run build
-npm run analyze
-npm run smoke:exports
 npm run lint
 npm test
+npm run smoke:exports
 npm run docs
+npm run docs:check
+npm pack --dry-run
 ```
 
-## Documentation readiness
+3. `npm pack --dry-run` lists `dist/` (without `dist/test` and `dist/docs`), `assets/`, `bin/`, the README, licence, changelog and `custom-elements.json`.
+4. The documentation is deployed and the pages for anything new or changed are checked on GitHub Pages.
 
-- Ensure install instructions match the real npm publication status.
-- Confirm examples use the canonical `mnw-*` tag names.
-- Review generated API output on `/api/` after `npm run analyze`.
-- Validate the GitHub Pages build under nested routes.
+## After publishing
+
+- `npm view material-next-web-components version` shows the new version.
+- Install it in a fresh project and import `material-next-web-components/marketing.js` and one element module.

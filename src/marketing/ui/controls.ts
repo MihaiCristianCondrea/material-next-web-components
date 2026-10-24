@@ -33,20 +33,20 @@ export const segments = <T extends string>(
   html`<md-outlined-segmented-button-set
     aria-label=${label}
     @segmented-button-set-selection=${(
-    e: CustomEvent<{selected: boolean; index: number}>
-  ) => {
-    if (e.detail.selected) onPick(items[e.detail.index][0]);
-  }}
+      e: CustomEvent<{selected: boolean; index: number}>
+    ) => {
+      if (e.detail.selected) onPick(items[e.detail.index][0]);
+    }}
   >
     ${items.map(
-    ([value, text, icon]) =>
-      html`<md-outlined-segmented-button
-        label=${text}
-        .selected=${value === current}
-        .hasIcon=${!!icon}
-        >${icon ? html`<md-icon slot="icon">${icon}</md-icon>` : nothing}</md-outlined-segmented-button
-      >`
-  )}
+      ([value, text, icon]) =>
+        html`<md-outlined-segmented-button
+          label=${text}
+          .selected=${value === current}
+          .hasIcon=${!!icon}
+          >${icon ? html`<md-icon slot="icon">${icon}</md-icon>` : nothing}</md-outlined-segmented-button
+        >`
+    )}
   </md-outlined-segmented-button-set>`;
 
 /** Outlined select whose visible label sits above it, outside the field. */
@@ -63,11 +63,11 @@ export const select = <T extends string>(
     @change=${(e: Event) => onPick((e.target as HTMLSelectElement).value as T)}
   >
     ${items.map(
-    ([key, text]) =>
-      html`<md-select-option value=${String(key)} ?selected=${key === value}>
-        <div slot="headline">${text}</div>
-      </md-select-option>`
-  )}
+      ([key, text]) =>
+        html`<md-select-option value=${String(key)} ?selected=${key === value}>
+          <div slot="headline">${text}</div>
+        </md-select-option>`
+    )}
   </md-outlined-select>`;
 
 /** Single choice as filter chips. */
@@ -79,18 +79,18 @@ export const chips = <T extends string | number>(
 ) =>
   html`<md-chip-set aria-label=${label || nothing}>
     ${items.map(
-    ([value, text]) =>
-      html`<md-filter-chip
-        label=${text}
-        .selected=${current === value}
-        @click=${(e: Event) => {
-        // The host owns selection: keep the chip in step with it.
-        (e.currentTarget as HTMLElement & {selected: boolean}).selected =
-          current === value;
-        if (current !== value) onPick(value);
-      }}
-      ></md-filter-chip>`
-  )}
+      ([value, text]) =>
+        html`<md-filter-chip
+          label=${text}
+          .selected=${current === value}
+          @click=${(e: Event) => {
+            // The host owns selection: keep the chip in step with it.
+            (e.currentTarget as HTMLElement & {selected: boolean}).selected =
+              current === value;
+            if (current !== value) onPick(value);
+          }}
+        ></md-filter-chip>`
+    )}
   </md-chip-set>`;
 
 const formatValue = (control: {unit?: string}, value: unknown) =>

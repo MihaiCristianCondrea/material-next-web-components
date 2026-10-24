@@ -1,0 +1,14 @@
+<div class="host-demo">
+  <div class="host-demo__screen"></div>
+  <div class="host-demo__side">
+    <div class="demo-controls" role="group" aria-label="Screen host">
+      <md-outlined-button data-action="pinned">set({filter: 'pinned'})</md-outlined-button>
+      <md-outlined-button data-action="all">set({filter: 'all'})</md-outlined-button>
+      <md-outlined-button data-action="go">go('focus')</md-outlined-button>
+      <md-outlined-button data-action="reset">reset()</md-outlined-button>
+    </div>
+    <label class="switch-row"><md-switch data-option="dark"></md-switch> theme: 'dark'</label>
+    <label class="switch-row"><md-switch data-option="frame"></md-switch> frame: true</label>
+    <pre class="demo-log" aria-live="polite"></pre>
+  </div>
+</div>

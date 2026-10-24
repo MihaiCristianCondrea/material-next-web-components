@@ -9,11 +9,21 @@ import terser from '@rollup/plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
 
+// The documentation site's scripts. Every file lands at the site root (chunks
+// included), so URLs built from import.meta.url resolve against the root
+// under any deployment path.
 export default {
-  input: 'dist/docs/docs-entry.js',
+  input: {
+    'material-next-docs.bundled': 'dist/docs/docs-entry.js',
+    'hub-gallery': 'dist/docs/pages/hub-gallery.js',
+    'hub-prototype': 'dist/docs/pages/hub-prototype.js',
+    'docs-demo-pages': 'dist/docs/pages/demo-pages.js',
+  },
   output: {
-    file: 'docs/material-next-docs.bundled.js',
+    dir: 'docs',
     format: 'esm',
+    entryFileNames: '[name].js',
+    chunkFileNames: 'chunk-[hash].js',
   },
   onwarn(warning) {
     if (warning.code !== 'THIS_IS_UNDEFINED') {
@@ -23,10 +33,6 @@ export default {
   plugins: [
     replace({preventAssignment: false, 'Reflect.decorate': 'undefined'}),
     resolve(),
-    /**
-     * This minification setup serves the static site generation.
-     * For bundling and minification, check the README.md file.
-     */
     terser({
       ecma: 2021,
       module: true,

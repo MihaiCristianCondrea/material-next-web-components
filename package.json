@@ -20,8 +20,8 @@
     "docs:build": "rollup -c",
     "docs:assets": "npm run build:scss && cp docs-src/docs.css docs/",
     "docs:serve": "wds --root-dir=docs --node-resolve --watch",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --watch",
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\"",
+    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --watch",
     "serve": "wds --watch",
     "serve:prod": "MODE=prod npm run serve",
     "test": "npm run test:dev && npm run test:prod",
@@ -33,7 +33,8 @@
     "build:scss": "node scripts/build-scss.mjs",
     "smoke:exports": "npm run build && node scripts/smoke-exports.mjs",
     "prepublishOnly": "npm run build && npm run analyze",
-    "prepare": "patch-package"
+    "prepare": "patch-package",
+    "docs:check": "node scripts/check-docs-coverage.mjs && node scripts/check-docs.mjs"
   },
   "keywords": [
     "web-components",
@@ -49,7 +50,6 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.6",
-    "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.2",
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@material/web": "^2.4.1",
     "@open-wc/testing": "^5.0.0",
@@ -155,6 +155,7 @@
   "files": [
     "dist/",
     "!dist/test/",
+    "!dist/docs/",
     "assets/",
     "bin/",
     "README.md",

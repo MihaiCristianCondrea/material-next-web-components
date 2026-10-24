@@ -1,40 +1,32 @@
 ---
-layout: page.11ty.cjs
-title: material-next-web-components ⌲ Roadmap
+layout: docs.11ty.cjs
+sidebar: false
+title: Roadmap
+heading: Roadmap and status
+description: What is stable, what is experimental, and what comes next.
 ---
 
-# Roadmap and component status
+## Status of each part
 
-This project is early-stage. The table below separates stable public components from documentation infrastructure and planned improvements.
+| Part | Import path | Status | Notes |
+| --- | --- | --- | --- |
+| Code block | `material-next-web-components/code-block.js` | Stable | Covered by compatibility expectations from 0.2. |
+| Expressive tab bar | `material-next-web-components/expressive-tab-bar.js` | Experimental | `<md-expressive-tab-bar>` stays as a compatibility alias of `<mnw-expressive-tab-bar>`. |
+| App showcase | `material-next-web-components/app-showcase.js` | Experimental | Reads any endpoint in the documented shapes. |
+| Home view | `material-next-web-components/material-next-home.js` | Experimental | Material Next's own landing view; most copy is fixed. |
+| Marketing hub | `material-next-web-components/marketing.js` | Experimental | Elements, controllers, embed API and assets, from Android Insider's and Smart Cleaner's hubs. |
+| Documentation layout | `material-next-web-components/docs-*.js` | Internal candidate | Used by this site; may change before 1.0. |
 
-| Component or area     | Import path                                          | Status             | Notes                                                                                                                    |
-| --------------------- | ---------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
-| Code block            | `material-next-web-components/code-block.js`         | Stable             | Copy-ready code presentation for docs and demos.                                                                         |
-| App showcase          | `material-next-web-components/app-showcase.js`       | Experimental       | Product card layout for promoted app collections.                                                                        |
-| Expressive tab bar    | `material-next-web-components/expressive-tab-bar.js` | Experimental       | Rounded Material navigation tabs. Prefer `<mnw-expressive-tab-bar>`; `<md-expressive-tab-bar>` is a compatibility alias. |
-| Home view             | `material-next-web-components/material-next-home.js` | Experimental       | Product-ready landing view; documented as an example, not used as the docs landing page.                                 |
-| Docs shell components | `material-next-web-components/docs/docs-page.js`     | Internal candidate | Exported today, but should be reviewed before a public package release.                                                  |
-| API reference         | `/api/`                                              | In progress        | Generated from the custom elements manifest.                                                                             |
-| Mobile navigation     | Docs site                                            | Planned            | Needs a dedicated drawer or overflow strategy as routes grow.                                                            |
+## Maturity levels
 
-## Next priorities
+- **Stable**: documented for production use; breaking changes only in a major version.
+- **Experimental**: usable in apps, but names and behaviour can change in a minor version before 1.0. Changes are listed in the changelog.
+- **Internal candidate**: exported because this site uses it; review before depending on it.
+- **Compatibility alias**: an older name kept working while documentation uses the new one.
 
-1. Finalize package publishing and remove ambiguity around npm installation.
-2. Stabilize the public component export surface.
-3. Improve mobile navigation and route loading states.
-4. Expand examples with accessibility, theming, and integration guidance.
+## Next
 
-## Component maturity model
-
-- **Stable public**: documented for production use and covered by compatibility expectations.
-- **Experimental public**: available for app usage, but API details can change before `1.0`.
-- **Internal candidate**: exported for the docs site or experiments, but should not be treated as stable public API.
-- **Compatibility alias**: kept temporarily to avoid breakage while docs move to canonical names.
-
-## Docs architecture direction
-
-The docs site should use Eleventy data for route-level navigation, component markdown for examples, and the generated custom elements manifest for the API reference. Example pages keep hand-authored guidance while `/api/` remains the source for generated property, attribute, event, slot, and CSS-part details.
-
-## Release checklist
-
-See [Release checklist](../release/) before publishing or cutting a public release.
+1. Release 0.2.0 to npm, then move Android Insider's and Smart Cleaner's hubs onto `marketing.js`.
+2. Move the Android system bars (status bar, gesture and 3-button navigation) that each app's screens draw into the library.
+3. Stabilize the marketing elements' names and tokens once two apps use them.
+4. Review the documentation layout elements for public use.

@@ -20,6 +20,7 @@ import {styles} from './device-frame-styles.js';
 export class MaterialNextDeviceFrame extends LitElement {
   static override styles = styles;
 
+  /** Which device: `pixel_9_pro_xl`, `pixel_9_pro_fold` or `pixelbook_go`. */
   @property({reflect: true})
   device: DeviceName = 'pixel_9_pro_xl';
 

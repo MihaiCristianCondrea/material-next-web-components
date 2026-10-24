@@ -1,129 +1,74 @@
+const relative = require('./_includes/relative-path.cjs');
+const site = require('./_data/site.cjs');
+const {apiTables, elements, escapeHtml} = require('./_includes/lib.cjs');
+
+// Compatibility aliases: documented with the element they alias.
+const ALIASES = {'md-expressive-tab-bar': 'mnw-expressive-tab-bar'};
+
+const importPathOf = (modulePath) => {
+  if (modulePath.startsWith('src/marketing/')) return 'material-next-web-components/marketing.js';
+  return `material-next-web-components/${modulePath.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
+};
+
 /**
- * This page generates its content from the custom-element.json file as read by
- * the _data/api.11tydata.js script.
+ * Generated API reference: every element in custom-elements.json, grouped like
+ * the catalog, with the same tables as its reference page.
  */
-module.exports = class Docs {
+module.exports = class Api {
   data() {
     return {
-      layout: 'page.11ty.cjs',
-      title: 'material-next-web-components ⌲ API',
+      layout: 'docs.11ty.cjs',
+      sidebar: false,
+      title: 'API reference',
+      heading: 'API reference',
+      description:
+        'Generated from the source with the custom elements analyzer: every element, with its properties, attributes, events, slots and styling hooks.',
     };
   }
 
   render(data) {
-    const apiData = data.api ?? require('./_data/api.11tydata.js')();
-    const manifest =
-      apiData.customElements ?? apiData['11tydata']?.customElements;
-    const elements = manifest.modules.reduce(
-      (els, module) =>
-        els.concat(
-          module.declarations?.filter((dec) => dec.customElement) ?? []
-        ),
-      []
+    const pages = data.collections.reference ?? [];
+    const pageFor = (tag) => pages.find((p) => [].concat(p.data.tagName ?? []).includes(tag));
+    const all = elements().filter((e) => !ALIASES[e.tagName]);
+    const groups = site.categories
+      .filter((c) => c.id !== 'guides')
+      .map((category) => ({
+        category,
+        members: all.filter((e) => pageFor(e.tagName)?.data.category === category.id),
+      }));
+    const unlisted = all.filter((e) => !pageFor(e.tagName));
+    if (unlisted.length) {
+      throw new Error(`Elements without a reference page: ${unlisted.map((e) => e.tagName).join(', ')}`);
+    }
+    const intro = `<p>Each element's page has a live demo and usage notes; this page collects the generated API of all of them. A property marked <em>Property only</em> has no attribute: set it from JavaScript (objects, arrays and callbacks are always property only). Boolean attributes are on when present.</p>
+<p>The JavaScript API of the marketing hub (controllers, <code>ScreenHost</code>, types) is listed on <a href="${relative(
+      data.page.url,
+      '/guides/marketing-api/'
+    )}">Marketing API</a>.</p>`;
+    return (
+      intro +
+      groups
+        .map(
+          ({category, members}) => `<h2 id="${category.id}">${escapeHtml(category.label)}</h2>
+${members
+  .map((e) => {
+    const page = pageFor(e.tagName);
+    const aliases = Object.entries(ALIASES)
+      .filter(([, target]) => target === e.tagName)
+      .map(([alias]) => `<code>&lt;${alias}&gt;</code>`);
+    return `<h3 id="${e.tagName}"><code>&lt;${e.tagName}&gt;</code></h3>
+<p class="api-meta"><code>import '${importPathOf(e.modulePath)}';</code> · class <code>${escapeHtml(e.name)}</code> · <a href="${relative(
+      data.page.url,
+      page.url
+    )}">${escapeHtml(page.data.name)} guide and demo</a>${
+      aliases.length ? ` · also registered as ${aliases.join(', ')} (compatibility alias)` : ''
+    }</p>
+${apiTables(e.tagName)}`;
+  })
+  .join('\n')}`
+        )
+        .join('\n')
     );
-    return `
-     <h1>API</h1>
-     ${elements
-       .map(
-         (element) => `
-       <h2>&lt;${element.tagName}></h2>
-       <div>
-         ${element.description}
-       </div>
-       ${renderTable(
-         'Attributes',
-         ['name', 'description', 'type.text', 'default'],
-         element.attributes
-       )}
-       ${renderTable(
-         'Properties',
-         ['name', 'attribute', 'description', 'type.text', 'default'],
-         element.members?.filter((m) => m.kind === 'field')
-       )}  
-       ${renderTable(
-         'Methods',
-         ['name', 'parameters', 'description', 'return.type.text'],
-         element.members
-           ?.filter((m) => m.kind === 'method' && m.privacy !== 'private')
-           .map((m) => ({
-             ...m,
-             parameters: renderTable(
-               '',
-               ['name', 'description', 'type.text'],
-               m.parameters
-             ),
-           }))
-       )}
-       ${renderTable('Events', ['name', 'description'], element.events)}    
-       ${renderTable(
-         'Slots',
-         [['name', '(default)'], 'description'],
-         element.slots
-       )}  
-       ${renderTable(
-         'CSS Shadow Parts',
-         ['name', 'description'],
-         element.cssParts
-       )}
-       ${renderTable(
-         'CSS Custom Properties',
-         ['name', 'description'],
-         element.cssProperties
-       )}
-       `
-       )
-       .join('')}
-   `;
   }
 };
 
-/**
- * Reads a (possibly deep) path off of an object.
- */
-const get = (obj, path) => {
-  let fallback = '';
-  if (Array.isArray(path)) {
-    [path, fallback] = path;
-  }
-  const parts = path.split('.');
-  while (obj && parts.length) {
-    obj = obj[parts.shift()];
-  }
-  return obj == null || obj === '' ? fallback : obj;
-};
-
-/**
- * Renders a table of data, plucking the given properties from each item in
- * `data`.
- */
-const renderTable = (name, properties, data) => {
-  if (data === undefined || data.length === 0) {
-    return '';
-  }
-  return `
-   ${name ? `<h3>${name}</h3>` : ''}
-   <table>
-     <tr>
-       ${properties
-         .map(
-           (p) =>
-             `<th>${capitalize(
-               (Array.isArray(p) ? p[0] : p).split('.')[0]
-             )}</th>`
-         )
-         .join('')}
-     </tr>
-     ${data
-       .map(
-         (i) => `
-       <tr>
-         ${properties.map((p) => `<td>${get(i, p)}</td>`).join('')}
-       </tr>
-     `
-       )
-       .join('')}
-   </table>
- `;
-};
-
-const capitalize = (s) => s[0].toUpperCase() + s.substring(1);

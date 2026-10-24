@@ -1,65 +1,62 @@
 ---
-layout: example.11ty.cjs
-title: material-next-web-components ⌲ Examples ⌲ Expressive tab bar
-tags: example
+tags: reference
 name: Expressive tab bar
-description: Rounded Material Web tabs for app, article, and docs navigation
+description: Rounded Material 3 expressive tabs for section navigation, built on Material Web tabs.
+category: components
 icon: tab
+status: experimental
 tagName: mnw-expressive-tab-bar
-order: 1
+importPath: material-next-web-components/expressive-tab-bar.js
+order: 20
 ---
 
-Use `<mnw-expressive-tab-bar>` when a page needs prominent rounded navigation while still using Material Web tabs internally. The older `<md-expressive-tab-bar>` tag remains a compatibility alias during the experimental phase.
+## Overview
+
+`<mnw-expressive-tab-bar>` is a pill-shaped bar of Material Web primary tabs, with icons above, below, before or after the labels. Use it for a few peer sections of one page or article: Overview, Usage, Accessibility. It renders a `<nav>` landmark, and each tab with an `href` holds a real link.
+
+Use plain Material Web `md-tabs` for panels that switch content in place without a URL, and a navigation bar or rail for an app's top-level destinations.
+
+`<md-expressive-tab-bar>` is the same element under its first name. It stays registered as a compatibility alias; new code uses `mnw-expressive-tab-bar`.
 
 ## Live demo
 
-<div class="demo-panel">
-  <mnw-expressive-tab-bar active-index="1"></mnw-expressive-tab-bar>
-  <mnw-expressive-tab-bar icon-position="end" active-index="2"></mnw-expressive-tab-bar>
-</div>
+{% demo "expressive-tab-bar" "Both bars cancel navigate, so the links do not move the page." "demo__stage--column" %}
 
-## Code
+## Usage
 
-<mnw-code-block language="html" copy code='<mnw-expressive-tab-bar active-index="1"></mnw-expressive-tab-bar>
-<mnw-expressive-tab-bar icon-position="end" active-index="2"></mnw-expressive-tab-bar>'></mnw-code-block>
+Tabs are objects, so set them through the `tabs` property: `{label: string, href: string, icon?: string}`, where `icon` is a Material Symbols name. The default is three placeholder tabs, so always set it.
+
+Selecting a tab updates `activeIndex` and fires `change`. If the tab has an `href`, `navigate` fires next: cancel it to route in JavaScript, or let the browser follow the link.
+
+```ts
+import 'material-next-web-components/expressive-tab-bar.js';
+
+const bar = document.querySelector('mnw-expressive-tab-bar')!;
+bar.tabs = [
+  {label: 'Overview', icon: 'article', href: '/guide/'},
+  {label: 'API', icon: 'code', href: '/guide/api/'},
+];
+bar.activeIndex = 0;
+bar.addEventListener('navigate', (event) => {
+  event.preventDefault();
+  router.go((event as CustomEvent).detail.item.href);
+});
+```
 
 ## API
 
-| Property        | Type                                    | Default          | Description                                                |
-| --------------- | --------------------------------------- | ---------------- | ---------------------------------------------------------- |
-| `active-index`  | `number`                                | `0`              | Selects the active tab by index.                           |
-| `icon-position` | `'top' \| 'bottom' \| 'start' \| 'end'` | `'top'`          | Places icons around labels.                                |
-| `tabs`          | `DocsNavigationItem[]`                  | example items    | JavaScript-only item data for custom tab labels and links. |
-| `aria-label`    | `string`                                | `'Article tabs'` | Accessible label for the navigation landmark.              |
+{% api "mnw-expressive-tab-bar" %}
 
-## Slots
+`icon-position` accepts `top`, `bottom`, `start` and `end`; any other value is treated as `top`. `active-index` is clamped to the tabs that exist. `change` only fires when the index actually changes.
 
-| Slot | Description                                 |
-| ---- | ------------------------------------------- |
-| none | Tabs are rendered from the `tabs` property. |
+## Accessibility
 
-## Events
+- The bar is a `<nav>` named by `aria-label` (default "Article tabs"). Give each bar on a page its own name.
+- Material Web tabs move between tabs with the arrow keys. A tab with an `href` contains a link, so it can also be opened in a new tab.
+- Icons are decorative; the label is always shown.
 
-| Event      | Description                                      |
-| ---------- | ------------------------------------------------ |
-| `change`   | Fired when the selected tab changes.             |
-| `navigate` | Cancelable event fired before anchor navigation. |
+## Limitations
 
-## Accessibility notes
-
-- Use clear tab labels that describe the destination.
-- Keep the active tab synchronized with the current page or hash.
-- Preserve native link fallback when intercepting `navigate`.
-
-## Design notes
-
-- Use the default top icon layout for expressive docs surfaces.
-- Use `start` or `end` icons when horizontal space is tighter.
-- Keep the bar near page or app navigation, not inside dense forms.
-
-## Theming and integration
-
-- Import `material-next-web-components/expressive-tab-bar.js` once before rendering the element.
-- Prefer `<mnw-expressive-tab-bar>` in new code. `<md-expressive-tab-bar>` is only a compatibility alias.
-- Set the `tabs` property from JavaScript for application routes or generated documentation routes.
-- Listen for the cancelable `navigate` event when your router should handle navigation instead of native anchors.
+- Experimental: names of the CSS custom properties may change before 1.0.
+- There are no tab panels: pair it with routing or anchors.
+- Many tabs scroll sideways; keep it to about five.

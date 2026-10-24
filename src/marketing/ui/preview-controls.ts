@@ -35,9 +35,11 @@ export type SettingsChangeEvent = CustomEvent<PreviewSettings>;
 export class MaterialNextPreviewControls extends LitElement {
   static override styles = styles;
 
+  /** The settings to show. */
   @property({attribute: false})
   settings: PreviewSettings = DEFAULT_PREVIEW_SETTINGS;
 
+  /** Settings that Reset sends; Reset shows while `settings` differ from them. */
   @property({attribute: false})
   defaults: PreviewSettings = DEFAULT_PREVIEW_SETTINGS;
 
@@ -75,11 +77,11 @@ export class MaterialNextPreviewControls extends LitElement {
           ? html`<div class="group">
               <span class="label">Palette</span>
               ${select(
-              'Palette',
-              palettes.map((p) => [p, paletteLabel(p)] as const),
-              s.palette,
-              (palette) => this.change({palette})
-            )}
+                'Palette',
+                palettes.map((p) => [p, paletteLabel(p)] as const),
+                s.palette,
+                (palette) => this.change({palette})
+              )}
             </div>`
           : nothing
       }

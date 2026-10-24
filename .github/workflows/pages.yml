@@ -31,6 +31,12 @@ jobs:
         run: npm install
       - name: Build documentation
         run: npm run docs
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      # Links, assets, console errors, navigation and demos, under this site's
+      # /material-next-web-components/ path. A failure stops the deploy.
+      - name: Check documentation
+        run: npm run docs:check
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:

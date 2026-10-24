@@ -26,7 +26,18 @@ const defaultTabs: ExpressiveTabItem[] = exampleNavigationItems;
  * A Material 3 expressive top app tab bar styled with rounded app-navigation
  * chrome and Material Web tabs.
  *
- * @fires change - Fired when the selected tab changes.
+ * @fires change - `{activeIndex, item}` after the selected tab changes.
+ * @fires navigate - `{index, item}` before following a tab's `href`. Cancelable:
+ *   `preventDefault()` keeps the browser from following the link, for routing
+ *   in JavaScript.
+ * @cssprop --mnw-expressive-tab-bar-container-color - Bar background.
+ * @cssprop --mnw-expressive-tab-bar-on-container - Inactive label and icon colour.
+ * @cssprop --mnw-expressive-tab-bar-active-container - Active tab background.
+ * @cssprop --mnw-expressive-tab-bar-on-active-container - Active label and icon colour.
+ * @cssprop --mnw-expressive-tab-bar-shape - Corner radius. Default `28px`.
+ * @cssprop --mnw-expressive-tab-bar-height - Tab height. Default `79px`.
+ * @cssprop --mnw-expressive-tab-min-width - Minimum tab width.
+ * @cssprop --mnw-expressive-tab-padding-inline - Tab inline padding.
  * @csspart tabs - The underlying Material Web tabs element.
  * @csspart tab - Each Material Web primary tab.
  */
@@ -46,7 +57,10 @@ export class MdExpressiveTabBar extends LitElement {
   @property({attribute: 'icon-position', reflect: true})
   iconPosition: ExpressiveTabIconPosition = 'top';
 
-  /** Tab item data. Set this property from JavaScript for custom labels. */
+  /**
+   * The tabs, as `{label, href, icon?}` objects. JavaScript property only. The
+   * default is three placeholder tabs linking to `#` anchors; always set it.
+   */
   @property({attribute: false})
   tabs: ExpressiveTabItem[] = defaultTabs;
 
@@ -71,8 +85,9 @@ export class MdExpressiveTabBar extends LitElement {
                 part="tab"
                 aria-label=${tab.label}
                 ?active=${index === activeIndex}
-                .inlineIcon=${iconPosition === 'start' ||
-                iconPosition === 'end'}
+                .inlineIcon=${
+                  iconPosition === 'start' || iconPosition === 'end'
+                }
                 @click=${(event: MouseEvent) =>
                   this.handleTabClick(event, index)}
               >
@@ -82,14 +97,18 @@ export class MdExpressiveTabBar extends LitElement {
                     [`icon-${iconPosition}`]: true,
                   })}
                 >
-                  ${tab.icon
-                    ? html`<md-icon class="tab-icon">${tab.icon}</md-icon>`
-                    : nothing}
-                  ${tab.href
-                    ? html`<a class="tab-link" href=${tab.href}
-                        >${tab.label}</a
-                      >`
-                    : html`<span class="tab-label">${tab.label}</span>`}
+                  ${
+                    tab.icon
+                      ? html`<md-icon class="tab-icon">${tab.icon}</md-icon>`
+                      : nothing
+                  }
+                  ${
+                    tab.href
+                      ? html`<a class="tab-link" href=${tab.href}
+                          >${tab.label}</a
+                        >`
+                      : html`<span class="tab-label">${tab.label}</span>`
+                  }
                 </span>
               </md-primary-tab>
             `

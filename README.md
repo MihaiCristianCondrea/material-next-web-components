@@ -6,6 +6,7 @@ Material-inspired Lit custom elements for product views, documentation pages, na
 
 ## Links
 
+- Documentation, with live demos: <https://mihaicristiancondrea.github.io/material-next-web-components/>
 - GitHub: <https://github.com/MihaiCristianCondrea/material-next-web-components>
 - Source docs: [`docs-src`](./docs-src)
 - Component examples: [`docs-src/examples`](./docs-src/examples)
@@ -44,14 +45,14 @@ import 'material-next-web-components/code-block.js';
 
 ## Components
 
-| Component                              | Import path                                          | Status             |
-| -------------------------------------- | ---------------------------------------------------- | ------------------ |
-| Code block                             | `material-next-web-components/code-block.js`         | Stable             |
-| App showcase                           | `material-next-web-components/app-showcase.js`       | Experimental       |
-| Expressive tab bar                     | `material-next-web-components/expressive-tab-bar.js` | Experimental       |
-| Home view                              | `material-next-web-components/material-next-home.js` | Experimental       |
-| Docs shell/page/top app bar/navigation | `material-next-web-components/docs/docs-page.js`     | Internal candidate |
-| Marketing hub                          | `material-next-web-components/marketing.js`          | Experimental       |
+| Component                              | Import path                                                                                                                                    | Status             |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| Code block                             | `material-next-web-components/code-block.js`                                                                                                   | Stable             |
+| App showcase                           | `material-next-web-components/app-showcase.js`                                                                                                 | Experimental       |
+| Expressive tab bar                     | `material-next-web-components/expressive-tab-bar.js`                                                                                           | Experimental       |
+| Home view                              | `material-next-web-components/material-next-home.js`                                                                                           | Experimental       |
+| Docs shell/page/top app bar/navigation | `material-next-web-components/docs-shell.js` (and `docs-page.js`, `docs-top-app-bar.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js`) | Internal candidate |
+| Marketing hub                          | `material-next-web-components/marketing.js`                                                                                                    | Experimental       |
 
 ## Marketing hub
 
@@ -101,19 +102,17 @@ The code is layered: `marketing/domain` (products, screens, preview settings, wi
 
 ## Documentation
 
-Documentation is authored in [`docs-src`](./docs-src) and compiled by GitHub Actions for GitHub Pages. The generated `docs` directory is not committed.
+The site at <https://mihaicristiancondrea.github.io/material-next-web-components/> has a page per element (live demo, copyable code, generated API), the [marketing hub guide](https://mihaicristiancondrea.github.io/material-next-web-components/guides/marketing-hub/) with a sample app, and the [API reference](https://mihaicristiancondrea.github.io/material-next-web-components/api/).
 
-Build the docs locally:
-
-```bash
-npm run docs
-```
-
-Serve the compiled docs locally:
+It is authored in [`docs-src`](./docs-src) with Eleventy and built by GitHub Actions for GitHub Pages; the generated `docs` directory is not committed. Demos are `docs-src/_demos/<id>.html` with an optional `src/docs/demos/<id>.ts`: the page shows that same source as the demo's code. The API tables come from `custom-elements.json`, so element documentation lives in JSDoc (`@fires`, `@slot`, `@cssprop`, property comments).
 
 ```bash
-npm run docs:serve
+npm run docs          # build into docs/
+npm run docs:check    # coverage, then every page in Chromium under /material-next-web-components/
+npm run docs:serve    # serve docs/ locally
 ```
+
+`docs:check` fails on undocumented exports or elements, broken links, anchors or assets, console errors, pages that scroll sideways at 360px, broken client-side navigation, and demos that stop working. The Pages workflow runs it before deploying.
 
 ## Development
 

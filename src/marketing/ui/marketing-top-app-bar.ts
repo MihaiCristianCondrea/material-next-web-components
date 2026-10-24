@@ -18,9 +18,11 @@ import {styles} from './marketing-top-app-bar-styles.js';
 export class MaterialNextMarketingTopAppBar extends LitElement {
   static override styles = styles;
 
+  /** The app's name, linked to `href`. */
   @property()
   name = '';
 
+  /** URL of the app's icon, 32px; omitted when empty. */
   @property()
   icon = '';
 
@@ -32,6 +34,7 @@ export class MaterialNextMarketingTopAppBar extends LitElement {
   @property()
   context = '';
 
+  /** Raised tone; set by the element while the window is scrolled. */
   @property({type: Boolean, reflect: true})
   scrolled = false;
 

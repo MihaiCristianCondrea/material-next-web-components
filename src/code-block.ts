@@ -14,7 +14,25 @@ import {
 } from 'lit/decorators.js';
 import {styles} from './code-block-styles.js';
 
-/** A Material code block with Google Sans Code typography and copy action. */
+/**
+ * A Material code block with Google Sans Code typography, lightweight syntax
+ * colours and an optional copy action.
+ *
+ * @slot - Code as text, used when `code` is empty. Wrap markup in a
+ *   `<template>` so the browser does not render it.
+ * @fires mnw-code-copy - `{code}` after the code is written to the clipboard.
+ * @fires mnw-code-copy-error - `{code, error}` when the Clipboard API is missing
+ *   or refuses; the block shows "Copy failed".
+ * @cssprop --md-sys-color-code-background - Code surface.
+ * @cssprop --md-sys-color-code-on-background - Code text.
+ * @cssprop --md-sys-color-code-comment - Comment tokens.
+ * @cssprop --md-sys-color-code-punctuation - Punctuation tokens.
+ * @cssprop --md-sys-color-code-tag - Markup tag tokens.
+ * @cssprop --md-sys-color-code-string - String tokens.
+ * @cssprop --md-sys-color-code-keyword - Keyword tokens.
+ * @cssprop --md-sys-color-code-function - Function name tokens.
+ * @cssprop --md-sys-color-code-variable - Variable and number tokens.
+ */
 @customElement('mnw-code-block')
 export class MaterialNextCodeBlock extends LitElement {
   static override styles = styles;
@@ -74,21 +92,24 @@ export class MaterialNextCodeBlock extends LitElement {
       <figure class="code-block">
         <figcaption class="header">
           <span class="language">${this.language}</span>
-          ${this.copy
-            ? html`<md-assist-chip
-                class="copy-button"
-                label=${this.copied ? 'Copied' : 'Copy'}
-                @click=${this.copyCode}
-              >
-                <md-icon slot="icon"
-                  >${this.copied ? 'done' : 'content_copy'}</md-icon
+          ${
+            this.copy
+              ? html`<md-assist-chip
+                  class="copy-button"
+                  label=${this.copied ? 'Copied' : 'Copy'}
+                  @click=${this.copyCode}
                 >
-              </md-assist-chip>`
-            : nothing}
+                  <md-icon slot="icon"
+                    >${this.copied ? 'done' : 'content_copy'}</md-icon
+                  >
+                </md-assist-chip>`
+              : nothing
+          }
           <span class="copy-status" aria-live="polite">${this.copyStatus}</span>
         </figcaption>
-        <pre><code class="language-${this
-          .normalizedLanguage}">${this.highlightedCode.map((token) =>
+        <pre><code class="language-${
+          this.normalizedLanguage
+        }">${this.highlightedCode.map((token) =>
           token.className
             ? html`<span class="token ${token.className}">${token.text}</span>`
             : token.text
