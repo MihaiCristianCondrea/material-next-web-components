@@ -46,11 +46,14 @@ const outputs = [
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 
-// Marketing modules compile every non-partial stylesheet next to its element.
-for (const entry of await readdir('src/marketing', {
-  recursive: true,
-  withFileTypes: true,
-})) {
+// Marketing and launcher modules compile every non-partial stylesheet next to
+// its element.
+const modules = await Promise.all(
+  ['src/marketing', 'src/launcher'].map((dir) =>
+    readdir(dir, {recursive: true, withFileTypes: true})
+  )
+);
+for (const entry of modules.flat()) {
   if (!entry.isFile() || !entry.name.endsWith('.scss')) continue;
   if (entry.name.startsWith('_')) continue;
   const input = join(entry.parentPath, entry.name).replaceAll('\\', '/');

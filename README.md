@@ -53,6 +53,7 @@ import 'material-next-web-components/code-block.js';
 | Home view                              | `material-next-web-components/material-next-home.js`                                                                                           | Experimental       |
 | Docs shell/page/top app bar/navigation | `material-next-web-components/docs-shell.js` (and `docs-page.js`, `docs-top-app-bar.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js`) | Internal candidate |
 | Marketing hub                          | `material-next-web-components/marketing.js`                                                                                                    | Experimental       |
+| Product launcher                       | `material-next-web-components/launcher.js`                                                                                                     | Experimental       |
 
 ## Marketing hub
 

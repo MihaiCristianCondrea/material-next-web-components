@@ -81,6 +81,39 @@ const table = (caption, head, rows) =>
         .join('')}</tbody></table></div>`
     : '';
 
+const textOf = (fragment) =>
+  fragment
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/"/g, '&quot;');
+
+/**
+ * Labels every body cell with its column header (`data-label`), so phones can
+ * show each row as a labelled card, and states the table roles explicitly,
+ * which a stacked (display: block) table otherwise loses in some browsers.
+ */
+const labelTables = (html) =>
+  html.replace(/<table>([\s\S]*?)<\/table>/g, (whole, inner) => {
+    const head = inner.match(/<thead>([\s\S]*?)<\/thead>/);
+    if (!head) return whole;
+    const labels = [...head[1].matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/g)].map(
+      (m) => textOf(m[1])
+    );
+    const body = inner
+      .replace(/<(thead|tbody)>/g, '<$1 role="rowgroup">')
+      .replace(/<th\b/g, '<th role="columnheader"')
+      .replace(/<tr>([\s\S]*?)<\/tr>/g, (row, cells) => {
+        let index = 0;
+        return `<tr role="row">${cells.replace(
+          /<td(\s[^>]*)?>/g,
+          (m, attrs = '') =>
+            `<td${attrs} role="cell" data-label="${labels[index++] ?? ''}">`
+        )}</tr>`;
+      });
+    return `<table role="table">${body}</table>`;
+  });
+
 /**
  * The generated API of one element: properties (with their attribute, or
  * "property only"), events, slots, CSS custom properties and parts.
@@ -98,7 +131,9 @@ const apiTables = (tagName, {heading = false} = {}) => {
       !m.readonly
   );
   const attrByField = new Map(
-    (e.attributes ?? []).filter((a) => a.fieldName).map((a) => [a.fieldName, a.name])
+    (e.attributes ?? [])
+      .filter((a) => a.fieldName)
+      .map((a) => [a.fieldName, a.name])
   );
   const props = table(
     `<${tagName}> properties`,
@@ -134,7 +169,10 @@ const apiTables = (tagName, {heading = false} = {}) => {
   const cssProps = table(
     `<${tagName}> CSS custom properties`,
     ['Custom property', 'Description'],
-    (e.cssProperties ?? []).map((p) => [code(p.name), inline(p.description ?? '')])
+    (e.cssProperties ?? []).map((p) => [
+      code(p.name),
+      inline(p.description ?? ''),
+    ])
   );
   const parts = table(
     `<${tagName}> CSS parts`,
@@ -146,7 +184,9 @@ const apiTables = (tagName, {heading = false} = {}) => {
     ? `<p class="api-summary">${inline(e.description)}</p>`
     : '';
   return `<section class="api-block" data-api="${tagName}">${
-    heading ? `<h3 id="api-${slug(tagName)}"><code>&lt;${tagName}&gt;</code></h3>` : ''
+    heading
+      ? `<h3 id="api-${slug(tagName)}"><code>&lt;${tagName}&gt;</code></h3>`
+      : ''
   }${intro}${body || '<p class="muted">No public properties, events or slots.</p>'}</section>`;
 };
 
@@ -158,8 +198,14 @@ const DEMO_TS = path.join('src', 'docs', 'demos');
 
 const packagePaths = (source) =>
   source
-    .replace(/(['"])(?:\.\.\/)+marketing\/index\.js\1/g, "'material-next-web-components/marketing.js'")
-    .replace(/(['"])(?:\.\.\/)+([a-z-]+)\.js\1/g, "'material-next-web-components/$2.js'")
+    .replace(
+      /(['"])(?:\.\.\/)+marketing\/index\.js\1/g,
+      "'material-next-web-components/marketing.js'"
+    )
+    .replace(
+      /(['"])(?:\.\.\/)+([a-z-]+)\.js\1/g,
+      "'material-next-web-components/$2.js'"
+    )
     .replace(/^\s*\/\/ docs:hide.*\n/gm, '');
 
 const readDemo = (id) => {
@@ -219,7 +265,10 @@ const source = (file, language) => {
   if (open && close && close.index > open.index) {
     text = text.slice(open.index + open[0].length, close.index);
     const indent = Math.min(
-      ...text.split('\n').filter((l) => l.trim()).map((l) => l.match(/^\s*/)[0].length)
+      ...text
+        .split('\n')
+        .filter((l) => l.trim())
+        .map((l) => l.match(/^\s*/)[0].length)
     );
     text = text
       .split('\n')
@@ -234,6 +283,7 @@ const source = (file, language) => {
 };
 
 module.exports = {
+  labelTables,
   apiTables,
   source,
   codeBlock,

@@ -6,10 +6,11 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({public: '.'});
   // The sample product's own theme and data, used by the live demos.
   eleventyConfig.addPassthroughCopy({'docs-src/demos/assets': 'demos/assets'});
-  // Device frames and the Google Play badge, as a hub copies them with
+  // Device frames, launcher icons and the Google Play badge, as a hub copies them with
   // `mnw-marketing-assets`; the docs bundle points configureMarketingAssets() here.
   eleventyConfig.addPassthroughCopy({
     'assets/marketing/device-frames': 'material-next/device-frames',
+    'assets/marketing/launcher': 'material-next/launcher',
     'assets/marketing/badges/google-play/en_badge_web_generic.png':
       'material-next/badges/google-play/en_badge_web_generic.png',
   });
@@ -32,6 +33,12 @@ module.exports = function (eleventyConfig) {
       const language = token.info.trim().split(/\s+/)[0] || 'text';
       return `${lib.codeBlock(language, token.content)}\n`;
     };
+  });
+
+  eleventyConfig.addTransform('table-labels', function (content) {
+    return (this.page.outputPath || '').endsWith('.html')
+      ? lib.labelTables(content)
+      : content;
   });
 
   eleventyConfig.addShortcode('demo', (id, caption, stage) =>

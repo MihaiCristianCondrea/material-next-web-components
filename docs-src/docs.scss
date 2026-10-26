@@ -13,8 +13,10 @@
   color-scheme: light;
   --md-ref-typeface-brand: 'Google Sans Flex', system-ui, sans-serif;
   --md-ref-typeface-plain: 'Google Sans Flex', system-ui, sans-serif;
-  --docs-font: 'Google Sans Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --docs-code-font: 'Google Sans Code', ui-monospace, 'SFMono-Regular', monospace;
+  --docs-font:
+    'Google Sans Flex', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --docs-code-font:
+    'Google Sans Code', ui-monospace, 'SFMono-Regular', monospace;
 
   --md-sys-color-primary: #6750a4;
   --md-sys-color-on-primary: #ffffff;
@@ -41,7 +43,8 @@
   --docs-success-container: #c4eed0;
   --docs-warning-container: #ffdcbe;
   --docs-on-warning-container: #2c1600;
-  --docs-shadow: 0 1px 2px rgb(29 27 32 / 0.06), 0 4px 16px rgb(29 27 32 / 0.06);
+  --docs-shadow:
+    0 1px 2px rgb(29 27 32 / 0.06), 0 4px 16px rgb(29 27 32 / 0.06);
   --docs-header-height: 64px;
 }
 
@@ -164,9 +167,33 @@ img {
 .site-nav {
   display: flex;
   gap: 4px;
+  // The pill wraps every link, also when the bar's nav row scrolls.
+  width: max-content;
   padding: 4px;
   border-radius: 999px;
   background: var(--md-sys-color-surface-container);
+}
+
+.site-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// Narrow windows: the navigation gets its own full-width row; the pill fills
+// it and its links scroll inside it, the active one kept in view.
+@media (max-width: 960px) {
+  .site-nav {
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .site-tab-link {
+    flex: 1 0 auto;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 14px;
+  }
 }
 
 .site-tab-link {
@@ -187,7 +214,11 @@ img {
 }
 
 .site-tab-link:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 8%,
+    transparent
+  );
   color: var(--md-sys-color-on-surface);
 }
 
@@ -206,7 +237,11 @@ img {
 }
 
 .icon-link:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 8%,
+    transparent
+  );
 }
 
 html[data-docs-navigating] .docs-route-content {
@@ -623,6 +658,87 @@ td:first-child {
   white-space: nowrap;
 }
 
+// Phones: each row becomes a card, every cell labelled with its column (the
+// build adds data-label), so long descriptions wrap at full width instead of
+// stretching rows in a 600px table.
+@media (max-width: 700px) {
+  .table-wrap {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+  }
+
+  table,
+  tbody,
+  tr,
+  td {
+    display: block;
+    min-width: 0;
+  }
+
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  tr {
+    margin-bottom: 12px;
+    padding: 4px 16px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: 16px;
+    background: var(--md-sys-color-surface-container-low);
+  }
+
+  // The label sits in a left column; the cell's own content (text and code
+  // mixed) flows in the rest.
+  td,
+  tr:last-child td {
+    position: relative;
+    min-height: 21px;
+    padding: 8px 0 8px calc(28% + 12px);
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    white-space: normal;
+  }
+
+  td:last-child,
+  tr:last-child td:last-child {
+    border-bottom: 0;
+  }
+
+  td::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 28%;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 21px;
+  }
+
+  // The first cell names the row: a title across the card.
+  td:first-child {
+    display: block;
+    padding: 10px 0;
+    font-weight: 600;
+    white-space: normal;
+  }
+
+  td:first-child::before {
+    content: none;
+  }
+
+  td code,
+  td:nth-child(2) code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
 .api-block {
   margin-bottom: 24px;
 }
@@ -682,6 +798,24 @@ td:first-child {
 
 .demo__code mnw-code-block:first-child {
   margin-top: 12px;
+}
+
+// A bar hosting a launcher demo, as an app bar would.
+.demo-launcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 8px 8px 8px 20px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--md-sys-color-surface-container);
+}
+
+.demo-launcher__label {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 14px;
 }
 
 // Readouts that show what a demo's events reported.
@@ -826,8 +960,11 @@ td:first-child {
   align-items: center;
 }
 
-.catalog-card__icon {
+// Google Fonts' .material-symbols-outlined sets display: inline-block after
+// this file loads, so the tile needs the higher specificity to stay centred.
+.catalog-card .catalog-card__icon {
   display: grid;
+  line-height: 1;
   place-items: center;
   width: 40px;
   height: 40px;
@@ -1041,7 +1178,11 @@ td:first-child {
 }
 
 .btn--filled:hover {
-  background: color-mix(in srgb, var(--md-sys-color-primary) 92%, var(--md-sys-color-on-primary));
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 92%,
+    var(--md-sys-color-on-primary)
+  );
 }
 
 .btn .material-symbols-outlined {

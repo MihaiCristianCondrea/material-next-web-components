@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Product launcher (`material-next-web-components/launcher.js`, experimental): `<mnw-product-launcher>`, an apps
+  button with editable favorites (add, remove, drag or Alt+arrow reorder, reset, localStorage) and a separate admin
+  redirects section, over Android apps, web products, consoles and shortcuts with `kind:key` ids. It hides the
+  current product, keeps hidden favorites in place, deduplicates entries and defaults to the author's projects,
+  migrating the metadata backend launcher's stored ids. Icons ship in `assets/marketing/launcher/`.
+- Documentation site: the launcher in the app bar; on phones the navigation pill holds every tab and keeps the
+  current one in view, tables stack into labelled rows, and catalog icons sit centred in their tiles.
+
 ## 0.2.0
 
 - Marketing hub (`material-next-web-components/marketing.js`, experimental): the gallery and prototype pages,

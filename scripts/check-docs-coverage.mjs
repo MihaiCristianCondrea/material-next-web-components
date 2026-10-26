@@ -22,6 +22,16 @@ for (const name of Object.keys(marketing)) {
   }
 }
 
+const launcher = await import(pathToFileURL('dist/launcher/index.js').href);
+const launcherPage = read('docs-src/examples/product-launcher.md');
+for (const name of Object.keys(launcher)) {
+  if (!new RegExp(`\`${name}\\b`).test(launcherPage)) {
+    problems.push(
+      `launcher.js exports ${name}, missing from docs-src/examples/product-launcher.md`
+    );
+  }
+}
+
 const pages = [
   ...readdirSync('docs-src/examples').map((f) => join('docs-src/examples', f)),
   ...readdirSync('docs-src/guides').map((f) => join('docs-src/guides', f)),
@@ -88,5 +98,5 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(
-  `Documentation coverage: ${Object.keys(marketing).length} marketing exports, every element and package export documented, ${used.size} demos wired.`
+  `Documentation coverage: ${Object.keys(marketing).length} marketing and ${Object.keys(launcher).length} launcher exports, every element and package export documented, ${used.size} demos wired.`
 );

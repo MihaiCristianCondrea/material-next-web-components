@@ -150,6 +150,14 @@
       "default": "./dist/marketing/*.js"
     },
     "./marketing/assets/*": "./assets/marketing/*",
+    "./launcher.js": {
+      "types": "./dist/launcher/index.d.ts",
+      "default": "./dist/launcher/index.js"
+    },
+    "./launcher/*.js": {
+      "types": "./dist/launcher/*.d.ts",
+      "default": "./dist/launcher/*.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

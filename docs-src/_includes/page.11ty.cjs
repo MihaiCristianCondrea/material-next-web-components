@@ -59,12 +59,18 @@ module.exports = function (data) {
         </a>
         <div class="site-nav">
           ${site.topLevel
-            .map((link, index) => `<a class="site-tab-link" href="${to(link.href)}" data-route-prefix="${
-              link.prefix ?? link.href
-            }"${index === activeIndex ? ' aria-current="page"' : ''}>${link.label}</a>`)
+            .map(
+              (link, index) =>
+                `<a class="site-tab-link" href="${to(link.href)}" data-route-prefix="${
+                  link.prefix ?? link.href
+                }"${index === activeIndex ? ' aria-current="page"' : ''}>${link.label}</a>`
+            )
             .join('\n          ')}
         </div>
-        <a slot="trailing" class="icon-link" href="${site.repository}" aria-label="Source on GitHub" title="Source on GitHub">${githubMark}</a>
+        <div slot="trailing" class="site-actions">
+          <a class="icon-link" href="${site.repository}" aria-label="Source on GitHub" title="Source on GitHub">${githubMark}</a>
+          <mnw-product-launcher current-product="web:material-next"></mnw-product-launcher>
+        </div>
       </mnw-docs-top-app-bar>
       <mnw-docs-page>
         <div id="main-content" class="docs-route-content" tabindex="-1">

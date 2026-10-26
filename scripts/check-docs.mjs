@@ -292,12 +292,12 @@ const ctx = await browser.newContext({viewport: {width: 1280, height: 900}});
 await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], {origin});
 const demo = await ctx.newPage();
 watch(demo, () => `demo ${current}`);
-const check = async (name, path, run) => {
+const check = async (name, path, run, on = demo) => {
   current = path;
   try {
-    await demo.goto(`${base}${path}`, {waitUntil: 'networkidle'});
-    await settle(demo);
-    await run(demo);
+    await on.goto(`${base}${path}`, {waitUntil: 'networkidle'});
+    await settle(on);
+    await run(on);
     interactions.push(name);
   } catch (error) {
     problem(`demo ${path}`, `${name}: ${error.message.split('\n')[0]}`);
@@ -460,7 +460,169 @@ await check('skip link and keyboard focus', '', async (p) => {
   if (focused !== 'main-content')
     throw new Error(`Enter on the skip link focused "${focused}"`);
 });
+const launcherTitles = (p, launcher) =>
+  p
+    .locator(`${launcher} .grid--favorites .title`)
+    .allTextContents()
+    .then((titles) => titles.map((t) => t.trim()));
+await check(
+  'edit and persist launcher favorites',
+  'examples/product-launcher/',
+  async (p) => {
+    const launcher = '#projects-launcher';
+    await p.evaluate(() => localStorage.clear());
+    await p.locator(`${launcher} .trigger`).click();
+    await p.locator(`${launcher} .panel`).waitFor({state: 'visible'});
+    const before = await launcherTitles(p, launcher);
+    if (before.includes('Material Next') || before.length !== 5)
+      throw new Error(`the current product shows: ${before.join(', ')}`);
+    await p.locator(`${launcher} .edit`).click();
+    await p.locator(`${launcher} .tile--editing`).nth(1).focus();
+    await p.keyboard.press('Alt+ArrowLeft');
+    await expectText(
+      logOf(p),
+      /launcher-change .*"shortcut:github".*"console:tutorials-admin"/
+    );
+    await p.locator(`${launcher} .tile--add`).first().click();
+    await expectText(logOf(p), /console:play-console"\]/);
+    await p.reload({waitUntil: 'networkidle'});
+    await settle(p);
+    await p.locator(`${launcher} .trigger`).click();
+    const after = await launcherTitles(p, launcher);
+    if (after[0] !== 'GitHub profile' || after.at(-1) !== 'Play Console')
+      throw new Error(`favorites did not persist: ${after.join(', ')}`);
+    const stored = await p.evaluate(() =>
+      JSON.parse(localStorage.getItem('mnw-docs-demo:launcher'))
+    );
+    // Material Next is hidden here but keeps its slot in the stored list.
+    if (!stored.favoriteIds.includes('web:material-next'))
+      throw new Error('the hidden favorite was dropped');
+    await p.keyboard.press('Escape');
+    const focused = await p.evaluate(
+      () => document.activeElement?.id === 'projects-launcher'
+    );
+    if (!focused) throw new Error('Escape did not return focus to the button');
+    // Drag with the pointer: the last favorite to the front.
+    await p.locator(`${launcher} .trigger`).click();
+    await p.locator(`${launcher} .edit`).click();
+    const tiles = p.locator(`${launcher} .tile--editing`);
+    const from = await tiles.last().boundingBox();
+    const to = await tiles.first().boundingBox();
+    await p.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    await p.mouse.down();
+    await p.mouse.move(to.x + to.width / 2, to.y + to.height / 2, {steps: 8});
+    await p.mouse.up();
+    const dragged = await launcherTitles(p, launcher);
+    if (dragged[0] !== 'Play Console')
+      throw new Error(`dragging did not reorder: ${dragged.join(', ')}`);
+    await p.locator(`${launcher} .reset`).click();
+    const reset = await launcherTitles(p, launcher);
+    if (reset.join() !== before.join())
+      throw new Error(`reset gave ${reset.join(', ')}`);
+  }
+);
+await check('the app bar launcher loads its icons', '', async (p) => {
+  const launcher = '.site-actions mnw-product-launcher';
+  await p.locator(`${launcher} .trigger`).click();
+  await p.locator(`${launcher} .panel`).waitFor({state: 'visible'});
+  await p.waitForFunction(() =>
+    [
+      ...document
+        .querySelector('.site-actions mnw-product-launcher')
+        .shadowRoot.querySelectorAll('img'),
+    ].every((img) => img.complete && img.naturalWidth > 0)
+  );
+  await p.mouse.click(10, 500);
+  const open = await p.locator(launcher).getAttribute('open');
+  if (open !== null) throw new Error('a click outside did not close it');
+});
 await ctx.close();
+
+// Phone layouts: the fixes for cramped navigation, tall table rows and
+// off-centre catalog icons, and the launcher as a bottom sheet.
+const phoneContext = await browser.newContext({
+  viewport: {width: 360, height: 780},
+  hasTouch: true,
+});
+const handset = await phoneContext.newPage();
+watch(handset, () => `phone ${current}`);
+await check(
+  'the active tab and its pill stay in view',
+  'roadmap/',
+  async (p) => {
+    const {pill, link} = await p.evaluate(() => {
+      const box = (e) => e.getBoundingClientRect().toJSON();
+      const nav = document.querySelector('.site-nav');
+      return {
+        pill: box(nav),
+        link: box(nav.querySelector('[aria-current="page"]')),
+      };
+    });
+    if (link.left < 0 || link.right > 360)
+      throw new Error(
+        `the Roadmap tab is off screen (${link.left}..${link.right})`
+      );
+    if (link.left < pill.left || link.right > pill.right)
+      throw new Error('the active tab sits outside the nav pill');
+  },
+  handset
+);
+await check(
+  'tables stack into labelled rows',
+  'roadmap/',
+  async (p) => {
+    const rows = await p.evaluate(() =>
+      [...document.querySelectorAll('.prose tbody tr')].map((tr) => ({
+        height: tr.getBoundingClientRect().height,
+        labelled: [...tr.cells].every((td) => td.dataset.label),
+      }))
+    );
+    if (!rows.length) throw new Error('no table');
+    if (rows.some((r) => !r.labelled)) throw new Error('a cell has no label');
+    const tallest = Math.max(...rows.map((r) => r.height));
+    if (tallest > 360) throw new Error(`a row is ${tallest}px tall`);
+  },
+  handset
+);
+await check(
+  'catalog icons sit centred in their tiles',
+  'examples/',
+  async (p) => {
+    const off = await p.evaluate(() =>
+      [...document.querySelectorAll('.catalog-card__icon')].map((tile) => {
+        const range = document.createRange();
+        range.selectNodeContents(tile);
+        const glyph = range.getBoundingClientRect();
+        const box = tile.getBoundingClientRect();
+        return Math.abs(
+          glyph.left + glyph.width / 2 - (box.left + box.width / 2)
+        );
+      })
+    );
+    if (off.some((d) => d > 2))
+      throw new Error(`an icon is ${Math.max(...off).toFixed(1)}px off centre`);
+  },
+  handset
+);
+await check(
+  'the launcher is a bottom sheet on phones',
+  'examples/product-launcher/',
+  async (p) => {
+    const launcher = '.site-actions mnw-product-launcher';
+    await p.locator(`${launcher} .trigger`).tap();
+    const panel = p.locator(`${launcher} .panel`);
+    await panel.waitFor({state: 'visible'});
+    // After the sheet's entrance animation.
+    await p.waitForTimeout(400);
+    const box = await panel.boundingBox();
+    if (Math.round(box.width) !== 360 || Math.round(box.y + box.height) !== 780)
+      throw new Error(`the sheet is at ${JSON.stringify(box)}`);
+    await p.locator(`${launcher} .close`).tap();
+    await panel.waitFor({state: 'hidden'});
+  },
+  handset
+);
+await phoneContext.close();
 
 await browser.close();
 server.close();

@@ -14,6 +14,7 @@ import docsNavigation from './docs-navigation.js';
 import embed from './embed.js';
 import expressiveTabBar from './expressive-tab-bar.js';
 import previewControls from './preview-controls.js';
+import productLauncher from './product-launcher.js';
 import screenCard from './screen-card.js';
 import screenHost from './screen-host.js';
 import screenInspector from './screen-inspector.js';
@@ -28,6 +29,7 @@ const demos: Record<string, Demo> = {
   embed,
   'expressive-tab-bar': expressiveTabBar,
   'preview-controls': previewControls,
+  'product-launcher': productLauncher,
   'screen-card': screenCard,
   'screen-host': screenHost,
   'screen-inspector': screenInspector,

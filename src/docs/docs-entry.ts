@@ -16,6 +16,7 @@ import '../docs-vertical-tabs.js';
 import '../expressive-tab-bar.js';
 import '../material-next-home.js';
 import '../marketing/index.js';
+import '../launcher/index.js';
 import {configureMarketingAssets} from '../marketing/index.js';
 import {runDemos} from './demos/index.js';
 
@@ -75,6 +76,19 @@ const updateSiteNav = (url: URL) => {
     if (selected) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
+  revealActiveTab();
+};
+
+/** Keeps the current section's link in view in the app bar's scrolling nav row. */
+const revealActiveTab = () => {
+  const link = document.querySelector<HTMLElement>(
+    '.site-tab-link[aria-current="page"]'
+  );
+  const row = link?.closest('.site-nav')?.assignedSlot?.parentElement;
+  if (!link || !row || row.scrollWidth <= row.clientWidth) return;
+  const box = row.getBoundingClientRect();
+  const tab = link.getBoundingClientRect();
+  row.scrollLeft += tab.left - box.left - (box.width - tab.width) / 2;
 };
 
 /** Opens the side navigation on wide windows, folds it on narrow ones. */
@@ -261,6 +275,8 @@ window.addEventListener('popstate', () => {
 
 absolutizePersistentUrls();
 updateSiteNav(currentPageUrl);
+// The app bar renders its nav row after this script runs.
+requestAnimationFrame(revealActiveTab);
 enhancePage();
 if (currentPageUrl.hash)
   requestAnimationFrame(() => scrollToHash(currentPageUrl.hash));

@@ -9,6 +9,7 @@ const entries = [
   'docs-vertical-tabs.js',
   'docs-table-of-contents.js',
   'marketing/index.js',
+  'launcher/index.js',
 ];
 
 for (const entry of entries) {
