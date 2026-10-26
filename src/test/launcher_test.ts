@@ -135,7 +135,7 @@ suite('launcher domain', () => {
       ],
     });
     assert.lengthOf(apps.items, 2);
-    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 12);
+    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 9);
   });
 
   test('the current product, exclusions and the page URL hide entries', () => {
@@ -242,11 +242,22 @@ suite('launcher domain', () => {
     );
   });
 
-  test('the project catalog has the backend favorites and redirects', () => {
+  test('the project catalog omits removed products and keeps admin redirects', () => {
     assert.includeMembers(
       [...PROJECT_LAUNCHER_CATALOG.defaultFavorites],
-      ['console:tutorials-admin', 'shortcut:github', 'shortcut:codex']
+      ['shortcut:github', 'android-app:android-insider', 'web:material-next']
     );
+    for (const id of [
+      'console:tutorials-admin',
+      'shortcut:codex',
+      'android-app:smart-cleaner',
+    ]) {
+      assert.notInclude(
+        PROJECT_LAUNCHER_CATALOG.items.map((item) => item.id),
+        id
+      );
+      assert.notInclude(PROJECT_LAUNCHER_CATALOG.defaultFavorites, id);
+    }
     assert.deepEqual(
       [...PROJECT_LAUNCHER_CATALOG.redirects],
       [

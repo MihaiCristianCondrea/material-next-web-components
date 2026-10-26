@@ -26,14 +26,14 @@ The demo reads a local fixture, `demos/assets/apps.json`, so it does not depend 
 
 `apps-endpoint` must return JSON as an array of apps, or an object with the apps in `data`, `apps`, `data.apps`, `promotedApps` or `androidApps` (checked in that order). For each app the element reads the first field present:
 
-| Shown as | Fields read, in order | When missing |
-| --- | --- | --- |
-| Name | `appName`, `name`, `title` | The app is skipped |
-| Package | `packageName`, `package` | The app is skipped |
-| Category | `category`, `appCategory`: a string, or `{label}` | "Android app" |
-| Description | `shortDescription`, `description`, `summary`: the first non-empty line | A generic sentence |
-| Icon | `iconUrl`, `iconLogo`, `icon`, `image` | A placeholder icon |
-| Play link | `storeUrl`, `googlePlayUrl`, `url` | Built from the package name |
+| Shown as    | Fields read, in order                                                  | When missing                |
+| ----------- | ---------------------------------------------------------------------- | --------------------------- |
+| Name        | `appName`, `name`, `title`                                             | The app is skipped          |
+| Package     | `packageName`, `package`                                               | The app is skipped          |
+| Category    | `category`, `appCategory`: a string, or `{label}`                      | "Android app"               |
+| Description | `shortDescription`, `description`, `summary`: the first non-empty line | A generic sentence          |
+| Icon        | `iconUrl`, `iconLogo`, `icon`, `image`                                 | A placeholder icon          |
+| Play link   | `storeUrl`, `googlePlayUrl`, `url`                                     | Built from the package name |
 
 ```json
 {
@@ -43,7 +43,7 @@ The demo reads a local fixture, `demos/assets/apps.json`, so it does not depend 
       "packageName": "com.d4rk.cleaner",
       "category": "Tools",
       "shortDescription": "See what fills your phone's storage and clear what you don't need.",
-      "icon": "https://example.com/icons/smart-cleaner.svg",
+      "icon": "https://example.com/icons/app.png",
       "storeUrl": "https://play.google.com/store/apps/details?id=com.d4rk.cleaner"
     }
   ]

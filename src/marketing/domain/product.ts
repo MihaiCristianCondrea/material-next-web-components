@@ -15,17 +15,13 @@ export interface MarketingProduct {
   name: string;
   /** Square app icon (SVG or PNG), relative to the hub's public folder. */
   icon: string;
-  /** Short page heading. One line on desktop. */
-  headline: string;
-  /** One sentence under the heading, 20 words at most. */
-  description: string;
-  /** Google Play listing. Shows the official badge in the hero and footer. */
+  /** Google Play listing. Shown as a footer link. */
   storeUrl?: string;
-  /** Source repository. Shows the GitHub badge. */
+  /** Source repository. Shown as a footer link. */
   repositoryUrl?: string;
   /** Extra links for the footer, in order. */
   links?: ProductLink[];
-  /** App version shown in the footer, never in the hero. */
+  /** App version shown in the footer. */
   version?: string;
   /** Credit line in the footer, for example the developer's name. */
   credit?: string;

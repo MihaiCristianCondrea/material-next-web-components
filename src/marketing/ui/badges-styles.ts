@@ -10,6 +10,16 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   display: inline-flex;
   vertical-align: middle;
 }
@@ -47,7 +57,7 @@ a:active {
   border: 1px solid var(--mnw-hub-border, rgba(23, 28, 36, 0.1));
   background: var(--mnw-hub-surface, #fff);
   color: var(--mnw-hub-text, #1b1c1e);
-  font: 500 14px/20px var(--mnw-hub-font, system-ui, sans-serif);
+  font: 500 14px/20px var(--_hub-font);
   letter-spacing: 0.1px;
   white-space: nowrap;
   transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), transform 120ms cubic-bezier(0.2, 0, 0, 1);

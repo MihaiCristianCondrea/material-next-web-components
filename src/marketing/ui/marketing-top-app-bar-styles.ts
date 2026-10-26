@@ -10,6 +10,16 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   position: sticky;
   top: 0;
   z-index: 20;
@@ -59,7 +69,7 @@ export const styles = css`
 }
 
 .name {
-  font: 500 18px/24px var(--mnw-hub-font);
+  font: 500 18px/24px var(--_hub-font);
   letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -67,7 +77,7 @@ export const styles = css`
 }
 
 .context {
-  font: 400 14px/20px var(--mnw-hub-font);
+  font: 400 14px/20px var(--_hub-font);
   color: var(--mnw-hub-text-subtle);
   white-space: nowrap;
 }

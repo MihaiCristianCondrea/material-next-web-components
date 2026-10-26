@@ -29,13 +29,6 @@ const catalog = createLauncherCatalog({
       product: 'pocket-notes',
     },
     {
-      kind: 'android-app',
-      key: 'smart-cleaner',
-      title: 'Smart Cleaner',
-      href: 'https://play.google.com/store/apps/details?id=com.d4rk.cleaner',
-      image: 'asset:launcher/smart-cleaner.svg',
-    },
-    {
       kind: 'shortcut',
       key: 'issues',
       title: 'Issues',
@@ -64,11 +57,7 @@ const catalog = createLauncherCatalog({
       image: 'asset:launcher/firebase.svg',
     },
   ],
-  defaultFavorites: [
-    'android-app:pocket-notes',
-    'android-app:smart-cleaner',
-    'shortcut:issues',
-  ],
+  defaultFavorites: ['android-app:pocket-notes', 'shortcut:issues'],
   redirects: ['console:play-console', 'console:firebase'],
 });
 

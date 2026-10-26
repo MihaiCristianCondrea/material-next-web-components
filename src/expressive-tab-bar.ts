@@ -34,7 +34,7 @@ const defaultTabs: ExpressiveTabItem[] = exampleNavigationItems;
  * @cssprop --mnw-expressive-tab-bar-on-container - Inactive label and icon colour.
  * @cssprop --mnw-expressive-tab-bar-active-container - Active tab background.
  * @cssprop --mnw-expressive-tab-bar-on-active-container - Active label and icon colour.
- * @cssprop --mnw-expressive-tab-bar-shape - Corner radius. Default `28px`.
+ * @cssprop --mnw-expressive-tab-bar-shape - Corner radius. Default `999px`.
  * @cssprop --mnw-expressive-tab-bar-height - Tab height. Default `79px`.
  * @cssprop --mnw-expressive-tab-min-width - Minimum tab width.
  * @cssprop --mnw-expressive-tab-padding-inline - Tab inline padding.

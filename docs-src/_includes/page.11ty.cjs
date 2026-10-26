@@ -58,6 +58,7 @@ module.exports = function (data) {
           <span class="brand-title">Material Next</span>
         </a>
         <div class="site-nav">
+          <span class="site-tab-indicator" aria-hidden="true"></span>
           ${site.topLevel
             .map(
               (link, index) =>

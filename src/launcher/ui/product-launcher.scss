@@ -1,7 +1,7 @@
 // The product launcher: an apps button and a panel of tiles. Surfaces nest in
 // tone (panel, favorites card, favorites well) and shapes follow the M3
 // Expressive scale: panel 28, card 24, well 20, tiles 16, icon tiles that
-// round out on hover. Colours come from the page's --md-sys-color-* tokens.
+// keep their shape on hover. Colours come from the page's --md-sys-color-* tokens.
 
 :host {
   --_ease: cubic-bezier(0.2, 0, 0, 1);
@@ -20,6 +20,12 @@
   --_on-error: var(--md-sys-color-on-error, #ffffff);
   --_outline: var(--md-sys-color-outline-variant, #c4c7cd);
   --_mono: var(--mnw-launcher-monochrome-filter, none);
+  font-family: var(
+    --md-ref-typeface-plain,
+    'Google Sans Flex',
+    system-ui,
+    sans-serif
+  );
   position: relative;
   display: inline-flex;
   vertical-align: middle;
@@ -183,9 +189,10 @@ h2 {
   text-decoration: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 180ms var(--_ease),
+    box-shadow 180ms var(--_ease);
   --md-focus-ring-shape: 16px;
-  --md-ripple-hover-color: var(--_text);
-  --md-ripple-pressed-color: var(--_text);
 }
 
 .icon {
@@ -195,17 +202,9 @@ h2 {
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  overflow: hidden;
-  background: var(--_primary-container);
-  color: var(--_on-primary-container);
-  transition:
-    border-radius 220ms var(--_ease),
-    transform 220ms var(--_spring);
-  --md-icon-size: 26px;
-}
-
-.icon:has(img) {
   background: transparent;
+  color: var(--_on-primary-container);
+  --md-icon-size: 26px;
 }
 
 .icon img {
@@ -213,6 +212,8 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  box-sizing: border-box;
+  padding: 1px;
 }
 
 .icon--monochrome img {
@@ -221,12 +222,12 @@ h2 {
   filter: var(--_mono);
 }
 
-// Expressive shape morph: the icon tile rounds out and lifts on hover and
-// keyboard focus.
-.tile:hover .icon,
-.tile:focus-visible .icon {
-  border-radius: 24px;
-  transform: scale(1.06);
+// Match the metadata launcher: one quiet surface highlight, stable artwork.
+.tile:hover,
+.tile:focus-visible {
+  background: color-mix(in srgb, var(--_card) 70%, transparent);
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--_outline) 25%, transparent);
 }
 
 .title {
@@ -260,13 +261,12 @@ h2 {
     transform 200ms var(--_spring),
     box-shadow 200ms var(--_ease),
     background-color 200ms var(--_ease);
-  animation: wobble 340ms ease-in-out 2;
+  animation: wobble 340ms ease-in-out infinite;
 }
 
 .tile--editing:hover,
 .tile--editing:focus-visible {
   background: color-mix(in srgb, var(--_text) 6%, transparent);
-  animation-play-state: paused;
 }
 
 .tile--dragging {
@@ -278,7 +278,15 @@ h2 {
   animation: none;
 }
 
+.cell:nth-child(even) .tile--editing {
+  animation-delay: -170ms;
+}
+
 @keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
   25% {
     transform: rotate(-1.4deg);
   }
@@ -433,13 +441,8 @@ h2 {
     animation: none;
   }
 
-  .icon,
+  .tile,
   .tile--editing {
     transition: none;
-  }
-
-  .tile:hover .icon,
-  .tile:focus-visible .icon {
-    transform: none;
   }
 }

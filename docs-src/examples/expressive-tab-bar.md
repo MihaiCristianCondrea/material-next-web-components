@@ -55,6 +55,8 @@ bar.addEventListener('navigate', (event) => {
 - Material Web tabs move between tabs with the arrow keys. A tab with an `href` contains a link, so it can also be opened in a new tab.
 - Icons are decorative; the label is always shown.
 
+The bar and selected tab are fully rounded by default (`999px`), including hover and pressed surfaces. Override `--mnw-expressive-tab-bar-shape` for a different shape.
+
 ## Limitations
 
 - Experimental: names of the CSS custom properties may change before 1.0.

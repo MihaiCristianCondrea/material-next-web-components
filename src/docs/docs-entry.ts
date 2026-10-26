@@ -76,7 +76,36 @@ const updateSiteNav = (url: URL) => {
     if (selected) link.setAttribute('aria-current', 'page');
     else link.removeAttribute('aria-current');
   }
+  positionSiteIndicator();
   revealActiveTab();
+};
+
+/** The docs chrome survives route changes, so one pill can move between links. */
+let indicatorAnimation: Animation | undefined;
+const positionSiteIndicator = (animate = true) => {
+  const nav = document.querySelector<HTMLElement>('.site-nav');
+  const selected = nav?.querySelector<HTMLElement>('[aria-current="page"]');
+  const indicator = nav?.querySelector<HTMLElement>('.site-tab-indicator');
+  if (!nav || !selected || !indicator) return;
+  const before = indicator.getBoundingClientRect();
+  const box = nav.getBoundingClientRect();
+  const target = selected.getBoundingClientRect();
+  const initialized = nav.hasAttribute('data-indicator');
+  indicatorAnimation?.cancel();
+  indicator.style.left = `${target.left - box.left}px`;
+  indicator.style.width = `${target.width}px`;
+  nav.setAttribute('data-indicator', '');
+  if (!animate || !initialized || prefersReducedMotion()) return;
+  indicatorAnimation = indicator.animate(
+    [
+      {
+        left: `${before.left - box.left}px`,
+        width: `${before.width}px`,
+      },
+      {left: `${target.left - box.left}px`, width: `${target.width}px`},
+    ],
+    {duration: 350, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
+  );
 };
 
 /** Keeps the current section's link in view in the app bar's scrolling nav row. */
@@ -273,6 +302,18 @@ window.addEventListener('popstate', () => {
   });
 });
 
+const siteNav = document.querySelector<HTMLElement>('.site-nav');
+if (siteNav) {
+  const observer = new ResizeObserver(() => {
+    positionSiteIndicator(false);
+    revealActiveTab();
+  });
+  observer.observe(siteNav);
+  siteNav
+    .querySelectorAll('.site-tab-link')
+    .forEach((link) => observer.observe(link));
+}
+void document.fonts.ready.then(() => positionSiteIndicator(false));
 absolutizePersistentUrls();
 updateSiteNav(currentPageUrl);
 // The app bar renders its nav row after this script runs.

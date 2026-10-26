@@ -165,6 +165,8 @@ img {
 }
 
 .site-nav {
+  position: relative;
+  isolation: isolate;
   display: flex;
   gap: 4px;
   // The pill wraps every link, also when the bar's nav row scrolls.
@@ -197,6 +199,7 @@ img {
 }
 
 .site-tab-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 40px;
@@ -1390,5 +1393,26 @@ mnw-screen-card {
 
   .host-demo__screen {
     zoom: 0.5;
+  }
+}
+
+// One persistent selection surface slides across the six ordinary page links.
+.site-tab-indicator {
+  position: absolute;
+  inset: 4px auto 4px 0;
+  transform-origin: left center;
+  z-index: -1;
+  border-radius: 999px;
+  background: var(--md-sys-color-secondary-container);
+  pointer-events: none;
+}
+
+.site-nav[data-indicator] .site-tab-link[aria-current='page'] {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-tab-link {
+    transition: none;
   }
 }

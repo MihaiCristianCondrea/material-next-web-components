@@ -9,23 +9,13 @@ import {launcherItem} from '../domain/launcher-item.js';
 /**
  * Mihai-Cristian Condrea's products and the consoles they run on: the
  * catalog <mnw-product-launcher> uses unless it is given another. The
- * favorites and admin redirects match the admin launcher of
+ * admin redirects match the admin launcher of
  * android-apps-metadata-backend, and its stored ids migrate.
  */
 
 const PLAY = 'https://play.google.com/store/apps/details?id=';
 
 export const PROJECT_LAUNCHER_ITEMS = [
-  launcherItem({
-    kind: 'console',
-    key: 'tutorials-admin',
-    title: 'Tutorials admin',
-    subtitle: 'Android Studio Tutorials API',
-    href: 'https://android-studio-tutorials-api.mihaicristiancondrea.workers.dev/admin/lessons',
-    icon: 'school',
-    image: 'asset:launcher/android-studio-tutorials.svg',
-    product: 'tutorials-api',
-  }),
   launcherItem({
     kind: 'shortcut',
     key: 'github',
@@ -34,24 +24,6 @@ export const PROJECT_LAUNCHER_ITEMS = [
     icon: 'code',
     image: 'asset:launcher/github.svg',
     monochrome: true,
-  }),
-  launcherItem({
-    kind: 'shortcut',
-    key: 'codex',
-    title: 'Codex',
-    href: 'https://chatgpt.com/codex/cloud',
-    icon: 'terminal',
-    image: 'asset:launcher/codex.svg',
-  }),
-  launcherItem({
-    kind: 'android-app',
-    key: 'smart-cleaner',
-    title: 'Smart Cleaner',
-    subtitle: 'Android app',
-    href: `${PLAY}com.d4rk.cleaner`,
-    icon: 'cleaning_services',
-    image: 'asset:launcher/smart-cleaner.svg',
-    product: 'smart-cleaner',
   }),
   launcherItem({
     kind: 'android-app',
@@ -128,10 +100,7 @@ export const PROJECT_LAUNCHER_ITEMS = [
 export const PROJECT_LAUNCHER_CATALOG = createLauncherCatalog({
   items: PROJECT_LAUNCHER_ITEMS,
   defaultFavorites: [
-    'console:tutorials-admin',
     'shortcut:github',
-    'shortcut:codex',
-    'android-app:smart-cleaner',
     'android-app:android-insider',
     'web:material-next',
   ],

@@ -19,7 +19,7 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher lists Mihai-Cristian Condrea's projects: the favorites and redirects of the admin launcher in [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin), plus Smart Cleaner, Android Insider, Material Next, App Toolkit and the apps metadata console. This site's app bar uses it, with `current-product="web:material-next"`.
+Without a `catalog`, the launcher lists GitHub, Android Insider, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
 
 ## Live demo
 
@@ -35,7 +35,7 @@ Import the module and place the element in an app bar's trailing area:
 </script>
 
 <mnw-product-launcher
-  current-product="android-app:smart-cleaner"
+  current-product="android-app:pocket-notes"
 ></mnw-product-launcher>
 ```
 
@@ -47,7 +47,7 @@ Every entry has a `kind` and a `key`, and its id is `kind:key`:
 
 | Kind          | For                                                | Example id                  |
 | ------------- | -------------------------------------------------- | --------------------------- |
-| `android-app` | An app's Play listing                              | `android-app:smart-cleaner` |
+| `android-app` | An app's Play listing                              | `android-app:pocket-notes` |
 | `web`         | A product site or web app                          | `web:material-next`         |
 | `console`     | An admin console or API dashboard                  | `console:play-console`      |
 | `shortcut`    | Anything else: a profile, a tool, an issue tracker | `shortcut:github`           |
@@ -135,10 +135,12 @@ Everything below comes from `material-next-web-components/launcher.js`; `launche
 
 The domain functions are pure, so a server-rendered page or a test can work out what a launcher shows without a browser.
 
+The built-in catalog no longer offers Tutorials admin, Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Favorites wobble for the duration of edit mode; reduced motion disables this animation.
+
 ## Accessibility
 
 - The apps button reports `aria-expanded`; the panel is a labelled dialog that takes focus when it opens and returns it to the button when Escape, the close button or a tap on the scrim closes it. A click outside or tabbing past the panel closes it too.
-- The edit button is a toggle (`aria-pressed`). In edit mode each favorite is a focusable group named with its position ("Codex, 3 of 5"), described by the reordering instructions.
+- The edit button is a toggle (`aria-pressed`). In edit mode each favorite is a focusable group named with its position ("GitHub profile, 1 of 2"), described by the reordering instructions.
 - Moves, additions, removals and resets are announced in a polite live region; focus stays on the moved tile or goes to its neighbour after a removal.
 - Links that open a new tab say so to screen readers. Tiles are at least 96px tall; the remove badge's hit area is 40px.
 - On phones (below 600px) the panel is a bottom sheet with a close button. With reduced motion, the open, wobble and reorder animations are off.

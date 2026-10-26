@@ -10,6 +10,16 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
   gap: 24px;
@@ -18,7 +28,6 @@ export const styles = css`
   box-sizing: border-box;
   background: var(--mnw-hub-bg);
   color: var(--mnw-hub-text);
-  font-family: var(--mnw-hub-font);
 }
 
 .stage {

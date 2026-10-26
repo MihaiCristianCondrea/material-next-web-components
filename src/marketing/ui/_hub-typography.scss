@@ -1,0 +1,13 @@
+// Shared by embedded controls and complete hubs. Keep the public font override.
+@mixin controls {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
+}

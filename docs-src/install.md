@@ -12,7 +12,7 @@ description: Add Material Next to a project, import the modules you use, and loa
 npm install material-next-web-components lit @material/web
 ```
 
-The package is public and published to npm from GitHub releases. Until the first release (0.2.0) is out, install from a clone instead: see [Build from source](#build-from-source).
+The package has not been released yet. npm publishing is configured through GitHub releases. Until the first release (0.0.1) is out, install from a clone instead: see [Build from source](#build-from-source).
 
 `lit` (^3.3.3) and `@material/web` (^2.4.1) are **peer dependencies**: your app installs them, and the library uses the same copies, so there is one Lit and one set of Material Web elements on the page. npm 7 and later install peer dependencies automatically; listing them yourself keeps their versions explicit.
 
@@ -22,16 +22,16 @@ The package ships ES modules with TypeScript declarations (`.d.ts`) and a custom
 
 Import each module once, anywhere in your app's bundle. Importing an element's module registers its tag.
 
-| Module | Registers | Status |
-| --- | --- | --- |
-| `material-next-web-components/code-block.js` | `<mnw-code-block>` | Stable |
-| `material-next-web-components/expressive-tab-bar.js` | `<mnw-expressive-tab-bar>`, and `<md-expressive-tab-bar>` as an alias | Experimental |
-| `material-next-web-components/app-showcase.js` | `<mnw-app-showcase>` | Experimental |
-| `material-next-web-components/material-next-home.js` | `<mnw-home>` (and the elements it uses) | Experimental |
-| `material-next-web-components/marketing.js` | The eight marketing hub elements, and exports the [marketing API](../guides/marketing-api/) | Experimental |
-| `material-next-web-components/app-shell.js` | `<mnw-app-shell>` and `<mnw-navigation-item>`, with layout policies ([App shell](../examples/app-shell/)) | Experimental |
-| `material-next-web-components/launcher.js` | `<mnw-product-launcher>` and its catalog, favorites and storage API ([Product launcher](../examples/product-launcher/)) | Experimental |
-| `material-next-web-components/docs-shell.js`, `docs-top-app-bar.js`, `docs-page.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js` | The documentation layout elements | Internal candidate |
+| Module                                                                                                                                    | Registers                                                                                                               | Status             |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `material-next-web-components/code-block.js`                                                                                              | `<mnw-code-block>`                                                                                                      | Stable             |
+| `material-next-web-components/expressive-tab-bar.js`                                                                                      | `<mnw-expressive-tab-bar>`, and `<md-expressive-tab-bar>` as an alias                                                   | Experimental       |
+| `material-next-web-components/app-showcase.js`                                                                                            | `<mnw-app-showcase>`                                                                                                    | Experimental       |
+| `material-next-web-components/material-next-home.js`                                                                                      | `<mnw-home>` (and the elements it uses)                                                                                 | Experimental       |
+| `material-next-web-components/marketing.js`                                                                                               | The eight marketing hub elements, and exports the [marketing API](../guides/marketing-api/)                             | Experimental       |
+| `material-next-web-components/app-shell.js`                                                                                               | `<mnw-app-shell>` and `<mnw-navigation-item>`, with layout policies ([App shell](../examples/app-shell/))               | Experimental       |
+| `material-next-web-components/launcher.js`                                                                                                | `<mnw-product-launcher>` and its catalog, favorites and storage API ([Product launcher](../examples/product-launcher/)) | Experimental       |
+| `material-next-web-components/docs-shell.js`, `docs-top-app-bar.js`, `docs-page.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js` | The documentation layout elements                                                                                       | Internal candidate |
 
 The root import, `material-next-web-components`, is the same as `material-next-home.js`. The documentation layout modules are also exported as `material-next-web-components/docs/<name>.js`; those paths are compatibility aliases. Every element module also exports its class (for example `MaterialNextCodeBlock`) for typing and `instanceof` checks.
 
@@ -42,7 +42,11 @@ import type {MaterialNextExpressiveTabBar} from 'material-next-web-components/ex
 ```
 
 ```html
-<mnw-code-block language="ts" copy code="console.log('Hello, Material Next');"></mnw-code-block>
+<mnw-code-block
+  language="ts"
+  copy
+  code="console.log('Hello, Material Next');"
+></mnw-code-block>
 ```
 
 ## What the library provides, and what you provide
@@ -88,7 +92,7 @@ git clone https://github.com/MihaiCristianCondrea/material-next-web-components.g
 cd material-next-web-components
 npm install
 npm run build      # compiles to dist/
-npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-0.2.0.tgz
+npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-0.0.1.tgz
 ```
 
 `npm run docs` builds this site into `docs/`, and `npm run docs:check` checks it in a browser under the GitHub Pages path.

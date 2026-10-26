@@ -10,6 +10,16 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -19,9 +29,8 @@ export const styles = css`
   border: 1px solid var(--mnw-hub-border-subtle);
   box-shadow: var(--mnw-hub-shadow-card);
   color: var(--mnw-hub-text);
-  font-family: var(--mnw-hub-font);
-  --md-outlined-button-label-text-font: var(--mnw-hub-font);
-  --md-text-button-label-text-font: var(--mnw-hub-font);
+  --md-outlined-button-label-text-font: var(--_hub-font);
+  --md-text-button-label-text-font: var(--_hub-font);
 }
 
 .back {
@@ -36,19 +45,19 @@ export const styles = css`
 }
 
 .tag {
-  font: 500 12px/16px var(--mnw-hub-font);
+  font: 500 12px/16px var(--_hub-font);
   letter-spacing: 0.5px;
   color: var(--mnw-hub-accent);
 }
 
 h1 {
   margin: 0;
-  font: 400 24px/32px var(--mnw-hub-font);
+  font: 400 24px/32px var(--_hub-font);
 }
 
 p {
   margin: 0;
-  font: 400 14px/20px var(--mnw-hub-font);
+  font: 400 14px/20px var(--_hub-font);
   color: var(--mnw-hub-text-variant);
 }
 
@@ -69,7 +78,7 @@ code {
 
 .label,
 .control__label {
-  font: 500 12px/16px var(--mnw-hub-font);
+  font: 500 12px/16px var(--_hub-font);
   letter-spacing: 0.5px;
   color: var(--mnw-hub-text-variant);
 }
@@ -92,7 +101,7 @@ md-outlined-segmented-button-set {
   align-items: center;
   gap: 12px;
   min-height: 40px;
-  font: 500 14px/20px var(--mnw-hub-font);
+  font: 500 14px/20px var(--_hub-font);
 }
 
 .control {
@@ -108,7 +117,7 @@ md-outlined-segmented-button-set {
 }
 
 .control__value {
-  font: 500 14px/20px var(--mnw-hub-font);
+  font: 500 14px/20px var(--_hub-font);
   font-variant-numeric: tabular-nums;
 }
 

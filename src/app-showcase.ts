@@ -153,12 +153,14 @@ export class MaterialNextAppShowcase extends LitElement {
         (app) =>
           html`<md-outlined-card class="app-card">
             <div class="app-icon">
-              ${app.iconUrl
-                ? html`<img src=${app.iconUrl} alt="" loading="lazy" />`
-                : html`<md-icon class="app-icon-placeholder">apps</md-icon>`}
+              ${
+                app.iconUrl
+                  ? html`<img src=${app.iconUrl} alt="" loading="lazy" />`
+                  : html`<md-icon class="app-icon-placeholder">apps</md-icon>`
+              }
             </div>
             <div class="app-content">
-              <h3>${app.name}</h3>
+              <h3 title=${app.name}>${app.name}</h3>
               <p class="app-category">${app.category}</p>
               <p>${app.description}</p>
             </div>

@@ -8,7 +8,7 @@ description: The checks before publishing a version to npm.
 
 ## How a release publishes
 
-Publishing a GitHub release runs `.github/workflows/publish.yml`. It checks that the tag is the `package.json` version with a `v` (`v0.2.0` for `0.2.0`), then lints, builds, tests in Chromium, checks the package exports, and runs `npm publish --provenance` with the `NPM_KEY` repository secret. A release marked as a pre-release publishes under the `next` dist-tag. Running the workflow by hand with **dry-run** on builds and packs without publishing.
+Publishing a GitHub release runs `.github/workflows/publish.yml`. It checks that the tag is the `package.json` version with a `v` (`v0.0.1` for `0.0.1`), then lints, builds, tests in Chromium, checks the package exports, and runs `npm publish --provenance` with the `NPM_KEY` repository secret. A release marked as a pre-release publishes under the `next` dist-tag. Running the workflow by hand with **dry-run** on builds and packs without publishing.
 
 ## Before tagging
 

@@ -26,13 +26,13 @@ This guide builds one for **Pocket Notes**, a sample app with three screens. Its
 
 ## Who provides what
 
-| The library provides | The app provides |
-| --- | --- |
-| The gallery page: shell, top app bar, hero with the Google Play badge, preview settings, category filter, cards, footer | Its **screens**: Lit templates translated from its Composables |
-| The prototype page: inspector, compare mode, window sizes, capture mode | Its **theme**: palettes as `[data-palette]` CSS, fonts, kit styles |
-| `ScreenHost`: state, `set()` and `go()`, palette and theme, device frames, the animation clock | Its **product config**: name, icon, headline, links |
-| The embed API for videos and capture scripts | Its own motion parts, illustrations and campaign code |
-| Device art, the Play badge and App Toolkit's window rules | Its brand: the hub chrome stays neutral so the screens carry it |
+| The library provides                                                                           | The app provides                                                   |
+| ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| The gallery page: shell, top app bar, preview settings, category filter, cards, footer         | Its **screens**: Lit templates translated from its Composables     |
+| The prototype page: inspector, compare mode, window sizes, capture mode                        | Its **theme**: palettes as `[data-palette]` CSS, fonts, kit styles |
+| `ScreenHost`: state, `set()` and `go()`, palette and theme, device frames, the animation clock | Its **product config**: name, icon, links                          |
+| The embed API for videos and capture scripts                                                   | Its own motion parts, illustrations and campaign code              |
+| Device art, the Play badge and App Toolkit's window rules                                      | Its brand: the hub chrome stays neutral so the screens carry it    |
 
 The library never styles a screen. It renders each screen into a light-DOM element and sets `data-palette` and `data-theme` on it; the app's CSS does the rest.
 
@@ -50,7 +50,7 @@ One object describes the app to the hub. Keep it in `src/config/product.js`.
 
 {% source "src/docs/sample-app/product.ts" %}
 
-`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. `storeUrl` adds the Google Play badge and Google's trademark line; `repositoryUrl` adds the source links. The full shape is on the [marketing shell](../../examples/marketing-shell/#product) page.
+`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. `storeUrl` adds the Google Play footer link and Google's trademark line; `repositoryUrl` adds a Source footer link. The full shape is on the [marketing shell](../../examples/marketing-shell/#product) page.
 
 ## Screens
 
@@ -60,15 +60,15 @@ A screen is a `MarketingScreen`: metadata, `defaults` for its state, and `render
 
 The important fields:
 
-| Field | |
-| --- | --- |
+| Field                        |                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `id`, `title`, `description` | Shown on its card and in the inspector. Ids must be unique; `createScreenRegistry()` throws on duplicates. |
-| `category`, `categoryLabel` | Groups the catalog. The filter chips appear with two or more categories. |
-| `palette` | The palette of the reference capture, used when the hub's palette is "As captured". |
-| `defaults` | The initial state. Every render gets `{...defaults, ...state}`. |
-| `controls` | Optional tweaks for the inspector: presets, choices, toggles, sliders. |
-| `tick(state, dt)` | Optional clock: return a patch to animate while the screen is visible. |
-| `source` | Optional: the Composable it translates, shown in the inspector. |
+| `category`, `categoryLabel`  | Groups the catalog. The filter chips appear with two or more categories.                                   |
+| `palette`                    | The palette of the reference capture, used when the hub's palette is "As captured".                        |
+| `defaults`                   | The initial state. Every render gets `{...defaults, ...state}`.                                            |
+| `controls`                   | Optional tweaks for the inspector: presets, choices, toggles, sliders.                                     |
+| `tick(state, dt)`            | Optional clock: return a patch to animate while the screen is visible.                                     |
+| `source`                     | Optional: the Composable it translates, shown in the inspector.                                            |
 
 Besides its own state, `render()` receives a `ScreenRenderContext`:
 
@@ -130,17 +130,17 @@ It returns a handle with `settings()`, `update(patch)`, `destroy()` and the `reg
 
 The whole view lives in the URL, so a link reopens it exactly:
 
-| Parameter | Values |
-| --- | --- |
-| `id` | A screen id; the first screen when missing |
-| `mode`, `compare` | `inspect` or `compare`; `theme`, `nav`, `palette` or `frame` |
-| `palette`, `paletteB` | A palette name or `captured` |
-| `theme`, `nav` | `system`, `light`, `dark`; `gesture`, `buttons` |
-| `window` | `phone`, `fold`, `desktop` |
-| `frame` | `device` or `none` |
-| `state`, `preset` | JSON merged over the defaults; a preset's label |
-| `ads` | `on` shows ad stand-ins (with `adsToggle`) |
-| `panel` | `none` is capture mode: the screen alone, framed with `frame=device` |
+| Parameter             | Values                                                               |
+| --------------------- | -------------------------------------------------------------------- |
+| `id`                  | A screen id; the first screen when missing                           |
+| `mode`, `compare`     | `inspect` or `compare`; `theme`, `nav`, `palette` or `frame`         |
+| `palette`, `paletteB` | A palette name or `captured`                                         |
+| `theme`, `nav`        | `system`, `light`, `dark`; `gesture`, `buttons`                      |
+| `window`              | `phone`, `fold`, `desktop`                                           |
+| `frame`               | `device` or `none`                                                   |
+| `state`, `preset`     | JSON merged over the defaults; a preset's label                      |
+| `ads`                 | `on` shows ad stand-ins (with `adsToggle`)                           |
+| `panel`               | `none` is capture mode: the screen alone, framed with `frame=device` |
 
 `fillPhone` (default `true`) makes a frameless phone fill the stage, for screens that adapt to their width. Turn it off when screens are laid out at a fixed 430 × 957dp. Larger windows keep their size and are scaled to fit.
 
@@ -159,17 +159,17 @@ await page.screenshot({path: `captures/${id}.png`});
 
 {% demo "screen-host" "The buttons call the host's API and the switches call setOptions(). Tap a note or the Focus tab inside the screen: its go() reaches onGo, which loads the target in the same host." %}
 
-| Option | Default | |
-| --- | --- | --- |
-| `registry`, `id` | | Required: the screens and the one to show |
-| `state` | `{}` | Merged over the screen's defaults |
-| `palette` | `'captured'` | A palette name, or the screen's own |
-| `theme` | light | `'light'` or `'dark'` |
-| `frame` | `false` | Draw the window's device around it |
-| `navType`, `window`, `showAds` | `'gesture'`, phone, `false` | Passed to the screen |
-| `fill` | `false` | Stretch a frameless screen over its container |
-| `onGo(id, state, host)` | | Handles `go()`; without it the host loads the target itself |
-| `onChange(host)` | | After `set()` and `reset()`; not after `load()` or `go()` |
+| Option                         | Default                     |                                                             |
+| ------------------------------ | --------------------------- | ----------------------------------------------------------- |
+| `registry`, `id`               |                             | Required: the screens and the one to show                   |
+| `state`                        | `{}`                        | Merged over the screen's defaults                           |
+| `palette`                      | `'captured'`                | A palette name, or the screen's own                         |
+| `theme`                        | light                       | `'light'` or `'dark'`                                       |
+| `frame`                        | `false`                     | Draw the window's device around it                          |
+| `navType`, `window`, `showAds` | `'gesture'`, phone, `false` | Passed to the screen                                        |
+| `fill`                         | `false`                     | Stretch a frameless screen over its container               |
+| `onGo(id, state, host)`        |                             | Handles `go()`; without it the host loads the target itself |
+| `onChange(host)`               |                             | After `set()` and `reset()`; not after `load()` or `go()`   |
 
 Methods: `load(id, state?)`, `reset()`, `setOptions(patch)`, `set(patch)`, `go(id, state?)`, `draw()` and `destroy()`. `screen`, `state` and `options` are readable. The clock runs only while a ticking screen is mounted and visible.
 
@@ -192,14 +192,22 @@ import {createMarketingEmbed} from 'material-next-web-components/marketing.js';
 import {SCREENS} from '../../ui/src/screens/index.js';
 import {loadFonts} from '../../ui/src/theme/index.js';
 
-const {setup, mount} = createMarketingEmbed({screens: SCREENS, loadTheme: loadFonts});
-await setup({assetBase: staticFile('/'), marketingAssetBase: staticFile('/material-next/')});
+const {setup, mount} = createMarketingEmbed({
+  screens: SCREENS,
+  loadTheme: loadFonts,
+});
+await setup({
+  assetBase: staticFile('/'),
+  marketingAssetBase: staticFile('/material-next/'),
+});
 
 export const LiveScreen = ({id, state}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [handle] = useState(() => delayRender());
   useEffect(() => {
-    void mount(ref.current!, id, state, {frame: true}).then(() => continueRender(handle));
+    void mount(ref.current!, id, state, {frame: true}).then(() =>
+      continueRender(handle)
+    );
   }, [id, JSON.stringify(state)]);
   return <div ref={ref} />;
 };
@@ -225,7 +233,9 @@ The device frames and the Google Play badge are image files in the package. Copy
 ```ts
 import {configureMarketingAssets} from 'material-next-web-components/marketing.js';
 
-configureMarketingAssets({base: new URL('./material-next/', import.meta.url).href});
+configureMarketingAssets({
+  base: new URL('./material-next/', import.meta.url).href,
+});
 ```
 
 Add the destination to `.gitignore`: it is generated.

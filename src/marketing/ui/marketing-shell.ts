@@ -11,7 +11,6 @@ import {
   DEFAULT_PREVIEW_SETTINGS,
   type PreviewSettings,
 } from '../domain/preview-settings.js';
-import './badges.js';
 import {chips} from './controls.js';
 import './marketing-top-app-bar.js';
 import './preview-controls.js';
@@ -27,8 +26,7 @@ export type CategoryChangeEvent = CustomEvent<{category: string}>;
 
 /**
  * A complete marketing hub page around the app's screen cards: the top app
- * bar, a short hero with the Google Play badge and the source link, the
- * preview settings, a category filter and the footer with the credits and
+ * bar, the preview settings, a category filter and the footer with the credits and
  * Google Play's trademark line.
  *
  * @slot - The `mnw-screen-card` elements.
@@ -88,39 +86,11 @@ export class MaterialNextMarketingShell extends LitElement {
     const p = normalizeProduct(this.product);
     return html`
       <a class="skip" href="#catalog">Skip to screens</a>
-      <mnw-marketing-top-app-bar name=${p.name} icon=${p.icon} context="UI kit">
-        ${
-          p.repositoryUrl
-            ? html`<mnw-github-badge
-                slot="trailing"
-                compact
-                href=${p.repositoryUrl}
-              ></mnw-github-badge>`
-            : nothing
-        }
-      </mnw-marketing-top-app-bar>
-
-      <section class="hero" aria-labelledby="headline">
-        <div class="hero__text">
-          <h1 id="headline">${p.headline}</h1>
-          <p>${p.description}</p>
-        </div>
-        ${
-          p.storeUrl || p.repositoryUrl
-            ? html`<div class="hero__actions">
-                ${p.storeUrl ? html`<mnw-play-badge href=${p.storeUrl}></mnw-play-badge>` : nothing}
-                ${
-                  p.repositoryUrl
-                    ? html`<mnw-github-badge
-                        href=${p.repositoryUrl}
-                      ></mnw-github-badge>`
-                    : nothing
-                }
-              </div>`
-            : nothing
-        }
-      </section>
-
+      <mnw-marketing-top-app-bar
+        name=${p.name}
+        icon=${p.icon}
+        context="UI kit"
+      ></mnw-marketing-top-app-bar>
       <div class="controls">
         <mnw-preview-controls
           .settings=${this.settings}
@@ -131,9 +101,9 @@ export class MaterialNextMarketingShell extends LitElement {
 
       <main id="catalog" tabindex="-1" aria-labelledby="catalog-title">
         <div class="catalog-header">
-          <h2 id="catalog-title">
+          <h1 id="catalog-title">
             ${this.catalogTitle} <span class="count">${this.count}</span>
-          </h2>
+          </h1>
           ${
             this.categories.length > 1
               ? chips(

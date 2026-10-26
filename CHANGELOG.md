@@ -1,159 +1,48 @@
 # Changelog
 
-## Unreleased
+Material Next Web Components has not been released yet. Version `0.0.1` is the
+first planned release. The Lit starter's upstream history is not this library's
+release history; attribution remains in `LICENSE` and the source headers.
 
-- App shell (`material-next-web-components/app-shell.js`, experimental): `<mnw-app-shell>` and
-  `<mnw-navigation-item>`, the frame of Android Insider's admin console as a component. The navigation drawer is a
-  top-layer modal sheet below `permanent-from` (900px of the shell's width by default) and a permanent column with a
-  connected app bar from it, one DOM tree in both. The app owns routing: destinations fire a cancelable
-  `navigation-request`, and `heading`, `leading` and `active-path` tell the shell where the app is. Layout policies
-  are rule lists, ready for more modes.
-- Product launcher (`material-next-web-components/launcher.js`, experimental): `<mnw-product-launcher>`, an apps
-  button with editable favorites (add, remove, drag or Alt+arrow reorder, reset, localStorage) and a separate admin
-  redirects section, over Android apps, web products, consoles and shortcuts with `kind:key` ids. It hides the
-  current product, keeps hidden favorites in place, deduplicates entries and defaults to the author's projects,
-  migrating the metadata backend launcher's stored ids. Icons ship in `assets/marketing/launcher/`.
-- Documentation site: the launcher in the app bar; on phones the navigation pill holds every tab and keeps the
-  current one in view, tables stack into labelled rows, and catalog icons sit centred in their tiles.
-- Development dependencies updated (Material Web 2.5, Eleventy 3.1.7, `@web/dev-server` 1.0, ESLint, Rollup,
-  Sass, Prettier); `npm audit` reports no vulnerabilities. Eleventy's own gray-matter fork reads YAML with
-  current js-yaml, so the gray-matter patch, `patch-package` and the js-yaml override are gone. TypeScript stays
-  on 6.0 until typescript-eslint supports 7.
+## 0.0.1 (unreleased)
 
-## 0.2.0
+### Components
 
-- Marketing hub (`material-next-web-components/marketing.js`, experimental): the gallery and prototype pages,
-  the embed API for videos, `ScreenHost`, the shell and its parts, `<mnw-device-frame>` with Google's device art,
-  `<mnw-play-badge>` and `<mnw-github-badge>`, and App Toolkit's window rules. Assets ship in `assets/marketing/`
-  with the `mnw-marketing-assets` command to copy them.
-- Published to npm: a GitHub release runs `.github/workflows/publish.yml`.
-- `lit` and `@material/web` are peer dependencies, so an app and the library share one copy of each.
-- `patch-package` runs on `prepare`, in this repository only, instead of on every install.
-- `<mnw-home>` renders its **Get started** button (`part="action"`, linking to `docs-href`), which its API
-  documented but did not draw.
-- `<mnw-docs-top-app-bar>` keeps the brand and actions on one row below 960px, with the navigation scrolling on
-  a row of its own, and scrolls away with the page below 600px.
-- JSDoc for every public property, event, slot and CSS custom property, so `custom-elements.json` is complete;
-  the manifest no longer lists tests, the docs site or generated style modules.
-- Documentation site: a page per element with a live demo, copyable code and the generated API, the marketing hub
-  guide with a sample app, a Marketing API page, corrected install instructions, and `npm run docs:check`
-  (coverage, links, assets, console errors, navigation, phone layouts and demos under the Pages path), which the
-  Pages and CI workflows run.
+- Product home, app showcase, code block and expressive tab bar, built with Lit
+  and Material Web. App showcase cards pair a proportionate icon with compact
+  text and a trailing Google Play action. Expressive tabs use fully rounded
+  container and selected-tab shapes.
+- Documentation shell, top app bar, vertical navigation and table of contents.
+  The site's six primary links share an animated selection pill that follows
+  navigation, browser history and resizing, with reduced-motion support.
+- Product launcher with editable favorites, pointer and keyboard reorder, reset,
+  local persistence and separate admin redirects. The built-in catalog excludes
+  Tutorials admin, Codex and Smart Cleaner, and their old SVGs are removed.
+  Hover highlights the tile without changing the artwork's shape; favorites
+  wobble throughout edit mode unless reduced motion is enabled.
+- Experimental application shell and navigation items, with a single navigation
+  tree, modal and permanent layouts, a connected app bar and a host-owned router.
+  The live console demo covers deep links, browser history and unsaved changes.
 
-## Lit starter history
+### Marketing hubs
 
-The entries below come from the Lit starter this repository began from.
+- Live galleries, prototype inspection and comparison, `ScreenHost`, embed and
+  capture APIs, device frames, badges and shared window rules. Assets are copied
+  by `mnw-marketing-assets`.
+- A clean marketing shell: app identity, preview controls, screen catalog and
+  footer. The hero and its `MarketingProduct.headline` and `description` fields
+  have been removed. Store/source links remain in the footer; no promotional
+  buttons are injected into the top app bar.
+- Shared sans-serif typography and Material Web typeface tokens for standalone
+  controls as well as complete hubs, including inspector selects and segments.
 
-## 2.0.3
+### Tooling and distribution
 
-### Patch Changes
-
-- [#4984](https://github.com/lit/lit/pull/4984) [`ad23f26ae908a160d30ed2a939b322fe9cc2ee83`](https://github.com/lit/lit/commit/ad23f26ae908a160d30ed2a939b322fe9cc2ee83) Thanks [@kyubisation](https://github.com/kyubisation)! - Update TypeScript dependencies to version 5.8 with related ARIAMixin changes (ariaColIndexText, ariaRelevant and ariaRowIndexText)
-
-## 2.0.2
-
-### Patch Changes
-
-- [#4682](https://github.com/lit/lit/pull/4682) [`290a608a`](https://github.com/lit/lit/commit/290a608aa2297e8b99a5424dc90632b97c66386c) - Update typescript to 5.5.0
-
-- [#4681](https://github.com/lit/lit/pull/4681) [`5463b104`](https://github.com/lit/lit/commit/5463b1046e0589c9ce7041e67cd539ddfba2e5a7) - Update Rollup and Terser dependencies
-
-- Updated dependencies [[`feccc1ba`](https://github.com/lit/lit/commit/feccc1ba8e82b36d07a0e2576381bf2819926b98)]:
-  - lit@3.2.0
-
-## 2.0.1
-
-### Patch Changes
-
-- [#4451](https://github.com/lit/lit/pull/4451) [`7852e130`](https://github.com/lit/lit/commit/7852e13022c9dcfcff5ed54a215c93420349e318) - Minor security fixes.
-
-## 2.0.0
-
-### Major Changes
-
-- [#4141](https://github.com/lit/lit/pull/4141) [`6b515e43`](https://github.com/lit/lit/commit/6b515e43c3a24cc8a593247d3aa72d81bcc724d5) - Update TypeScript to ~5.2.0
-
-- [#3756](https://github.com/lit/lit/pull/3756) [`f06f7972`](https://github.com/lit/lit/commit/f06f7972a027d2937fe2c68ab5af0274dec57cf4) - Drop IE11 support
-
-### Patch Changes
-
-- [#3814](https://github.com/lit/lit/pull/3814) [`23326c6b`](https://github.com/lit/lit/commit/23326c6b9a6abdf01998dadf5d0f20a643e457aa) - Update to TypeScript v5.0
-
-- Updated dependencies [[`dfd747cf`](https://github.com/lit/lit/commit/dfd747cf4f7239e0c3bb7134f8acb967d0157654), [`6b515e43`](https://github.com/lit/lit/commit/6b515e43c3a24cc8a593247d3aa72d81bcc724d5), [`23c404fd`](https://github.com/lit/lit/commit/23c404fdec0cd7be834221b6ddf9b659c24ca8a2), [`1040f758`](https://github.com/lit/lit/commit/1040f75861b029527538b4ec36b2cfedcc32988a), [`0f6878dc`](https://github.com/lit/lit/commit/0f6878dc45fd95bbeb8750f277349c1392e2b3ad), [`1db01376`](https://github.com/lit/lit/commit/1db0137699b35d7e7bfac9b2ab274af4100fd7cf), [`2a01471a`](https://github.com/lit/lit/commit/2a01471a5f65fe34bad11e1099281811b8d0f79b), [`6f2833fd`](https://github.com/lit/lit/commit/6f2833fd05f2ecde5386f72d291dafc9dbae0cf7), [`c3e473b4`](https://github.com/lit/lit/commit/c3e473b499ff029b5e1aff01ca8799daf1ca1bbe), [`2eba6997`](https://github.com/lit/lit/commit/2eba69974c9e130e7483f44f9daca308345497d5), [`92cedaa2`](https://github.com/lit/lit/commit/92cedaa2c8cd8a306be3fe25d52e0e47bb044020), [`d27a77ec`](https://github.com/lit/lit/commit/d27a77ec3d3999e872df9218a2b07f90f22eb417), [`7e8491d4`](https://github.com/lit/lit/commit/7e8491d4ed9f0c39d974616c4678552ef50b81df), [`6470807f`](https://github.com/lit/lit/commit/6470807f3a0981f9d418cb26f05969912455d148), [`23326c6b`](https://github.com/lit/lit/commit/23326c6b9a6abdf01998dadf5d0f20a643e457aa), [`09949234`](https://github.com/lit/lit/commit/09949234445388d51bfb4ee24ff28a4c9f82fe17), [`f06f7972`](https://github.com/lit/lit/commit/f06f7972a027d2937fe2c68ab5af0274dec57cf4)]:
-  - lit@3.0.0
-
-## 2.0.0-pre.1
-
-### Major Changes
-
-- [#4141](https://github.com/lit/lit/pull/4141) [`6b515e43`](https://github.com/lit/lit/commit/6b515e43c3a24cc8a593247d3aa72d81bcc724d5) - Update TypeScript to ~5.2.0
-
-### Patch Changes
-
-- Updated dependencies [[`6b515e43`](https://github.com/lit/lit/commit/6b515e43c3a24cc8a593247d3aa72d81bcc724d5), [`0f6878dc`](https://github.com/lit/lit/commit/0f6878dc45fd95bbeb8750f277349c1392e2b3ad), [`2a01471a`](https://github.com/lit/lit/commit/2a01471a5f65fe34bad11e1099281811b8d0f79b), [`2eba6997`](https://github.com/lit/lit/commit/2eba69974c9e130e7483f44f9daca308345497d5), [`d27a77ec`](https://github.com/lit/lit/commit/d27a77ec3d3999e872df9218a2b07f90f22eb417), [`6470807f`](https://github.com/lit/lit/commit/6470807f3a0981f9d418cb26f05969912455d148), [`09949234`](https://github.com/lit/lit/commit/09949234445388d51bfb4ee24ff28a4c9f82fe17)]:
-  - lit@3.0.0-pre.1
-
-## 2.0.0-pre.0
-
-### Major Changes
-
-- [#3756](https://github.com/lit/lit/pull/3756) [`f06f7972`](https://github.com/lit/lit/commit/f06f7972a027d2937fe2c68ab5af0274dec57cf4) - Drop IE11 support
-
-### Patch Changes
-
-- [#3814](https://github.com/lit/lit/pull/3814) [`23326c6b`](https://github.com/lit/lit/commit/23326c6b9a6abdf01998dadf5d0f20a643e457aa) - Update to TypeScript v5.0
-
-- Updated dependencies [[`dfd747cf`](https://github.com/lit/lit/commit/dfd747cf4f7239e0c3bb7134f8acb967d0157654), [`23c404fd`](https://github.com/lit/lit/commit/23c404fdec0cd7be834221b6ddf9b659c24ca8a2), [`1db01376`](https://github.com/lit/lit/commit/1db0137699b35d7e7bfac9b2ab274af4100fd7cf), [`c3e473b4`](https://github.com/lit/lit/commit/c3e473b499ff029b5e1aff01ca8799daf1ca1bbe), [`92cedaa2`](https://github.com/lit/lit/commit/92cedaa2c8cd8a306be3fe25d52e0e47bb044020), [`23326c6b`](https://github.com/lit/lit/commit/23326c6b9a6abdf01998dadf5d0f20a643e457aa), [`f06f7972`](https://github.com/lit/lit/commit/f06f7972a027d2937fe2c68ab5af0274dec57cf4)]:
-  - lit@3.0.0-pre.0
-
-## 1.0.6
-
-### Patch Changes
-
-- [#4157](https://github.com/lit/lit/pull/4157) [`da32db2e`](https://github.com/lit/lit/commit/da32db2e67547e0f17b7132065559eba2b1d3513) Thanks [@welingtonms](https://github.com/welingtonms)! - Improve bundling and minification recommendations.
-
-## 1.0.5
-
-### Patch Changes
-
-- [#3561](https://github.com/lit/lit/pull/3561) [`e5c254e9`](https://github.com/lit/lit/commit/e5c254e96cb5d0f770ec616332e231559325c5c5) - Update dependency `@rollup/plugin-replace`
-
-## 1.0.4
-
-### Patch Changes
-
-- [#2922](https://github.com/lit/lit/pull/2922) [`da9db86a`](https://github.com/lit/lit/commit/da9db86a33cba710d439e254df2492f9f6dcbbee) - Update dependencies and remove unused dependencies
-
-## 1.0.3
-
-### Patch Changes
-
-- [#2757](https://github.com/lit/lit/pull/2757) [`55841c14`](https://github.com/lit/lit/commit/55841c14f52891357dd93680d3bc5b1da6c89c8a) - Update Rollup and Rollup plugins
-
-## 1.0.2
-
-### Patch Changes
-
-- [#2535](https://github.com/lit/lit/pull/2535) [`d1359856`](https://github.com/lit/lit/commit/d1359856698d1af381b335fb757f9282574690b0) - Update the README to indicate that issues and PRs should be filed on the main Lit repo.
-
-## 1.0.1
-
-### Patch Changes
-
-- [#2300](https://github.com/lit/lit/pull/2300) [`8b9dcb4d`](https://github.com/lit/lit/commit/8b9dcb4d10e4161083146ae40d0b12174a63d31d) - Fix starter kits so `npm run serve` serves the root directory, and add a link to the `/dev/index.html` component example from `/`.
-
-- Updated dependencies [[`fcc2b3d0`](https://github.com/lit/lit/commit/fcc2b3d0054e69e6f76588ea9f440117b6d0deed), [`49ecf623`](https://github.com/lit/lit/commit/49ecf6239033e9578184d46116e6b89676d091db), [`1d563e83`](https://github.com/lit/lit/commit/1d563e830c02a2d1a22e1e939f1ace971b1d1ae7)]:
-  - lit@2.1.0
-
-## 1.0.0
-
-### Patch Changes
-
-- [#2113](https://github.com/lit/lit/pull/2113) [`5b2f3642`](https://github.com/lit/lit/commit/5b2f3642ff91931b5b01f8bdd2ed98aba24f1047) - Dependency upgrades including TypeScript 4.4.2
-
-- [#2103](https://github.com/lit/lit/pull/2103) [`15a8356d`](https://github.com/lit/lit/commit/15a8356ddd59a1e80880a93acd21fadc9c24e14b) - Added Lit dev mode to test and serve commands, controlled via the MODE=dev or MODE=prod environment variables.
-
-- [#2117](https://github.com/lit/lit/pull/2117) [`eff2fbc7`](https://github.com/lit/lit/commit/eff2fbc7e45cfc2a7b8df21e18c84619dfbcb277) - Updated starter templates to use open-wc analyzer for generating custom-elements.json, and updated basic API docs generater included in the template to the new manifest format.
-
-- Updated dependencies [[`15a8356d`](https://github.com/lit/lit/commit/15a8356ddd59a1e80880a93acd21fadc9c24e14b), [`5fabe2b5`](https://github.com/lit/lit/commit/5fabe2b5ae4ab8fba9dc2d23a69105d32e4c0705), [`5b2f3642`](https://github.com/lit/lit/commit/5b2f3642ff91931b5b01f8bdd2ed98aba24f1047), [`5fabe2b5`](https://github.com/lit/lit/commit/5fabe2b5ae4ab8fba9dc2d23a69105d32e4c0705), [`5fabe2b5`](https://github.com/lit/lit/commit/5fabe2b5ae4ab8fba9dc2d23a69105d32e4c0705), [`0312f3e5`](https://github.com/lit/lit/commit/0312f3e533611eb3f4f9381594485a33ad003b74)]:
-  - lit@2.0.0
+- `lit` and `@material/web` are peer dependencies. Package exports, generated
+  element API documentation, browser tests and a documentation-site checker
+  cover the public entry points and demos.
+- GitHub release publishing is configured with npm provenance. No release or npm
+  publication has been made by this change.
+- Updated development tooling; removed the obsolete gray-matter patch and
+  js-yaml override. TypeScript stays at 6.0.3 because typescript-eslint 8.72.1
+  supports TypeScript versions below 6.1, not 7.0.2.

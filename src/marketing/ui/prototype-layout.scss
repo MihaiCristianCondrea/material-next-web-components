@@ -1,6 +1,9 @@
+@use 'hub-typography';
+
 // The prototype page: the panel 360 px on the leading side, like a navigation
 // drawer, and the stage in the rest of the workspace.
 :host {
+  @include hub-typography.controls;
   display: grid;
   grid-template-columns: 360px minmax(0, 1fr);
   gap: 24px;
@@ -9,7 +12,6 @@
   box-sizing: border-box;
   background: var(--mnw-hub-bg);
   color: var(--mnw-hub-text);
-  font-family: var(--mnw-hub-font);
 }
 
 .stage {

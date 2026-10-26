@@ -106,6 +106,32 @@ shell.layoutPolicy = createLayoutPolicy([
 
 Rules hold a width and a mode. Modal and permanent are the modes today; the rule list is where a rail or a bottom bar would go, without changing how policies are written.
 
+### Choosing the drawer presentation
+
+`github-dev-tools` uses a modal drawer that starts closed at every width. That
+presentation already maps to `navigation-mode="modal"`: the top app bar and
+screen use the full width until the menu opens an overlay. It should not reserve
+a permanent empty drawer column.
+
+Android Insider uses the connected frame beside an always-visible drawer. Keep
+`navigation-mode="auto"` and the default `permanent-from="900"` for that layout;
+below the breakpoint it becomes modal. A forced `navigation-mode="permanent"`
+is useful only when the host guarantees enough room.
+
+Next steps for consumers:
+
+1. Add both presentations to the console demo with the same navigation nodes;
+   verify resize, Escape, scrim, focus return and unchanged routing state.
+2. Migrate Insider with the automatic modal/permanent policy, preserving deep
+   links and unsaved-change guards.
+3. Convert metadata to a SPA behind a preview route, then use the same policy
+   with its own breakpoint before replacing `/admin`.
+4. Migrate GitHub Dev Tools with a modal drawer at all widths, preserving its
+   full-width content, theme controls and footer links.
+5. Add a user-collapsible persistent drawer only when a consumer needs it. Keep
+   open/closed preference with the host; the shell should not infer it from the
+   repository name. A rail or bottom navigation remains a separate future mode.
+
 ### Theming
 
 The shell reads Material's `--md-sys-color-*` tokens: `surface` for the screen and compact app bar, `surface-container` for the compact bar once content scrolls under it, `surface-container-low` for the drawer and the connected frame, `secondary-container` for the current destination. Sizes are custom properties (see below).

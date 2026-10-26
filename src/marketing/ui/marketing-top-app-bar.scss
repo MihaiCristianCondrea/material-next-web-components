@@ -1,6 +1,9 @@
+@use 'hub-typography';
+
 // Material 3 small top app bar: 64 dp, the brand leading, actions trailing.
 // It takes the surface-container tone once the page scrolls under it.
 :host {
+  @include hub-typography.controls;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -52,7 +55,7 @@
 }
 
 .name {
-  font: 500 18px/24px var(--mnw-hub-font);
+  font: 500 18px/24px var(--_hub-font);
   letter-spacing: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -60,7 +63,7 @@
 }
 
 .context {
-  font: 400 14px/20px var(--mnw-hub-font);
+  font: 400 14px/20px var(--_hub-font);
   color: var(--mnw-hub-text-subtle);
   white-space: nowrap;
 }

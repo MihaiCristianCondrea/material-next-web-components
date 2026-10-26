@@ -8,14 +8,14 @@ description: What is stable, what is experimental, and what comes next.
 
 ## Status of each part
 
-| Part | Import path | Status | Notes |
-| --- | --- | --- | --- |
-| Code block | `material-next-web-components/code-block.js` | Stable | Covered by compatibility expectations from 0.2. |
-| Expressive tab bar | `material-next-web-components/expressive-tab-bar.js` | Experimental | `<md-expressive-tab-bar>` stays as a compatibility alias of `<mnw-expressive-tab-bar>`. |
-| App showcase | `material-next-web-components/app-showcase.js` | Experimental | Reads any endpoint in the documented shapes. |
-| Home view | `material-next-web-components/material-next-home.js` | Experimental | Material Next's own landing view; most copy is fixed. |
-| Marketing hub | `material-next-web-components/marketing.js` | Experimental | Elements, controllers, embed API and assets, from Android Insider's and Smart Cleaner's hubs. |
-| Documentation layout | `material-next-web-components/docs-*.js` | Internal candidate | Used by this site; may change before 1.0. |
+| Part                 | Import path                                          | Status             | Notes                                                                                         |
+| -------------------- | ---------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------- |
+| Code block           | `material-next-web-components/code-block.js`         | Stable             | Covered by compatibility expectations from 0.2.                                               |
+| Expressive tab bar   | `material-next-web-components/expressive-tab-bar.js` | Experimental       | `<md-expressive-tab-bar>` stays as a compatibility alias of `<mnw-expressive-tab-bar>`.       |
+| App showcase         | `material-next-web-components/app-showcase.js`       | Experimental       | Reads any endpoint in the documented shapes.                                                  |
+| Home view            | `material-next-web-components/material-next-home.js` | Experimental       | Material Next's own landing view; most copy is fixed.                                         |
+| Marketing hub        | `material-next-web-components/marketing.js`          | Experimental       | Elements, controllers, embed API and assets, from Android Insider's and Smart Cleaner's hubs. |
+| Documentation layout | `material-next-web-components/docs-*.js`             | Internal candidate | Used by this site; may change before 1.0.                                                     |
 
 ## Maturity levels
 
@@ -26,7 +26,7 @@ description: What is stable, what is experimental, and what comes next.
 
 ## Next
 
-1. Release 0.2.0 to npm, then move Android Insider's and Smart Cleaner's hubs onto `marketing.js`.
+1. Release 0.0.1 to npm, then move Android Insider's and Smart Cleaner's hubs onto `marketing.js`.
 2. Move the Android system bars (status bar, gesture and 3-button navigation) that each app's screens draw into the library.
 3. Stabilize the marketing elements' names and tokens once two apps use them.
 4. Review the documentation layout elements for public use.

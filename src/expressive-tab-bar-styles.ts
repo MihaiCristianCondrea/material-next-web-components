@@ -36,7 +36,7 @@ export const styles = css`
 nav {
   display: block;
   overflow: hidden;
-  border-radius: var(--mnw-expressive-tab-bar-shape, 28px);
+  border-radius: var(--mnw-expressive-tab-bar-shape, 999px);
   background: var(--mnw-expressive-tab-bar-container-color);
   border: 0;
   box-shadow: none;
@@ -54,7 +54,7 @@ md-tabs {
   );
   --md-primary-tab-container-color: transparent;
   --md-primary-tab-container-height: var(--mnw-expressive-tab-bar-height, 79px);
-  --md-primary-tab-container-shape: var(--mnw-expressive-tab-bar-shape, 28px);
+  --md-primary-tab-container-shape: var(--mnw-expressive-tab-bar-shape, 999px);
   --md-primary-tab-hover-label-text-color: var(
     --mnw-expressive-tab-bar-on-container
   );
@@ -73,7 +73,13 @@ md-tabs {
   box-shadow: none;
 }
 
+md-tabs::part(divider) {
+  display: none;
+}
+
 md-primary-tab {
+  box-sizing: border-box;
+  border-radius: var(--mnw-expressive-tab-bar-shape, 999px);
   min-width: var(--mnw-expressive-tab-min-width, 180px);
   padding-inline: var(--mnw-expressive-tab-padding-inline, 24px);
   border: 0;
@@ -131,8 +137,11 @@ md-primary-tab[active] {
 
 @media (max-width: 720px) {
   md-tabs {
-    --md-primary-tab-container-height: 64px;
-    height: 64px;
+    --md-primary-tab-container-height: var(
+      --mnw-expressive-tab-bar-height,
+      64px
+    );
+    height: var(--mnw-expressive-tab-bar-height, 64px);
   }
   md-primary-tab {
     min-width: 144px;

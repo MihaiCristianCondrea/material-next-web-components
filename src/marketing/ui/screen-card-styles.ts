@@ -10,6 +10,16 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -73,7 +83,7 @@ export const styles = css`
 h3 {
   margin: 0;
   min-width: 0;
-  font: 500 18px/24px var(--mnw-hub-font);
+  font: 500 18px/24px var(--_hub-font);
   letter-spacing: 0;
 }
 
@@ -100,7 +110,7 @@ h3 a:focus-visible {
   background: var(--mnw-hub-surface-low);
   border: 1px solid var(--mnw-hub-border-subtle);
   color: var(--mnw-hub-text-variant);
-  font: 500 12px/16px var(--mnw-hub-font);
+  font: 500 12px/16px var(--_hub-font);
   letter-spacing: 0.3px;
   white-space: nowrap;
 }
@@ -108,7 +118,7 @@ h3 a:focus-visible {
 p {
   margin: 0;
   max-width: 65ch;
-  font: 400 14px/20px var(--mnw-hub-font);
+  font: 400 14px/20px var(--_hub-font);
   color: var(--mnw-hub-text-variant);
 }
 
@@ -135,7 +145,7 @@ p {
 }
 
 md-filled-tonal-button {
-  --md-filled-tonal-button-label-text-font: var(--mnw-hub-font);
+  --md-filled-tonal-button-label-text-font: var(--_hub-font);
 }
 
 @keyframes enter {

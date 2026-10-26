@@ -10,12 +10,21 @@ import {css} from 'lit';
 
 export const styles = css`
 :host {
+  --_hub-font: var(
+    --mnw-hub-font,
+    'Google Sans Flex',
+    'Google Sans',
+    system-ui,
+    sans-serif
+  );
+  font-family: var(--_hub-font);
+  --md-ref-typeface-plain: var(--_hub-font);
+  --md-ref-typeface-brand: var(--_hub-font);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: var(--mnw-hub-bg);
   color: var(--mnw-hub-text);
-  font-family: var(--mnw-hub-font);
 }
 
 .skip {
@@ -28,53 +37,13 @@ export const styles = css`
   background: var(--mnw-hub-surface);
   color: var(--mnw-hub-text);
   box-shadow: var(--mnw-hub-shadow-raised);
-  font: 500 14px/20px var(--mnw-hub-font);
+  font: 500 14px/20px var(--_hub-font);
   transform: translateY(-160%);
 }
 
 .skip:focus {
   transform: none;
   outline: 2px solid var(--mnw-hub-accent);
-}
-
-.hero {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px 32px;
-  padding: 40px var(--mnw-hub-gutter) 24px;
-}
-
-.hero__text {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-width: 720px;
-}
-
-h1 {
-  margin: 0;
-  font: 400 clamp(32px, 4vw, 45px)/1.16 var(--mnw-hub-font);
-  letter-spacing: -0.25px;
-  color: var(--mnw-hub-text);
-  text-wrap: balance;
-}
-
-.hero p {
-  margin: 0;
-  max-width: 60ch;
-  font: 400 16px/24px var(--mnw-hub-font);
-  letter-spacing: 0.15px;
-  color: var(--mnw-hub-text-variant);
-}
-
-.hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  --mnw-play-badge-height: 60px;
 }
 
 .controls {
@@ -103,9 +72,9 @@ main {
   margin-bottom: 20px;
 }
 
-h2 {
+h1 {
   margin: 0;
-  font: 400 24px/32px var(--mnw-hub-font);
+  font: 400 24px/32px var(--_hub-font);
   color: var(--mnw-hub-text);
 }
 
@@ -114,7 +83,7 @@ h2 {
 }
 
 md-chip-set {
-  --md-filter-chip-label-text-font: var(--mnw-hub-font);
+  --md-filter-chip-label-text-font: var(--_hub-font);
 }
 
 .grid {
@@ -132,7 +101,7 @@ md-chip-set {
   border: 1px dashed var(--mnw-hub-border);
   color: var(--mnw-hub-text-variant);
   text-align: center;
-  font: 400 14px/20px var(--mnw-hub-font);
+  font: 400 14px/20px var(--_hub-font);
 }
 
 footer {
@@ -145,7 +114,7 @@ footer {
   border-top: 1px solid var(--mnw-hub-border-subtle);
   background: var(--mnw-hub-surface-low);
   color: var(--mnw-hub-text-variant);
-  font: 400 13px/20px var(--mnw-hub-font);
+  font: 400 13px/20px var(--_hub-font);
 }
 
 .footer__meta {
@@ -191,13 +160,6 @@ footer a:focus-visible {
 }
 
 @media (max-width: 600px) {
-  .hero {
-    padding-top: 28px;
-    padding-bottom: 20px;
-  }
-  .hero__actions {
-    --mnw-play-badge-height: 54px;
-  }
   .controls {
     position: static;
   }

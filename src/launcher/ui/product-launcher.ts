@@ -7,7 +7,6 @@ import '@material/web/button/text-button.js';
 import '@material/web/focus/md-focus-ring.js';
 import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/icon-button.js';
-import '@material/web/ripple/ripple.js';
 import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -580,7 +579,7 @@ export class MaterialNextProductLauncher extends LitElement {
       title=${item.subtitle ? `${item.title} · ${item.subtitle}` : item.title}
       data-focus=${`${list}:${item.id}`}
       ?data-autofocus=${autofocus}
-      ><md-ripple></md-ripple>${this.tileContent(item)}</a
+      >${this.tileContent(item)}</a
     >`;
   }
 
@@ -640,7 +639,7 @@ export class MaterialNextProductLauncher extends LitElement {
         data-focus=${`${list}:${item.id}`}
         @click=${() => this.addItem(item)}
       >
-        <md-ripple ?disabled=${added}></md-ripple>${this.tileContent(item)}
+        ${this.tileContent(item)}
         <span class="badge" aria-hidden="true"
           ><md-icon>${added ? 'check' : 'add'}</md-icon></span
         >

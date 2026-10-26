@@ -219,25 +219,25 @@ suite('ScreenHost', () => {
 });
 
 suite('marketing elements', () => {
-  test('shell shows the hero, the store badge and the trademark line', async () => {
+  test('shell keeps its app bar clean and product links in the footer', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
         .product=${{
-        id: 'demo',
-        name: 'Demo',
-        icon: '',
-        headline: 'Every screen, live',
-        description: 'The app as it is.',
-        storeUrl: 'https://play.google.com/store/apps/details?id=demo',
-        repositoryUrl: 'https://github.com/example/demo',
-      }}
+          id: 'demo',
+          name: 'Demo',
+          icon: '',
+          storeUrl: 'https://play.google.com/store/apps/details?id=demo',
+          repositoryUrl: 'https://github.com/example/demo',
+        }}
         .count=${1}
         ><div>card</div></mnw-marketing-shell
       >`
     );
     const root = el.shadowRoot!;
-    assert.equal(root.querySelector('h1')?.textContent, 'Every screen, live');
-    assert.exists(root.querySelector('mnw-play-badge'));
+    assert.notExists(root.querySelector('.hero'));
+    assert.notExists(root.querySelector('mnw-play-badge, mnw-github-badge'));
+    assert.exists(root.querySelector('footer a[href*="play.google.com"]'));
+    assert.exists(root.querySelector('footer a[href*="github.com"]'));
     assert.include(
       root.querySelector('footer')?.textContent ?? '',
       'trademarks of Google LLC'
@@ -248,7 +248,7 @@ suite('marketing elements', () => {
   test('shell hides the store parts without a store URL and shows the empty state', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
-        .product=${{id: 'demo', name: 'Demo', icon: '', headline: 'H', description: 'D'}}
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
         .count=${0}
       ></mnw-marketing-shell>`
     );

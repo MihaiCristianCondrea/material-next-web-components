@@ -53,7 +53,12 @@ if (!['dev', 'prod'].includes(mode)) {
 const browsers = {
   // Local browser testing via playwright
   // ===========
-  chromium: playwrightLauncher({product: 'chromium'}),
+  chromium: playwrightLauncher({
+    product: 'chromium',
+    launchOptions: process.env.CHROME_PATH
+      ? {executablePath: process.env.CHROME_PATH}
+      : {},
+  }),
   firefox: playwrightLauncher({product: 'firefox'}),
   webkit: playwrightLauncher({product: 'webkit'}),
 

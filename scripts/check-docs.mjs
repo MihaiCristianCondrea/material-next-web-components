@@ -478,14 +478,28 @@ await check(
     await p.locator(`${launcher} .trigger`).click();
     await p.locator(`${launcher} .panel`).waitFor({state: 'visible'});
     const before = await launcherTitles(p, launcher);
-    if (before.includes('Material Next') || before.length !== 5)
+    if (
+      before.some((title) =>
+        ['Tutorials admin', 'Codex', 'Smart Cleaner'].includes(title)
+      )
+    )
+      throw new Error('a removed product is still offered');
+    if (before.includes('Material Next') || before.length !== 2)
       throw new Error(`the current product shows: ${before.join(', ')}`);
     await p.locator(`${launcher} .edit`).click();
+    const editing = p.locator(`${launcher} .tile--editing`).first();
+    await p.locator(`${launcher} .grid--favorites .cell`).first().hover();
+    const wobble = await editing.evaluate((tile) => {
+      const style = getComputedStyle(tile);
+      return [style.animationIterationCount, style.animationPlayState];
+    });
+    if (wobble[0] !== 'infinite' || wobble[1] !== 'running')
+      throw new Error(`edit motion stops: ${wobble}`);
     await p.locator(`${launcher} .tile--editing`).nth(1).focus();
     await p.keyboard.press('Alt+ArrowLeft');
     await expectText(
       logOf(p),
-      /launcher-change .*"shortcut:github".*"console:tutorials-admin"/
+      /launcher-change .*"android-app:android-insider".*"shortcut:github"/
     );
     await p.locator(`${launcher} .tile--add`).first().click();
     await expectText(logOf(p), /console:play-console"\]/);
@@ -493,7 +507,7 @@ await check(
     await settle(p);
     await p.locator(`${launcher} .trigger`).click();
     const after = await launcherTitles(p, launcher);
-    if (after[0] !== 'GitHub profile' || after.at(-1) !== 'Play Console')
+    if (after[0] !== 'Android Insider' || after.at(-1) !== 'Play Console')
       throw new Error(`favorites did not persist: ${after.join(', ')}`);
     const stored = await p.evaluate(() =>
       JSON.parse(localStorage.getItem('mnw-docs-demo:launcher'))
@@ -536,6 +550,20 @@ await check('the app bar launcher loads its icons', '', async (p) => {
         .shadowRoot.querySelectorAll('img'),
     ].every((img) => img.complete && img.naturalWidth > 0)
   );
+  await p.locator(`${launcher} .panel`).evaluate(async (panel) => {
+    await Promise.all(
+      panel.getAnimations().map((animation) => animation.finished)
+    );
+  });
+  const icon = p.locator(`${launcher} .grid--favorites .icon`).first();
+  const beforeHover = await icon.boundingBox();
+  await p.locator(`${launcher} .grid--favorites .tile`).first().hover();
+  const afterHover = await icon.boundingBox();
+  if (
+    Math.abs(beforeHover.width - afterHover.width) > 0.5 ||
+    Math.abs(beforeHover.height - afterHover.height) > 0.5
+  )
+    throw new Error('hover resizes launcher artwork');
   await p.mouse.click(10, 500);
   const open = await p.locator(launcher).getAttribute('open');
   if (open !== null) throw new Error('a click outside did not close it');
@@ -593,10 +621,119 @@ await check(
     );
   }
 );
-await ctx.close();
 
 // Phone layouts: the fixes for cramped navigation, tall table rows and
 // off-centre catalog icons, and the launcher as a bottom sheet.
+
+await check(
+  'the selection pill follows routes, history and resize',
+  '',
+  async (p) => {
+    const matches = () =>
+      p.evaluate(() => {
+        const indicator = document
+          .querySelector('.site-tab-indicator')
+          .getBoundingClientRect();
+        const selected = document
+          .querySelector('.site-tab-link[aria-current="page"]')
+          .getBoundingClientRect();
+        return (
+          Math.abs(indicator.left - selected.left) < 1 &&
+          Math.abs(indicator.width - selected.width) < 1
+        );
+      });
+    await p.locator('.site-tab-link', {hasText: 'Install'}).click();
+    await p.waitForURL('**/install/');
+    await p.waitForTimeout(400);
+    if (!(await matches())) throw new Error('pill missed Install');
+    await p.goBack();
+    await p.waitForURL(base);
+    await p.waitForTimeout(400);
+    if (!(await matches())) throw new Error('pill missed Home on Back');
+    await p.setViewportSize({width: 360, height: 780});
+    await p.waitForTimeout(100);
+    if (!(await matches())) throw new Error('pill missed after resize');
+    await p.setViewportSize({width: 1280, height: 900});
+  }
+);
+await check(
+  'the inspector controls share sans-serif typography',
+  'examples/screen-inspector/',
+  async (p) => {
+    const fonts = await p.locator('mnw-screen-inspector').evaluate((host) => {
+      const root = host.shadowRoot;
+      const segment = root.querySelector('md-outlined-segmented-button');
+      const select = root.querySelector('md-outlined-select');
+      const label = segment.shadowRoot.querySelector(
+        '.md3-segmented-button__label-text'
+      );
+      return [host, label, select].map(
+        (node) => getComputedStyle(node).fontFamily
+      );
+    });
+    if (
+      fonts.some((font) => !font.includes('sans-serif') || /Times/.test(font))
+    )
+      throw new Error(`unexpected fonts: ${fonts}`);
+  }
+);
+await check(
+  'the marketing gallery has a clean app bar and no hero',
+  'demos/marketing-hub/',
+  async (p) => {
+    const shell = p.locator('mnw-marketing-shell');
+    if (await shell.locator('.hero, mnw-play-badge, mnw-github-badge').count())
+      throw new Error('promotional hero or badge still rendered');
+    if (!(await shell.locator('#catalog h1').count()))
+      throw new Error('missing catalog page heading');
+  }
+);
+await check(
+  'expressive tabs are fully rounded',
+  'examples/expressive-tab-bar/',
+  async (p) => {
+    const shapes = await p
+      .locator('mnw-expressive-tab-bar')
+      .first()
+      .evaluate((host) => {
+        const root = host.shadowRoot;
+        return [
+          root.querySelector('nav'),
+          root.querySelector('md-primary-tab'),
+        ].map((node) => getComputedStyle(node).borderTopLeftRadius);
+      });
+    if (shapes.some((shape) => shape !== '999px'))
+      throw new Error(`tab shapes: ${shapes}`);
+  }
+);
+const reduced = await browser.newPage({reducedMotion: 'reduce'});
+await check(
+  'reduced motion disables launcher wobble and nav motion',
+  '',
+  async (p) => {
+    const launcher = '.site-actions mnw-product-launcher';
+    await p.locator(`${launcher} .trigger`).click();
+    await p.locator(`${launcher} .edit`).click();
+    const animations = await p
+      .locator(`${launcher} .tile--editing`)
+      .first()
+      .evaluate((tile) => tile.getAnimations().length);
+    if (animations)
+      throw new Error('favorite still wobbles under reduced motion');
+    await p.keyboard.press('Escape');
+    await p.locator('.site-tab-link', {hasText: 'Install'}).click();
+    await p.waitForURL('**/install/');
+    const moving = await p
+      .locator('.site-tab-indicator')
+      .evaluate((pill) => pill.getAnimations().length);
+    if (moving)
+      throw new Error('selection pill still animates under reduced motion');
+  },
+  reduced
+);
+await reduced.close();
+await ctx.close();
+
 const phoneContext = await browser.newContext({
   viewport: {width: 360, height: 780},
   hasTouch: true,

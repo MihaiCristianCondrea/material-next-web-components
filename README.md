@@ -2,7 +2,7 @@
 
 Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
 
-> Status: early-stage. Published to npm from GitHub releases (see [Releasing](#releasing)); APIs marked Experimental can still change between minor versions.
+> Status: unreleased. `0.0.1` is the first planned release. npm publishing is configured through GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
 
 ## Links
 
@@ -13,13 +13,13 @@ Material-inspired Lit custom elements for product views, documentation pages, na
 
 ## Install
 
-Install it with its peer dependencies, Lit and Material Web:
+After the first release, install it with its peer dependencies, Lit and Material Web:
 
 ```bash
 npm install material-next-web-components lit @material/web
 ```
 
-To work on the library itself:
+Until then, build from source. To work on the library itself:
 
 ```bash
 git clone https://github.com/MihaiCristianCondrea/material-next-web-components.git
@@ -141,8 +141,8 @@ npm run smoke:exports
 
 Publishing a GitHub release publishes the package to npm (`.github/workflows/publish.yml`):
 
-1. Set `version` in `package.json` (for example `0.2.0`) and add the entry to `CHANGELOG.md` on `main`.
-2. Create a release whose tag is that version with a `v` (`v0.2.0`). A pre-release publishes under the `next` dist-tag.
+1. Set `version` in `package.json` (for example `0.0.1`) and add the entry to `CHANGELOG.md` on `main`.
+2. Create a release whose tag is that version with a `v` (`v0.0.1`). A pre-release publishes under the `next` dist-tag.
 3. The workflow checks the tag against `package.json`, lints, builds, tests in Chromium, then publishes with npm provenance using the `NPM_KEY` repository secret.
 
 Run the workflow by hand with **dry-run** on to build and pack without publishing.
