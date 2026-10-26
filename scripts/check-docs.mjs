@@ -605,6 +605,141 @@ await check(
   }
 );
 await check(
+  'switch the app shell presentation without losing state',
+  'examples/app-shell/',
+  async (p) => {
+    const frame = p.frame({url: /demos\/app-shell\//});
+    if (!frame) throw new Error('no console frame');
+    await frame.waitForSelector('mnw-app-shell[layout]');
+    await p.locator('.app-shell-stage').scrollIntoViewIfNeeded();
+    const shell = frame.locator('mnw-app-shell');
+    const layout = () => shell.getAttribute('layout');
+    const until = async (want) => {
+      for (let i = 0; i < 40 && (await layout()) !== want; i++) {
+        await p.waitForTimeout(50);
+      }
+      if ((await layout()) !== want)
+        throw new Error(`layout is ${await layout()}, not ${want}`);
+    };
+    // The frame is scaled with CSS zoom, which Playwright's own clicks inside
+    // it do not follow: click where the element is on screen, as a user does.
+    const tap = async (selector, offset = {x: 0.5, y: 0.5}) => {
+      const outer = await p.locator('.app-shell-frame').evaluate((f) => ({
+        ...f.getBoundingClientRect().toJSON(),
+        zoom: Number(f.style.zoom) || 1,
+      }));
+      const inner = await frame
+        .locator(selector)
+        .first()
+        .evaluate((e) => e.getBoundingClientRect().toJSON());
+      await p.mouse.click(
+        outer.x + (inner.x + inner.width * offset.x) * outer.zoom,
+        outer.y + (inner.y + inner.height * offset.y) * outer.zoom
+      );
+    };
+    const drawerShown = () =>
+      frame.evaluate(() =>
+        document
+          .querySelector('mnw-app-shell')
+          .shadowRoot.querySelector('.drawer')
+          .matches(':popover-open')
+      );
+    const menuFocused = () =>
+      shell.evaluate((el) =>
+        el.shadowRoot.activeElement?.classList.contains('leading')
+      );
+
+    await until('permanent');
+    await tap('mnw-navigation-item[href="lessons/"]');
+    await frame.waitForFunction(
+      () => document.querySelector('mnw-app-shell').heading === 'Lessons'
+    );
+    await frame.locator('#lesson').evaluate((field) => {
+      field.value = 'Draft';
+      field.dispatchEvent(new Event('input', {bubbles: true}));
+    });
+    const url = frame.url();
+    // Mark the navigation nodes: a switch must keep these very elements.
+    await frame.evaluate(() =>
+      document
+        .querySelectorAll('mnw-navigation-item')
+        .forEach((node, i) => (node.__mark = i))
+    );
+    const kept = async (when) => {
+      const now = await frame.evaluate(() => ({
+        text: document.querySelector('#lesson')?.value,
+        heading: document.querySelector('mnw-app-shell').heading,
+        marked: [...document.querySelectorAll('mnw-navigation-item')].every(
+          (node, i) => node.__mark === i
+        ),
+      }));
+      if (
+        now.text !== 'Draft' ||
+        now.heading !== 'Lessons' ||
+        !now.marked ||
+        frame.url() !== url
+      )
+        throw new Error(`${when} lost state: ${JSON.stringify(now)}`);
+    };
+
+    await p.locator('[data-presentation="modal"]').click();
+    await until('modal');
+    await kept('switching to modal');
+    // Full-width content: the screen starts at the frame's edge.
+    const main = await frame
+      .locator('mnw-app-shell .main')
+      .evaluate((el) => el.getBoundingClientRect().toJSON());
+    if (main.x > 1 || main.width < 1200)
+      throw new Error(`content is at ${main.x}px, ${main.width}px wide`);
+    // The same nodes in the modal drawer; Escape and the scrim close it.
+    await tap('mnw-app-shell .leading');
+    await frame.waitForFunction(() =>
+      document
+        .querySelector('mnw-app-shell')
+        .shadowRoot.querySelector('.drawer')
+        .matches(':popover-open')
+    );
+    await kept('opening the modal drawer');
+    await p.keyboard.press('Escape');
+    await p.waitForTimeout(100);
+    if (await drawerShown()) throw new Error('Escape did not close it');
+    if (!(await menuFocused()))
+      throw new Error('Escape did not return focus to the menu');
+    await tap('mnw-app-shell .leading');
+    await p.waitForTimeout(300);
+    if (!(await drawerShown())) throw new Error('the menu did not reopen it');
+    // The scrim: the right half of the screen, beside the drawer.
+    await tap('mnw-app-shell', {x: 0.8, y: 0.2});
+    await p.waitForTimeout(100);
+    if (await drawerShown()) throw new Error('the scrim did not close it');
+
+    await p.locator('[data-presentation="auto"]').click();
+    await until('permanent');
+    await kept('switching back');
+    // Focus on a destination when the drawer is put away goes to the menu.
+    await frame.evaluate(() => {
+      document.querySelector('mnw-navigation-item[href="feed/"]').focus();
+      window.postMessage(
+        {type: 'app-shell-presentation', mode: 'modal'},
+        location.origin
+      );
+    });
+    await until('modal');
+    await p.waitForTimeout(100);
+    if (!(await menuFocused()))
+      throw new Error('focus fell out of the drawer on switch');
+    await p.locator('[data-presentation="auto"]').click();
+    await until('permanent');
+
+    // Resizing across the breakpoint, in the connected presentation.
+    await p.locator('[data-width="390"]').click();
+    await until('modal');
+    await p.locator('[data-width="1280"]').click();
+    await until('permanent');
+    await kept('resizing');
+  }
+);
+await check(
   'open a deep app shell route and go back up',
   'demos/app-shell/feed/android-16/',
   async (p) => {

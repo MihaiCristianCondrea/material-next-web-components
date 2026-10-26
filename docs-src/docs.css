@@ -1178,6 +1178,12 @@ td:first-child {
   font-size: 18px;
 }
 
+.frame-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .frame-sizes {
   display: flex;
   flex-wrap: wrap;
@@ -1199,11 +1205,26 @@ td:first-child {
   color: var(--md-sys-color-on-secondary-container);
 }
 
-.app-shell-frame {
-  max-width: 100%;
-  margin-inline: auto;
+.frame-controls,
+.app-shell-stage {
+  flex: 1 0 100%;
+  min-width: 0;
+}
+
+.app-shell-stage {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  transition: width 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.app-shell-frame {
+  flex: none;
+  max-width: none;
+}
+
+.app-shell-stage + .demo-open {
+  margin: 12px 16px;
 }
 
 .console-demo {

@@ -261,6 +261,49 @@ suite('mnw-app-shell', () => {
     );
   });
 
+  test('switching to modal moves focus from the drawer to the menu button', async () => {
+    const {shell} = await mount(1000);
+    const feed = items(shell)[1];
+    feed.focus();
+    assert.equal(document.activeElement, feed);
+    shell.navigationMode = 'modal';
+    await shell.updateComplete;
+    await (leading(shell) as HTMLElement & {updateComplete: Promise<unknown>})
+      .updateComplete;
+    assert.equal(shell.layout, 'modal');
+    assert.equal(
+      shell.shadowRoot!.activeElement,
+      leading(shell),
+      'focus did not fall to the body'
+    );
+  });
+
+  test('switching to permanent keeps focus on the same destination', async () => {
+    const {shell} = await mount(1000, 'navigation-mode="modal"');
+    const navigation = items(shell);
+    shell.openDrawer();
+    await shell.updateComplete;
+    navigation[0].focus();
+    shell.navigationMode = 'auto';
+    await shell.updateComplete;
+    assert.equal(shell.layout, 'permanent');
+    assert.isFalse(shell.drawerOpen);
+    // The same nodes, still in the shell, and still focused.
+    assert.deepEqual(items(shell), navigation);
+    assert.equal(document.activeElement, navigation[0]);
+  });
+
+  test('switching keeps screen content in place', async () => {
+    const {shell} = await mount(1000);
+    const screen = shell.querySelector('p')!;
+    shell.navigationMode = 'modal';
+    await shell.updateComplete;
+    shell.navigationMode = 'auto';
+    await shell.updateComplete;
+    assert.equal(shell.querySelector('p'), screen);
+    assert.isTrue(screen.isConnected);
+  });
+
   test('growing past the breakpoint closes an open drawer', async () => {
     const {host, shell} = await mount(500);
     shell.openDrawer();

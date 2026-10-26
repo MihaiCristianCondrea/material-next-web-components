@@ -26,6 +26,8 @@ The shell owns layout, drawer state, focus and motion. **The app owns routing**:
 
 A small admin console: Feed, an article (with Back), Studio Bot, Lessons and Settings. Narrow the frame to get the modal drawer. In Lessons, type something, then pick another destination: the app's router asks before leaving. Every route is its own URL; reload or use Back and Forward inside the frame.
 
+**Connected (Insider)** and **Modal (Dev Tools)** switch the drawer presentation in place: the page only sets `navigation-mode` on the shell, so the route, the text you typed and the navigation nodes stay as they are.
+
 {% preview "app-shell-frame" "" "demo__stage--flush" %}
 
 The console's markup:
@@ -118,17 +120,21 @@ Android Insider uses the connected frame beside an always-visible drawer. Keep
 below the breakpoint it becomes modal. A forced `navigation-mode="permanent"`
 is useful only when the host guarantees enough room.
 
+Switching between them, or resizing across the breakpoint, keeps the same
+navigation nodes and the screen. Focus follows: on a destination that is still
+on screen it stays there; when the drawer is put away it moves to the menu
+button. The demo above switches both ways, and the documentation checks drive
+it: the switch, resizing, Escape, the scrim, focus and the route.
+
 Next steps for consumers:
 
-1. Add both presentations to the console demo with the same navigation nodes;
-   verify resize, Escape, scrim, focus return and unchanged routing state.
-2. Migrate Insider with the automatic modal/permanent policy, preserving deep
+1. Migrate Insider with the automatic modal/permanent policy, preserving deep
    links and unsaved-change guards.
-3. Convert metadata to a SPA behind a preview route, then use the same policy
+2. Convert metadata to a SPA behind a preview route, then use the same policy
    with its own breakpoint before replacing `/admin`.
-4. Migrate GitHub Dev Tools with a modal drawer at all widths, preserving its
+3. Migrate GitHub Dev Tools with a modal drawer at all widths, preserving its
    full-width content, theme controls and footer links.
-5. Add a user-collapsible persistent drawer only when a consumer needs it. Keep
+4. Add a user-collapsible persistent drawer only when a consumer needs it. Keep
    open/closed preference with the host; the shell should not infer it from the
    repository name. A rail or bottom navigation remains a separate future mode.
 

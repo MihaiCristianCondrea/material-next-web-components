@@ -135,6 +135,8 @@ export class MaterialNextAppShell extends LitElement {
   private modalShown = false;
   /** Where focus goes when the modal drawer closes. */
   private focusAfterClose: 'trigger' | 'headline' | 'none' = 'trigger';
+  /** The drawer element that had focus when the layout switched. */
+  private focusBeforeSwitch?: HTMLElement;
 
   override connectedCallback() {
     super.connectedCallback();
@@ -194,6 +196,8 @@ export class MaterialNextAppShell extends LitElement {
         : this.navigationMode;
     if (layout !== this.layout) {
       const switched = this.hasUpdated;
+      // Before render hides or moves the drawer, which would drop focus.
+      if (switched) this.focusBeforeSwitch = this.focusInDrawer();
       this.layout = layout;
       if (switched) {
         this.dispatchEvent(
@@ -224,8 +228,43 @@ export class MaterialNextAppShell extends LitElement {
 
   protected override updated(changed: PropertyValues<this>) {
     if (changed.has('drawerOpen') || changed.has('layout')) this.syncDrawer();
+    if (changed.has('layout')) void this.restoreFocusAfterSwitch();
     const previous = changed.get('heading');
     if (changed.has('heading') && previous !== undefined) this.playHeading();
+  }
+
+  /** The focused element in the drawer's slots, if any. */
+  private focusInDrawer(): HTMLElement | undefined {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !this.contains(active)) return;
+    let child: Element | null = active;
+    while (child && child.parentElement !== this) child = child.parentElement;
+    const slot = child?.getAttribute('slot');
+    return slot === 'brand' ||
+      slot === 'navigation' ||
+      slot === 'navigation-footer'
+      ? active
+      : undefined;
+  }
+
+  /**
+   * After a layout switch, focus stays where it was when the drawer is still
+   * on screen (modal to permanent: the same nodes), and goes to the menu
+   * button when the drawer has been put away (permanent to modal).
+   */
+  private async restoreFocusAfterSwitch() {
+    const focused = this.focusBeforeSwitch;
+    this.focusBeforeSwitch = undefined;
+    if (!focused) return;
+    if (this.layout === 'modal' && !this.drawerOpen) {
+      // The menu button appeared in this update; its own button renders next.
+      const button = this.leadingButton as
+        (HTMLElement & {updateComplete?: Promise<unknown>}) | undefined;
+      await button?.updateComplete;
+      button?.focus();
+    } else {
+      focused.focus({preventScroll: true});
+    }
   }
 
   /** Shows or hides the modal drawer to match `drawerOpen` and the layout. */

@@ -1194,7 +1194,14 @@ td:first-child {
 
 // Demo layouts --------------------------------------------------------------------
 
-// The app shell demo: width presets above a frame that can narrow to a phone.
+// The app shell demo: presentation and width presets above a frame that can
+// narrow to a phone.
+.frame-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .frame-sizes {
   display: flex;
   flex-wrap: wrap;
@@ -1216,11 +1223,29 @@ td:first-child {
   color: var(--md-sys-color-on-secondary-container);
 }
 
-.app-shell-frame {
-  max-width: 100%;
-  margin-inline: auto;
+.frame-controls,
+.app-shell-stage {
+  // Whole rows of the demo stage: the frame is scaled to this width, so it
+  // must not size it.
+  flex: 1 0 100%;
+  min-width: 0;
+}
+
+.app-shell-stage {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  transition: width 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+// Sized and scaled by the demo script.
+.app-shell-frame {
+  flex: none;
+  max-width: none;
+}
+
+.app-shell-stage + .demo-open {
+  margin: 12px 16px;
 }
 
 // The demo console's own page (demos/app-shell/).

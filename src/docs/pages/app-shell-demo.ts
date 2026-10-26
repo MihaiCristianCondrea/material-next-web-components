@@ -169,3 +169,14 @@ window.addEventListener('popstate', async () => {
 
 show(new URL(location.href));
 // /example
+
+// The docs page around this frame switches the drawer presentation. Only the
+// shell's navigation-mode changes; the route and the screen stay.
+window.addEventListener('message', (event) => {
+  const data = event.data as {type?: string; mode?: string};
+  if (event.origin !== location.origin) return;
+  if (data?.type !== 'app-shell-presentation') return;
+  if (data.mode === 'auto' || data.mode === 'modal') {
+    shell.navigationMode = data.mode;
+  }
+});

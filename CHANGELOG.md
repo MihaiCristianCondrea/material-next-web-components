@@ -22,7 +22,11 @@ release history; attribution remains in `LICENSE` and the source headers.
   wobble throughout edit mode unless reduced motion is enabled.
 - Experimental application shell and navigation items, with a single navigation
   tree, modal and permanent layouts, a connected app bar and a host-owned router.
-  The live console demo covers deep links, browser history and unsaved changes.
+  The live console demo covers deep links, browser history and unsaved changes,
+  and switches in place between the connected presentation (Android Insider)
+  and a modal drawer at every width (GitHub Dev Tools) without losing the route,
+  screen state or navigation nodes. A layout switch keeps focus on a visible
+  destination, or moves it to the menu button when the drawer is put away.
 
 ### Marketing hubs
 
