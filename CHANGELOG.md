@@ -9,6 +9,10 @@
   migrating the metadata backend launcher's stored ids. Icons ship in `assets/marketing/launcher/`.
 - Documentation site: the launcher in the app bar; on phones the navigation pill holds every tab and keeps the
   current one in view, tables stack into labelled rows, and catalog icons sit centred in their tiles.
+- Development dependencies updated (Material Web 2.5, Eleventy 3.1.7, `@web/dev-server` 1.0, ESLint, Rollup,
+  Sass, Prettier); `npm audit` reports no vulnerabilities. Eleventy's own gray-matter fork reads YAML with
+  current js-yaml, so the gray-matter patch, `patch-package` and the js-yaml override are gone. TypeScript stays
+  on 6.0 until typescript-eslint supports 7.
 
 ## 0.2.0
 
