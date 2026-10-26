@@ -95,7 +95,10 @@ const watch = (page, label) => {
   });
   page.on('requestfailed', (r) => {
     // External fonts may be blocked in sandboxes; everything local must load.
-    if (r.url().startsWith(origin)) {
+    // A request a reload or navigation cancels is aborted, not missing; a
+    // missing file still fails above with its 404.
+    const aborted = r.failure()?.errorText === 'net::ERR_ABORTED';
+    if (r.url().startsWith(origin) && !aborted) {
       problem(label(), `failed ${r.url().slice(origin.length)}`);
     }
   });
@@ -112,7 +115,8 @@ const collect = () => {
       // Iframe pages (the full-page demos) are pages too.
       const src = el.localName === 'iframe' ? el.getAttribute('src') : null;
       if (src) hrefs.add(new URL(src, el.baseURI).href);
-      const href = el.getAttribute('href');
+      // <base href> sets where the page's URLs resolve; it is not a link.
+      const href = el.localName === 'base' ? null : el.getAttribute('href');
       if (href && (el.tagName === 'A' || el.hasAttribute('href'))) {
         hrefs.add(new URL(href, el.baseURI).href);
       }
@@ -536,6 +540,59 @@ await check('the app bar launcher loads its icons', '', async (p) => {
   const open = await p.locator(launcher).getAttribute('open');
   if (open !== null) throw new Error('a click outside did not close it');
 });
+await check(
+  'route the app shell demo and guard unsaved changes',
+  'demos/app-shell/feed/',
+  async (p) => {
+    const shell = p.locator('mnw-app-shell');
+    const heading = () => shell.evaluate((el) => el.heading);
+    if ((await shell.getAttribute('layout')) !== 'permanent')
+      throw new Error('no permanent drawer at 1280px');
+    // A marker on window survives client-side navigation, not a reload.
+    await p.evaluate(() => (window.__sameDocument = true));
+    await p.locator('mnw-navigation-item[href="lessons/"]').click();
+    if ((await heading()) !== 'Lessons' || !p.url().endsWith('/lessons/'))
+      throw new Error(`Lessons did not open: ${await heading()} ${p.url()}`);
+    const active = await p
+      .locator('mnw-navigation-item[active]')
+      .getAttribute('href');
+    if (active !== 'lessons/') throw new Error(`${active} is current`);
+    await p.locator('#lesson').fill('Draft');
+    await p.locator('mnw-navigation-item[href="settings/"]').click();
+    await p.locator('#leave-dialog').waitFor({state: 'visible'});
+    await p.locator('#leave-dialog md-text-button').click();
+    if ((await heading()) !== 'Lessons')
+      throw new Error('Keep editing left the lesson');
+    await p.locator('mnw-navigation-item[href="settings/"]').click();
+    await p.locator('#leave-dialog md-filled-tonal-button').click();
+    await p.waitForFunction(
+      () => document.querySelector('mnw-app-shell').heading === 'Settings'
+    );
+    if (!(await p.evaluate(() => window.__sameDocument)))
+      throw new Error('navigating reloaded the page');
+    await p.goBack();
+    await p.waitForFunction(
+      () => document.querySelector('mnw-app-shell').heading === 'Lessons'
+    );
+  }
+);
+await check(
+  'open a deep app shell route and go back up',
+  'demos/app-shell/feed/android-16/',
+  async (p) => {
+    const shell = p.locator('mnw-app-shell');
+    if ((await shell.evaluate((el) => el.leading)) !== 'back')
+      throw new Error('an article does not lead with Back');
+    const active = await p
+      .locator('mnw-navigation-item[active]')
+      .getAttribute('href');
+    if (active !== 'feed/') throw new Error(`${active} is current`);
+    await p.locator('mnw-app-shell .leading').click();
+    await p.waitForFunction(
+      () => document.querySelector('mnw-app-shell').heading === 'Feed'
+    );
+  }
+);
 await ctx.close();
 
 // Phone layouts: the fixes for cramped navigation, tall table rows and
@@ -619,6 +676,39 @@ await check(
       throw new Error(`the sheet is at ${JSON.stringify(box)}`);
     await p.locator(`${launcher} .close`).tap();
     await panel.waitFor({state: 'hidden'});
+  },
+  handset
+);
+await check(
+  'the app shell drawer is modal on phones',
+  'demos/app-shell/feed/',
+  async (p) => {
+    const shell = p.locator('mnw-app-shell');
+    if ((await shell.getAttribute('layout')) !== 'modal')
+      throw new Error('no modal drawer at 360px');
+    const drawer = p.locator('mnw-app-shell .drawer');
+    await p.locator('mnw-app-shell .leading').tap();
+    await drawer.waitFor({state: 'visible'});
+    await p.waitForTimeout(400);
+    const box = await drawer.boundingBox();
+    if (box.x !== 0 || box.width > 360 - 56)
+      throw new Error(`the drawer is at ${JSON.stringify(box)}`);
+    // The scrim, beside the drawer.
+    await p.mouse.click(340, 400);
+    await drawer.waitFor({state: 'hidden'});
+    await p.locator('mnw-app-shell .leading').tap();
+    await drawer.waitFor({state: 'visible'});
+    await p.keyboard.press('Escape');
+    await drawer.waitFor({state: 'hidden'});
+    const focused = await shell.evaluate((el) =>
+      el.shadowRoot.activeElement?.classList.contains('leading')
+    );
+    if (!focused) throw new Error('Escape did not return focus to the menu');
+    await p.locator('mnw-app-shell .leading').tap();
+    await p.locator('mnw-navigation-item[href="studio-bot/"]').tap();
+    await drawer.waitFor({state: 'hidden'});
+    if ((await shell.evaluate((el) => el.heading)) !== 'Studio Bot')
+      throw new Error('picking a destination did not navigate');
   },
   handset
 );

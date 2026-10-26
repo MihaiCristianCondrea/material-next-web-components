@@ -32,6 +32,16 @@ for (const name of Object.keys(launcher)) {
   }
 }
 
+const appShell = await import(pathToFileURL('dist/app-shell/index.js').href);
+const appShellPage = read('docs-src/examples/app-shell.md');
+for (const name of Object.keys(appShell)) {
+  if (!new RegExp(`\`${name}\\b`).test(appShellPage)) {
+    problems.push(
+      `app-shell.js exports ${name}, missing from docs-src/examples/app-shell.md`
+    );
+  }
+}
+
 const pages = [
   ...readdirSync('docs-src/examples').map((f) => join('docs-src/examples', f)),
   ...readdirSync('docs-src/guides').map((f) => join('docs-src/guides', f)),
@@ -98,5 +108,5 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(
-  `Documentation coverage: ${Object.keys(marketing).length} marketing and ${Object.keys(launcher).length} launcher exports, every element and package export documented, ${used.size} demos wired.`
+  `Documentation coverage: ${Object.keys(marketing).length} marketing, ${Object.keys(launcher).length} launcher and ${Object.keys(appShell).length} app shell exports, every element and package export documented, ${used.size} demos wired.`
 );

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- App shell (`material-next-web-components/app-shell.js`, experimental): `<mnw-app-shell>` and
+  `<mnw-navigation-item>`, the frame of Android Insider's admin console as a component. The navigation drawer is a
+  top-layer modal sheet below `permanent-from` (900px of the shell's width by default) and a permanent column with a
+  connected app bar from it, one DOM tree in both. The app owns routing: destinations fire a cancelable
+  `navigation-request`, and `heading`, `leading` and `active-path` tell the shell where the app is. Layout policies
+  are rule lists, ready for more modes.
 - Product launcher (`material-next-web-components/launcher.js`, experimental): `<mnw-product-launcher>`, an apps
   button with editable favorites (add, remove, drag or Alt+arrow reorder, reset, localStorage) and a separate admin
   redirects section, over Android apps, web products, consoles and shortcuts with `kind:key` ids. It hides the

@@ -10,6 +10,7 @@ const entries = [
   'docs-table-of-contents.js',
   'marketing/index.js',
   'launcher/index.js',
+  'app-shell/index.js',
 ];
 
 for (const entry of entries) {

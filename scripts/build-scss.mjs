@@ -46,10 +46,10 @@ const outputs = [
   {input: 'docs-src/docs.scss', output: 'docs-src/docs.css', lit: false},
 ];
 
-// Marketing and launcher modules compile every non-partial stylesheet next to
+// Marketing, launcher and app shell modules compile every non-partial stylesheet next to
 // its element.
 const modules = await Promise.all(
-  ['src/marketing', 'src/launcher'].map((dir) =>
+  ['src/marketing', 'src/launcher', 'src/app-shell'].map((dir) =>
     readdir(dir, {recursive: true, withFileTypes: true})
   )
 );

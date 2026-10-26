@@ -7,6 +7,7 @@
 // module of the same name (src/docs/demos/<id>.ts), whose source is also the
 // code sample shown under it. A module may return a cleanup function, called
 // before the next page replaces the demo.
+import appShellFrame from './app-shell-frame.js';
 import appShowcase from './app-showcase.js';
 import codeBlock from './code-block.js';
 import deviceFrame from './device-frame.js';
@@ -22,6 +23,7 @@ import screenInspector from './screen-inspector.js';
 type Demo = (root: HTMLElement) => void | (() => void);
 
 const demos: Record<string, Demo> = {
+  'app-shell-frame': appShellFrame,
   'app-showcase': appShowcase,
   'code-block': codeBlock,
   'device-frame': deviceFrame,

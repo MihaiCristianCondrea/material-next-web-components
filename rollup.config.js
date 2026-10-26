@@ -18,6 +18,7 @@ export default {
     'hub-gallery': 'dist/docs/pages/hub-gallery.js',
     'hub-prototype': 'dist/docs/pages/hub-prototype.js',
     'docs-demo-pages': 'dist/docs/pages/demo-pages.js',
+    'app-shell-demo': 'dist/docs/pages/app-shell-demo.js',
   },
   output: {
     dir: 'docs',

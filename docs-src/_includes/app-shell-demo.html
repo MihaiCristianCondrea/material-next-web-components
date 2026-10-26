@@ -1,0 +1,26 @@
+<!-- example -->
+<mnw-app-shell heading="Feed">
+  <div slot="brand" class="console-brand">
+    <img src="../demos/assets/android-insider-icon.svg" alt="" width="36" height="36">
+    <div>
+      <p class="console-brand__name">Android Insider</p>
+      <p class="console-brand__role">Admin console</p>
+    </div>
+  </div>
+
+  <mnw-navigation-item slot="navigation" href="feed/" icon="dynamic_feed">Feed</mnw-navigation-item>
+  <mnw-navigation-item slot="navigation" href="studio-bot/" icon="smart_toy">Studio Bot</mnw-navigation-item>
+  <mnw-navigation-item slot="navigation" href="lessons/" icon="school">Lessons
+    <span slot="badge">3</span>
+  </mnw-navigation-item>
+  <mnw-navigation-item slot="navigation" href="settings/" icon="settings">Settings</mnw-navigation-item>
+
+  <div slot="navigation-footer" class="console-footer">
+    <a href="https://mihaicristiancondrea.github.io/profile/#privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
+  </div>
+
+  <mnw-product-launcher slot="actions" current-product="console:tutorials-admin" storage-key="mnw-docs-demo:app-shell-launcher"></mnw-product-launcher>
+
+  <div id="screen" class="console-screen"></div>
+</mnw-app-shell>
+<!-- /example -->

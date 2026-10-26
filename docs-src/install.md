@@ -29,6 +29,7 @@ Import each module once, anywhere in your app's bundle. Importing an element's m
 | `material-next-web-components/app-showcase.js` | `<mnw-app-showcase>` | Experimental |
 | `material-next-web-components/material-next-home.js` | `<mnw-home>` (and the elements it uses) | Experimental |
 | `material-next-web-components/marketing.js` | The eight marketing hub elements, and exports the [marketing API](../guides/marketing-api/) | Experimental |
+| `material-next-web-components/app-shell.js` | `<mnw-app-shell>` and `<mnw-navigation-item>`, with layout policies ([App shell](../examples/app-shell/)) | Experimental |
 | `material-next-web-components/launcher.js` | `<mnw-product-launcher>` and its catalog, favorites and storage API ([Product launcher](../examples/product-launcher/)) | Experimental |
 | `material-next-web-components/docs-shell.js`, `docs-top-app-bar.js`, `docs-page.js`, `docs-vertical-tabs.js`, `docs-table-of-contents.js` | The documentation layout elements | Internal candidate |
 

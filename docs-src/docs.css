@@ -1175,6 +1175,113 @@ td:first-child {
   font-size: 18px;
 }
 
+.frame-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.frame-sizes .btn {
+  height: 36px;
+  padding: 0 16px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.frame-sizes .btn[aria-pressed=true] {
+  border-color: transparent;
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+.app-shell-frame {
+  max-width: 100%;
+  margin-inline: auto;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  transition: width 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.console-demo {
+  min-height: 100dvh;
+}
+
+.console-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.console-brand p {
+  margin: 0;
+}
+
+.console-brand__name {
+  font-weight: 600;
+}
+
+.console-brand__role {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 12px;
+}
+
+.console-footer {
+  padding: 16px 16px 4px;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+  font-size: 12px;
+}
+
+.console-screen {
+  max-width: 880px;
+  padding: 8px 24px 48px;
+}
+
+.console-list {
+  padding-left: 20px;
+}
+
+.console-field {
+  display: grid;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.console-field textarea {
+  padding: 12px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.console-dialog {
+  max-width: min(400px, 100vw - 48px);
+  padding: 24px;
+  border: 0;
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.console-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.console-dialog h2 {
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.console-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}
+
 .nav-demo {
   display: grid;
   grid-template-columns: minmax(0, 280px) minmax(0, 220px);
