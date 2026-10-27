@@ -147,10 +147,12 @@ export const styles = css`
 
   .mnw-stage {
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
     width: 100%;
     height: 100%;
     min-width: 0;
+    min-height: 0;
   }
 
   .mnw-stage > .mnw-mount:not(.mnw-mount--fill) {
@@ -173,7 +175,6 @@ export const styles = css`
     padding: 16px;
     border-radius: 28px;
     background: var(--mnw-hub-stage);
-    border: 1px solid var(--mnw-hub-border-subtle);
   }
 
   .mnw-compare__label {

@@ -1,7 +1,7 @@
 ---
 tags: reference
 name: Screen inspector
-description: "The prototype page's side panel: screen details, view options, and each screen's own controls and presets."
+description: "The prototype page's side panel: the screen picker, view options, and each screen's own controls and presets."
 category: marketing
 icon: tune
 status: experimental
@@ -12,7 +12,7 @@ order: 170
 
 ## Overview
 
-`<mnw-screen-inspector>` is the panel beside the live screen on the prototype page. From top to bottom: a link back to the gallery, the screen's category, title, description and Compose source, a screen picker, Inspect or Compare, then the view options (theme, system navigation, window, palette, device frame, ads) and the screen's own `controls`. At the end: **Reset state** and **Capture view**.
+`<mnw-screen-inspector>` is the panel beside the live screen on the prototype page. From top to bottom: a link back to the gallery, a screen picker (the page's heading, the screen title, is visually hidden), Inspect or Compare, then the view options (theme, system navigation, window, palette, device frame, ads) and the screen's own `controls`. At the end: **Reset state** and **Capture view**.
 
 [`mountScreenPrototype()`](../../guides/marketing-hub/#the-prototype-page) renders it and applies everything it reports. Use it directly only for a custom prototype page.
 
@@ -24,12 +24,12 @@ order: 170
 
 A screen's `controls` become the panel's last section. Each control edits one state key (`key`), except presets, which apply a whole patch. `patch` adds more state to every change.
 
-| `type` | Shows | Fields |
-| --- | --- | --- |
-| `'presets'` | Assist chips | `label`, `options: [label, patch][]` |
-| `'choice'` | Filter chips | `key`, `label`, `options: (string \| number)[]`, `patch?` |
-| `'toggle'` | A switch | `key`, `label`, `patch?` |
-| `'slider'` or anything else | A slider with its value | `key`, `label`, `min`, `max`, `step?`, `unit?`, `patch?` |
+| `type`                      | Shows                   | Fields                                                    |
+| --------------------------- | ----------------------- | --------------------------------------------------------- |
+| `'presets'`                 | Assist chips            | `label`, `options: [label, patch][]`                      |
+| `'choice'`                  | Filter chips            | `key`, `label`, `options: (string \| number)[]`, `patch?` |
+| `'toggle'`                  | A switch                | `key`, `label`, `patch?`                                  |
+| `'slider'` or anything else | A slider with its value | `key`, `label`, `min`, `max`, `step?`, `unit?`, `patch?`  |
 
 ## API
 

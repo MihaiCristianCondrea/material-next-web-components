@@ -5,8 +5,9 @@
 
 import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/icon-button.js';
-import {LitElement, html, type PropertyValues} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
+import {AnchoredPanelController} from '../../internal/anchored-panel.js';
 import {DEFAULT_SOURCE_COLOR} from '../domain/color-theme.js';
 import type {ThemePreferenceStore} from '../data/theme-preference-store.js';
 import {DEFAULT_THEME_STORAGE_KEY} from '../data/theme-preference-store.js';
@@ -61,82 +62,13 @@ export class MaterialNextThemeButton extends LitElement {
     this.open = !this.open;
   }
 
-  private restoreFocus = false;
-
-  protected override willUpdate(changed: PropertyValues<this>) {
-    if (changed.has('open') && !this.open) {
-      const active = (this.renderRoot as ShadowRoot).activeElement;
-      this.restoreFocus = !!active && !!this.surface?.contains(active);
-    }
-  }
-
-  protected override updated(changed: PropertyValues<this>) {
-    if (!changed.has('open') || (!this.open && !changed.get('open'))) return;
-    const popover = this.surface;
-    if (!popover) return;
-    const native = typeof popover.showPopover === 'function';
-    if (this.open) {
-      // The top layer escapes the transforms and filters of a sticky app bar.
-      if (native && !popover.matches(':popover-open')) popover.showPopover();
-      this.place();
-      this.listen();
-      this.controls?.focus();
-    } else {
-      if (native && popover.matches(':popover-open')) popover.hidePopover();
-      this.stopListening();
-      if (this.restoreFocus) this.trigger?.focus();
-    }
-  }
-
-  override disconnectedCallback() {
-    this.stopListening();
-    super.disconnectedCallback();
-  }
-
-  /** Under the button, aligned to its end; inside the window. */
-  private readonly place = () => {
-    const rect = this.trigger?.getBoundingClientRect();
-    if (!rect || !this.surface) return;
-    // Aligned to the button's end, moved in when that would cross the start.
-    const width = this.surface.offsetWidth;
-    const end = Math.max(
-      8,
-      Math.min(window.innerWidth - rect.right, window.innerWidth - width - 8)
-    );
-    this.surface.style.setProperty(
-      '--_top',
-      `${Math.round(rect.bottom + 8)}px`
-    );
-    this.surface.style.setProperty('--_end', `${Math.round(end)}px`);
-  };
-
-  private readonly onDocumentPointerDown = (e: PointerEvent) => {
-    if (!e.composedPath().includes(this)) this.open = false;
-  };
-
-  private readonly onKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && this.open) {
-      e.stopPropagation();
-      this.restoreFocus = true;
-      this.open = false;
-    }
-  };
-
-  private listen() {
-    document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
-    window.addEventListener('resize', this.place);
-    window.addEventListener('scroll', this.place, {passive: true});
-  }
-
-  private stopListening() {
-    document.removeEventListener(
-      'pointerdown',
-      this.onDocumentPointerDown,
-      true
-    );
-    window.removeEventListener('resize', this.place);
-    window.removeEventListener('scroll', this.place);
-  }
+  private readonly panel = new AnchoredPanelController(this, {
+    isOpen: () => this.open,
+    setOpen: (open) => (this.open = open),
+    trigger: () => this.trigger,
+    surface: () => this.surface,
+    focus: () => this.controls,
+  });
 
   override render() {
     return html`<md-icon-button
@@ -153,7 +85,7 @@ export class MaterialNextThemeButton extends LitElement {
         class="popover"
         .popover=${'manual'}
         ?data-open=${this.open}
-        @keydown=${this.onKeyDown}
+        @keydown=${this.panel.onKeyDown}
       >
         <section
           class="panel"

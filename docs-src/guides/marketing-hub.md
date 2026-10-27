@@ -60,15 +60,14 @@ A screen is a `MarketingScreen`: metadata, `defaults` for its state, and `render
 
 The important fields:
 
-| Field                        |                                                                                                            |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `id`, `title`, `description` | Shown on its card and in the inspector. Ids must be unique; `createScreenRegistry()` throws on duplicates. |
-| `category`, `categoryLabel`  | Groups the catalog. The filter chips appear with two or more categories.                                   |
-| `palette`                    | The palette of the reference capture, used when the hub's palette is "As captured".                        |
-| `defaults`                   | The initial state. Every render gets `{...defaults, ...state}`.                                            |
-| `controls`                   | Optional tweaks for the inspector: presets, choices, toggles, sliders.                                     |
-| `tick(state, dt)`            | Optional clock: return a patch to animate while the screen is visible.                                     |
-| `source`                     | Optional: the Composable it translates, shown in the inspector.                                            |
+| Field                        |                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `id`, `title`, `description` | Shown on its card; the title also names it in the inspector. Ids must be unique; `createScreenRegistry()` throws on duplicates. |
+| `category`, `categoryLabel`  | Groups the catalog. The filter chips appear with two or more categories.                                                        |
+| `palette`                    | The palette of the reference capture, used when the hub's palette is "As captured".                                             |
+| `defaults`                   | The initial state. Every render gets `{...defaults, ...state}`.                                                                 |
+| `controls`                   | Optional tweaks for the inspector: presets, choices, toggles, sliders.                                                          |
+| `tick(state, dt)`            | Optional clock: return a patch to animate while the screen is visible.                                                          |
 
 Besides its own state, `render()` receives a `ScreenRenderContext`:
 

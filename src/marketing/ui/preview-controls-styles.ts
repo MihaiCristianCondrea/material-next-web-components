@@ -83,4 +83,30 @@ export const styles = css`
       margin-left: 0;
     }
   }
+  :host([layout='stacked']) .bar {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  :host([layout='stacked']) .group {
+    align-items: stretch;
+  }
+
+  :host([layout='stacked']) md-outlined-segmented-button-set,
+  :host([layout='stacked']) md-outlined-select {
+    width: 100%;
+  }
+
+  :host([layout='stacked']) .group:has(.switch) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  :host([layout='stacked']) .reset {
+    margin-left: 0;
+    align-self: flex-start;
+  }
 `;

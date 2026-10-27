@@ -43,6 +43,9 @@ export class MaterialNextPreviewControls extends LitElement {
   @property({attribute: false})
   defaults: PreviewSettings = DEFAULT_PREVIEW_SETTINGS;
 
+  /** `bar`: one wrapping row. `stacked`: one control per row, full width, for a panel. */
+  @property({reflect: true}) layout: 'bar' | 'stacked' = 'bar';
+
   /** The app's palette names; "As captured" is always offered first. */
   @property({attribute: false})
   palettes: readonly string[] = [];

@@ -12,7 +12,7 @@ order: 120
 
 ## Overview
 
-`<mnw-preview-controls>` is the toolbar above the hub's catalog. It shows the current `PreviewSettings` with Material Web components (segmented buttons for theme and navigation, a select for the palette, a switch for the device frame) and a **Reset** action once anything differs from `defaults`. The marketing shell includes one; use it on its own in a custom hub page.
+`<mnw-preview-controls>` holds the hub's preview settings. It shows the current `PreviewSettings` with Material Web components (segmented buttons for theme and navigation, a select for the palette, a switch for the device frame) and a **Reset** action once anything differs from `defaults`. The marketing shell shows one in a panel opened by the **Preview settings** button (`tune`) in its top app bar, with `layout="stacked"`: one control per row, as wide as the panel. The default `layout="bar"` is one wrapping row, for a custom hub page.
 
 ## Live demo
 
@@ -22,12 +22,12 @@ order: 120
 
 `PreviewSettings` is:
 
-| Field | Type | Default |
-| --- | --- | --- |
-| `theme` | `'system' \| 'light' \| 'dark'` | `'system'` |
-| `navType` | `'gesture' \| 'buttons'` | `'gesture'` |
-| `palette` | `string`: a palette name, or `'captured'` for each screen's own | `'captured'` |
-| `deviceFrame` | `boolean` | `false` |
+| Field         | Type                                                            | Default      |
+| ------------- | --------------------------------------------------------------- | ------------ |
+| `theme`       | `'system' \| 'light' \| 'dark'`                                 | `'system'`   |
+| `navType`     | `'gesture' \| 'buttons'`                                        | `'gesture'`  |
+| `palette`     | `string`: a palette name, or `'captured'` for each screen's own | `'captured'` |
+| `deviceFrame` | `boolean`                                                       | `false`      |
 
 `settings-change` carries the complete new settings, not a patch. Reset sends `defaults`. The palette select appears only when `palettes` is not empty, and always offers "As captured" first.
 

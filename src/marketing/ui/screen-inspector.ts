@@ -116,16 +116,8 @@ export class MaterialNextScreenInspector extends LitElement {
         <md-icon slot="icon">arrow_back</md-icon>All screens
       </md-outlined-button>
 
-      <div class="meta">
-        ${
-          s.categoryLabel || s.category
-            ? html`<span class="tag">${s.categoryLabel ?? s.category}</span>`
-            : nothing
-        }
-        <h1>${s.title}</h1>
-        <p>${s.description}</p>
-        ${s.source ? html`<code>${s.source}</code>` : nothing}
-      </div>
+      <!-- The Screen select shows the title; the page still needs its heading. -->
+      <h1 class="visually-hidden">${s.title}</h1>
 
       <div class="section">
         <span class="label">Screen</span>

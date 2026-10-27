@@ -29,17 +29,83 @@ export const styles = css`
     color: var(--mnw-hub-text);
   }
 
-  .controls {
-    position: sticky;
-    top: var(--mnw-app-shell-top-app-bar-height, 72px);
-    z-index: 15;
-    padding: 12px clamp(16px, 3vw, 32px);
-    background: var(--mnw-hub-scrolled);
-    backdrop-filter: saturate(1.2) blur(16px);
-    -webkit-backdrop-filter: saturate(1.2) blur(16px);
+  .settings {
+    display: inline-flex;
+  }
+
+  :host([settings-open]) .settings-trigger {
+    --md-icon-button-icon-color: var(--mnw-hub-accent);
+    --md-icon-button-hover-icon-color: var(--mnw-hub-accent);
+    --md-icon-button-focus-icon-color: var(--mnw-hub-accent);
+  }
+
+  .popover {
+    position: fixed;
+    inset: auto;
+    top: var(--_top, 64px);
+    inset-inline-end: var(--_end, 8px);
+    width: min(var(--mnw-hub-settings-width, 360px), 100vw - 16px);
+    max-height: calc(100dvh - var(--_top, 64px) - 16px);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: visible;
+    z-index: 60;
+  }
+
+  .popover:not([data-open]) {
+    display: none;
+  }
+
+  .popover::backdrop {
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .panel {
+    box-sizing: border-box;
+    max-height: inherit;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 16px;
+    border-radius: 28px;
+    background: var(--mnw-hub-surface);
+    color: var(--mnw-hub-text);
     box-shadow:
-      inset 0 1px 0 var(--mnw-hub-border-subtle),
-      inset 0 -1px 0 var(--mnw-hub-border-subtle);
+      0 4px 12px rgba(0, 0, 0, 0.12),
+      0 16px 48px rgba(0, 0, 0, 0.16);
+    transform-origin: top right;
+    animation: anchored-panel-open 220ms cubic-bezier(0.2, 0, 0, 1) both;
+  }
+
+  :host(:dir(rtl)) .panel {
+    transform-origin: top left;
+  }
+
+  @keyframes anchored-panel-open {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.96);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .panel {
+      animation: none;
+    }
+  }
+  @media (forced-colors: active) {
+    .panel {
+      border: 1px solid CanvasText;
+    }
+  }
+  .panel {
+    padding: 20px;
+  }
+
+  mnw-preview-controls {
+    outline: none;
   }
 
   #catalog {

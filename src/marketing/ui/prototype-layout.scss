@@ -20,22 +20,22 @@
   height: calc(100dvh - 48px);
   min-width: 0;
   display: grid;
+  // One track the stage's size, never the content's, so the device is
+  // measured against the space it has.
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   place-items: center;
-  border-radius: 28px;
-  background: var(--mnw-hub-stage);
-  border: 1px solid var(--mnw-hub-border-subtle);
-  overflow: auto;
-  // The stage holds a mock, so it scrolls without a bar like the mock does.
-  scrollbar-width: none;
-}
-
-.stage::-webkit-scrollbar {
-  display: none;
+  // No card around the device, and no scrolling: the device is scaled to fit
+  // the stage, as it would sit in the window. Its shadow may paint into the
+  // page's 24px padding, so it fades out instead of ending at an edge.
+  overflow: clip;
+  overflow-clip-margin: 24px;
 }
 
 ::slotted([slot='stage']) {
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
 }
 
 .panel {

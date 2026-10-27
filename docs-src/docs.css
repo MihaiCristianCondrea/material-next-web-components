@@ -780,6 +780,15 @@ td:first-child {
   margin-top: 12px;
 }
 
+.demo-launcher__palette {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--md-sys-color-on-surface);
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .demo-launcher {
   display: flex;
   align-items: center;

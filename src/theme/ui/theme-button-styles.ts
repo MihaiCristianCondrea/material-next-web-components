@@ -61,18 +61,14 @@ export const styles = css`
       0 4px 12px rgba(0, 0, 0, 0.12),
       0 16px 48px rgba(0, 0, 0, 0.16);
     transform-origin: top right;
-    animation: open 220ms cubic-bezier(0.2, 0, 0, 1) both;
+    animation: anchored-panel-open 220ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 
   :host(:dir(rtl)) .panel {
     transform-origin: top left;
   }
 
-  mnw-theme-controls {
-    outline: none;
-  }
-
-  @keyframes open {
+  @keyframes anchored-panel-open {
     from {
       opacity: 0;
       transform: translateY(-8px) scale(0.96);
@@ -87,5 +83,8 @@ export const styles = css`
     .panel {
       border: 1px solid CanvasText;
     }
+  }
+  mnw-theme-controls {
+    outline: none;
   }
 `;

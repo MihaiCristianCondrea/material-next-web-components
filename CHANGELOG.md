@@ -8,10 +8,15 @@ Last updated: October 27, 2026.
 
 ### Fixed
 
+- A framed device on the prototype page could be taller than the stage and scroll: its fit was measured before the frame had its size, against a stage that grew with it, and CSS zoom left the frame artwork at full size.
 - System color mode now opts plain host pages into light and dark browser colors. Launcher edit and close icons follow the panel colors, including when the host palette is disabled.
 
 ### Changed
 
+- The marketing shell's preview settings open from a **Preview settings** button in the top app bar, so the screen catalog starts right under the bar. `<mnw-preview-controls>` takes `layout="stacked"` for a panel; `settings-open` reflects the panel's state.
+- The prototype stage has no outlined card and never scrolls: a framed device or a large window is scaled to fit, and refits when the window, the frame or the screen changes size.
+- The screen inspector no longer shows the screen's category, description and Compose source; the screen picker names the screen. `MarketingScreen.source` is removed.
+- The product launcher demo's **Follow color palette** is a Material checkbox.
 - Redesigned the product launcher with Google light and dark surfaces, single-line app labels and an uncluttered edit grid. Select apps or drag them between Favorites and More apps; Alt+arrow and Delete remain available on the keyboard.
 - Launcher edits stay temporary until Done. Cancel, Escape and closing the panel discard the draft, and `launcher-change` reports only saved changes.
 

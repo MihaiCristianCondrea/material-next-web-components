@@ -342,7 +342,50 @@ suite('marketing elements', () => {
     const bar = shell.shadowRoot!.querySelector<HTMLSlotElement>(
       '.bar slot[name="actions"]'
     )!;
-    assert.equal(bar.assignedElements({flatten: true})[0]?.id, 'get');
+    assert.deepEqual(
+      bar.assignedElements({flatten: true}).map((e) => e.id || e.className),
+      ['settings', 'get'],
+      'the preview settings button comes first'
+    );
+  });
+
+  test('shell opens preview settings from its top app bar', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
+      ></mnw-marketing-shell>`
+    );
+    const root = el.shadowRoot!;
+    assert.notExists(
+      root.querySelector('.controls'),
+      'no row above the catalog'
+    );
+    const trigger = root.querySelector<HTMLElement>('.settings-trigger')!;
+    assert.equal(trigger.getAttribute('aria-label'), 'Preview settings');
+    assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+    trigger.click();
+    await el.updateComplete;
+    assert.isTrue(el.settingsOpen);
+    assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+    const controls = root.querySelector('.panel mnw-preview-controls')!;
+    assert.equal(controls.getAttribute('layout'), 'stacked');
+    setTimeout(() =>
+      controls.dispatchEvent(
+        new CustomEvent('settings-change', {
+          detail: {theme: 'dark'},
+          bubbles: true,
+          composed: true,
+        })
+      )
+    );
+    await oneEvent(el, 'settings-change');
+    root
+      .querySelector('.settings-popover')!
+      .dispatchEvent(
+        new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})
+      );
+    await el.updateComplete;
+    assert.isFalse(el.settingsOpen);
   });
 
   test('screen card reports its per-card toggles', async () => {

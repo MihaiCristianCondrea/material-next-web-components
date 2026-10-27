@@ -63,8 +63,6 @@ export interface MarketingScreen<S extends ScreenState = ScreenState> {
   id: string;
   title: string;
   description: string;
-  /** Compose source path, shown in the prototype panel. */
-  source?: string;
   /** Group id for the catalog filter. */
   category?: string;
   /** Label for `category`; defaults to the id. */

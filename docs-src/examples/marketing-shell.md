@@ -12,7 +12,7 @@ order: 100
 
 ## Overview
 
-`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
+`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings behind the **Preview settings** button in the top app bar, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
 
 Most apps never use it directly: [`mountMarketingGallery()`](../../guides/marketing-hub/#the-gallery) renders it, fills it with live cards and wires every event. Use the element yourself only to build a different gallery (other card content, another data source) with the same page.
 
@@ -76,8 +76,8 @@ document.body.append(shell);
 
 ### Top app bar actions
 
-Anything in the `actions` slot sits at the trailing end of the top app bar, in
-reading order: icon buttons, buttons, links, menus or your own custom elements.
+Anything in the `actions` slot sits at the trailing end of the top app bar,
+after the **Preview settings** button, in reading order: icon buttons, buttons, links, menus or your own custom elements.
 
 ```html
 <mnw-marketing-shell>
@@ -130,7 +130,7 @@ The category chips appear when there are two or more categories. With `count` at
 ## Accessibility
 
 - A "Skip to screens" link comes first. The shared app bar names the page; the screen catalog has an `<h2>` with its count.
-- Preview settings are a toolbar of labelled Material Web segmented buttons, a select and a switch; every control has a visible label.
+- **Preview settings** is an icon button with `aria-expanded`; it opens a labelled dialog of Material Web segmented buttons, a select and a switch, each with a visible label. Escape or a click outside closes it and returns focus to the button. `settings-open` reflects whether it is open.
 - With `prefers-reduced-motion`, the top app bar's tone transition and the cards' entrance animation and shadow transition are off.
 
 ## Styling

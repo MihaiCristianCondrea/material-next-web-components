@@ -4,8 +4,10 @@
  */
 
 import '@material/web/icon/icon.js';
+import '@material/web/iconbutton/icon-button.js';
 import {LitElement, html, nothing} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
+import {AnchoredPanelController} from '../../internal/anchored-panel.js';
 import {normalizeProduct, type MarketingProduct} from '../domain/product.js';
 import {
   DEFAULT_PREVIEW_SETTINGS,
@@ -31,11 +33,12 @@ export type CategoryChangeEvent = CustomEvent<{category: string}>;
 
 /**
  * A marketing hub composed with the shared app shell: a connected or closed
- * drawer, product heading, preview settings, screen catalog and product footer.
+ * drawer, product heading, preview settings behind a top app bar button,
+ * screen catalog and product footer.
  *
  * @slot - The `mnw-screen-card` elements.
  * @slot empty - Shown when no card matches the filter.
- * @slot actions - Top app bar actions, trailing: icon buttons, buttons or any
+ * @slot actions - Top app bar actions, after the preview settings button: icon buttons, buttons or any
  *   custom element, for example `<mnw-product-launcher>`.
  * @slot navigation - App-specific navigation; defaults to the screen catalog.
  * @slot extra - App-specific sections after the catalog, for example motion parts.
@@ -85,6 +88,22 @@ export class MaterialNextMarketingShell extends LitElement {
   /** Shell width from which the automatic drawer is permanent. */
   @property({type: Number, attribute: 'permanent-from'}) permanentFrom = 900;
 
+  /** Whether the preview settings panel is open. */
+  @property({type: Boolean, reflect: true, attribute: 'settings-open'})
+  settingsOpen = false;
+
+  @query('.settings-trigger') private settingsTrigger?: HTMLElement;
+  @query('.settings-popover') private settingsSurface?: HTMLElement;
+
+  private readonly settingsPanel = new AnchoredPanelController(this, {
+    isOpen: () => this.settingsOpen,
+    setOpen: (open) => (this.settingsOpen = open),
+    trigger: () => this.settingsTrigger,
+    surface: () => this.settingsSurface,
+    focus: () =>
+      this.renderRoot.querySelector<HTMLElement>('mnw-preview-controls'),
+  });
+
   private openCatalog(event: NavigationRequestEvent) {
     if (event.detail.href !== '#catalog') return;
     event.preventDefault();
@@ -117,6 +136,38 @@ export class MaterialNextMarketingShell extends LitElement {
           ${p.icon ? html`<img src=${p.icon} alt="" width="32" height="32" />` : nothing}
           <span>${p.name}</span>
         </a>
+        <div slot="actions" class="settings">
+          <md-icon-button
+            class="settings-trigger"
+            aria-label="Preview settings"
+            title="Preview settings"
+            aria-haspopup="dialog"
+            aria-expanded=${this.settingsOpen ? 'true' : 'false'}
+            @click=${() => (this.settingsOpen = !this.settingsOpen)}
+            ><md-icon>tune</md-icon></md-icon-button
+          >
+          <div
+            class="settings-popover popover"
+            .popover=${'manual'}
+            ?data-open=${this.settingsOpen}
+            @keydown=${this.settingsPanel.onKeyDown}
+          >
+            <section
+              class="panel"
+              role="dialog"
+              aria-label="Preview settings"
+              .inert=${!this.settingsOpen}
+            >
+              <mnw-preview-controls
+                layout="stacked"
+                tabindex="-1"
+                .settings=${this.settings}
+                .defaults=${this.defaults}
+                .palettes=${this.palettes}
+              ></mnw-preview-controls>
+            </section>
+          </div>
+        </div>
         <slot slot="actions" name="actions"></slot>
         <slot slot="navigation" name="navigation">
           <mnw-navigation-item href="#catalog" icon="grid_view"
@@ -138,14 +189,6 @@ export class MaterialNextMarketingShell extends LitElement {
             );
           }}
         ></mnw-app-shell-footer>
-        <div class="controls">
-          <mnw-preview-controls
-            .settings=${this.settings}
-            .defaults=${this.defaults}
-            .palettes=${this.palettes}
-          ></mnw-preview-controls>
-        </div>
-
         <section id="catalog" tabindex="-1" aria-labelledby="catalog-title">
           <div class="catalog-header">
             <h2 id="catalog-title">

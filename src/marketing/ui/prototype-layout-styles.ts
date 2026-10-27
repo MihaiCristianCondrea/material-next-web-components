@@ -38,21 +38,17 @@ export const styles = css`
     height: calc(100dvh - 48px);
     min-width: 0;
     display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
-    border-radius: 28px;
-    background: var(--mnw-hub-stage);
-    border: 1px solid var(--mnw-hub-border-subtle);
-    overflow: auto;
-    scrollbar-width: none;
-  }
-
-  .stage::-webkit-scrollbar {
-    display: none;
+    overflow: clip;
+    overflow-clip-margin: 24px;
   }
 
   ::slotted([slot='stage']) {
     width: 100%;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
   }
 
   .panel {

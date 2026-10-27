@@ -41,16 +41,16 @@ Start with the [guide](../marketing-hub/). Exports marked **Building block** are
 
 ## Screens and products
 
-| Export                                          |                                                                                                                                                             |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `MarketingScreen<S>`                            | A screen: `id`, `title`, `description`, `source?`, `category?`, `categoryLabel?`, `palette?`, `defaults`, `controls?`, `render(state)`, `tick?(state, dt)`. |
-| `ScreenRenderContext`                           | What `render()` gets besides its state: `set?`, `go?`, `navType`, `window?`, `showAds`.                                                                     |
-| `ScreenState`                                   | `Record<string, unknown>`.                                                                                                                                  |
-| `ScreenControl`                                 | An inspector control: `presets`, `choice`, `toggle` or a slider. See the [screen inspector](../../examples/screen-inspector/#screen-controls).              |
-| `createScreenRegistry(screens): ScreenRegistry` | Indexes screens by id and throws on a duplicate. The registry has `screens`, `byId(id)` and `categories()` (each category once, in catalog order).          |
-| `ScreenRegistry`                                | The registry's type.                                                                                                                                        |
-| `MarketingProduct`, `ProductLink`               | The product config. Fields are on the [marketing shell](../../examples/marketing-shell/#product) page.                                                      |
-| `normalizeProduct(product)`                     | **Building block.** Fills the optional fields (`links: []`, empty `version` and `credit`).                                                                  |
+| Export                                          |                                                                                                                                                    |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MarketingScreen<S>`                            | A screen: `id`, `title`, `description`, `category?`, `categoryLabel?`, `palette?`, `defaults`, `controls?`, `render(state)`, `tick?(state, dt)`.   |
+| `ScreenRenderContext`                           | What `render()` gets besides its state: `set?`, `go?`, `navType`, `window?`, `showAds`.                                                            |
+| `ScreenState`                                   | `Record<string, unknown>`.                                                                                                                         |
+| `ScreenControl`                                 | An inspector control: `presets`, `choice`, `toggle` or a slider. See the [screen inspector](../../examples/screen-inspector/#screen-controls).     |
+| `createScreenRegistry(screens): ScreenRegistry` | Indexes screens by id and throws on a duplicate. The registry has `screens`, `byId(id)` and `categories()` (each category once, in catalog order). |
+| `ScreenRegistry`                                | The registry's type.                                                                                                                               |
+| `MarketingProduct`, `ProductLink`               | The product config. Fields are on the [marketing shell](../../examples/marketing-shell/#product) page.                                             |
+| `normalizeProduct(product)`                     | **Building block.** Fills the optional fields (`links: []`, empty `version` and `credit`).                                                         |
 
 ## Preview settings
 

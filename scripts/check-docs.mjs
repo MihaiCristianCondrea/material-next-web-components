@@ -657,7 +657,12 @@ await check(
     )
       throw new Error('launcher no longer defaults to Google colors');
     await p.keyboard.press('Escape');
-    await p.getByLabel('Follow color palette', {exact: true}).check();
+    const follow = p.locator('#launcher-palette');
+    if ((await follow.evaluate((el) => el.localName)) !== 'md-checkbox')
+      throw new Error('Follow color palette is not a Material checkbox');
+    await p.locator('[data-demo] label.demo-launcher__palette').click();
+    if (!(await follow.evaluate((el) => el.checked)))
+      throw new Error('the Follow color palette label does not toggle it');
     await p.locator('#projects-launcher .trigger').click();
     const colors = await panel.evaluate((el) => ({
       actual: getComputedStyle(el).backgroundColor,
@@ -1227,6 +1232,44 @@ await check(
       throw new Error('missing changelog sections or update date');
   }
 );
+
+const short = await browser.newPage({viewport: {width: 1600, height: 760}});
+await check(
+  'the prototype scales a framed device into the stage without scrolling',
+  'demos/marketing-hub/screen.html?id=notes&frame=device',
+  async (p) => {
+    await p.waitForFunction(
+      () => document.querySelector('.mnw-stage > .mnw-mount')?.style.transform
+    );
+    const m = await p.evaluate(() => {
+      const stage = document
+        .querySelector('mnw-prototype-layout')
+        .shadowRoot.querySelector('.stage');
+      const s = stage.getBoundingClientRect();
+      const d = document
+        .querySelector('.mnw-stage > .mnw-mount')
+        .getBoundingClientRect();
+      return {
+        inside: d.top >= s.top && d.bottom <= s.bottom,
+        scrolls: stage.scrollHeight > stage.clientHeight + 1,
+        border: getComputedStyle(stage).borderTopWidth,
+        meta: !!document
+          .querySelector('mnw-screen-inspector')
+          .shadowRoot.querySelector('.meta, code'),
+      };
+    });
+    if (!m.inside || m.scrolls)
+      throw new Error(
+        `the device does not fit the stage: ${JSON.stringify(m)}`
+      );
+    if (m.border !== '0px')
+      throw new Error('the stage is still an outlined card');
+    if (m.meta)
+      throw new Error('the inspector still shows the screen description');
+  },
+  short
+);
+await short.close();
 
 const reduced = await browser.newPage({reducedMotion: 'reduce'});
 await check(

@@ -232,7 +232,8 @@ export const mountScreenPrototype = ({
         })
       );
     });
-    requestAnimationFrame(fit);
+    observeSizes();
+    queueFit();
   };
 
   // Larger windows and devices keep their size and are scaled down to fit the stage.
@@ -240,18 +241,46 @@ export const mountScreenPrototype = ({
     for (const el of root.querySelectorAll<HTMLElement>(
       '.mnw-stage > .mnw-mount:not(.mnw-mount--fill)'
     )) {
-      el.style.zoom = '';
       const child = el.firstElementChild as HTMLElement | null;
       if (!child) continue;
-      const box = el.parentElement!.getBoundingClientRect();
+      // The stage's own size, not its rendered one; offsetWidth and
+      // offsetHeight ignore the transform.
+      const stage = el.parentElement!;
       const w = child.offsetWidth;
       const h = child.offsetHeight;
       if (!w || !h) continue;
-      const zoom = Math.min(1, (box.width - 32) / w, (box.height - 32) / h);
-      el.style.zoom = zoom < 1 ? zoom.toFixed(4) : '';
+      // Room around the device for the frame's drop shadow, which falls
+      // mostly below it.
+      const scale = Math.min(
+        1,
+        (stage.clientWidth - 64) / w,
+        (stage.clientHeight - 112) / h
+      );
+      // A transform, not zoom: zoom shrinks the layout box but a device
+      // frame's artwork can still paint at full size. The stage centers the
+      // mount, so scaling about its center keeps it centered.
+      el.style.transform = scale < 1 ? `scale(${scale.toFixed(4)})` : '';
     }
   };
-  addEventListener('resize', () => requestAnimationFrame(fit));
+  // Refit whenever the stage or a device changes size: after fonts and
+  // frame artwork load, a window or frame switch, or a resized window.
+  let fitQueued = false;
+  const queueFit = () => {
+    if (fitQueued) return;
+    fitQueued = true;
+    requestAnimationFrame(() => {
+      fitQueued = false;
+      fit();
+    });
+  };
+  const sizes = new ResizeObserver(queueFit);
+  const observeSizes = () => {
+    sizes.disconnect();
+    for (const el of root.querySelectorAll<HTMLElement>(
+      '.mnw-stage, .mnw-stage > .mnw-mount > *'
+    ))
+      sizes.observe(el);
+  };
 
   let stageKey = '';
   const draw = () => {
@@ -301,7 +330,8 @@ export const mountScreenPrototype = ({
       const patches =
         view.mode === 'compare' ? sides().map((s) => s.patch) : [{}];
       hosts.forEach((h, i) => h.setOptions({...hostView(), ...patches[i]}));
-      requestAnimationFrame(fit);
+      observeSizes();
+      queueFit();
     }
   };
 

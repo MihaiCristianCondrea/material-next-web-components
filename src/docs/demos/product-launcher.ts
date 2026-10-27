@@ -4,6 +4,8 @@
  */
 
 import {createLauncherCatalog} from '../../launcher/index.js';
+import '@material/web/checkbox/checkbox.js';
+import type {MdCheckbox} from '@material/web/checkbox/checkbox.js';
 import type {MaterialNextProductLauncher} from '../../launcher/index.js';
 
 // A catalog of your own: an app, its site, its console and two shortcuts.
@@ -65,7 +67,7 @@ export default (root: HTMLElement) => {
   const custom =
     root.querySelector<MaterialNextProductLauncher>('#custom-launcher')!;
   const log = root.querySelector('.demo-log')!;
-  const palette = root.querySelector<HTMLInputElement>('#launcher-palette')!;
+  const palette = root.querySelector<MdCheckbox>('#launcher-palette')!;
   const onPalette = () => {
     for (const launcher of root.querySelectorAll<MaterialNextProductLauncher>(
       'mnw-product-launcher'

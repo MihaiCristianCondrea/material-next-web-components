@@ -40,36 +40,14 @@ export const styles = css`
     margin-bottom: 12px;
   }
 
-  .meta {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .tag {
-    font: 500 12px/16px var(--_hub-font);
-    letter-spacing: 0.5px;
-    color: var(--mnw-hub-accent);
-  }
-
-  h1 {
-    margin: 0;
-    font: 400 24px/32px var(--_hub-font);
-  }
-
-  p {
-    margin: 0;
-    font: 400 14px/20px var(--_hub-font);
-    color: var(--mnw-hub-text-variant);
-  }
-
-  code {
-    font:
-      400 12px/16px ui-monospace,
-      'Google Sans Code',
-      monospace;
-    color: var(--mnw-hub-text-subtle);
-    word-break: break-all;
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .section {

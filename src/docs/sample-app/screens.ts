@@ -149,7 +149,6 @@ export const notesScreen: MarketingScreen<NotesState> = {
   title: 'Notes',
   description:
     'The home screen: every note, with a Pinned filter and a button for a new note.',
-  source: 'feature/notes/NotesScreen.kt',
   category: 'notes',
   categoryLabel: 'Notes',
   palette: 'ocean',
@@ -235,7 +234,6 @@ export const editorScreen: MarketingScreen<EditorState> = {
   title: 'Note',
   description:
     'One note, opened from the list. An empty note id is a new note.',
-  source: 'feature/notes/EditorScreen.kt',
   category: 'notes',
   categoryLabel: 'Notes',
   palette: 'ocean',
@@ -305,7 +303,6 @@ export const focusScreen: MarketingScreen<FocusState> = {
   title: 'Focus timer',
   description:
     'A countdown with a progress ring. Start it in the preview; the ring follows the clock.',
-  source: 'feature/focus/FocusScreen.kt',
   category: 'focus',
   categoryLabel: 'Focus',
   palette: 'clay',

@@ -1,4 +1,5 @@
 @use 'hub-typography';
+@use '../../internal/anchored-panel';
 
 // The hub page. One gutter for the bar, controls and catalog (content
 // at most 1312 px), one accent, the M3 shape scale (28 cards, full controls).
@@ -10,18 +11,30 @@
   background: var(--mnw-hub-bg);
   color: var(--mnw-hub-text);
 }
-// Controls stay in reach while the catalog scrolls under them.
-.controls {
-  position: sticky;
-  top: var(--mnw-app-shell-top-app-bar-height, 72px);
-  z-index: 15;
-  padding: 12px clamp(16px, 3vw, 32px);
-  background: var(--mnw-hub-scrolled);
-  backdrop-filter: saturate(1.2) blur(16px);
-  -webkit-backdrop-filter: saturate(1.2) blur(16px);
-  box-shadow:
-    inset 0 1px 0 var(--mnw-hub-border-subtle),
-    inset 0 -1px 0 var(--mnw-hub-border-subtle);
+// Preview settings open from a top app bar button, so the catalog starts
+// right under the bar.
+.settings {
+  display: inline-flex;
+}
+
+:host([settings-open]) .settings-trigger {
+  --md-icon-button-icon-color: var(--mnw-hub-accent);
+  --md-icon-button-hover-icon-color: var(--mnw-hub-accent);
+  --md-icon-button-focus-icon-color: var(--mnw-hub-accent);
+}
+
+@include anchored-panel.styles(
+  var(--mnw-hub-settings-width, 360px),
+  var(--mnw-hub-surface),
+  var(--mnw-hub-text)
+);
+
+.panel {
+  padding: 20px;
+}
+
+mnw-preview-controls {
+  outline: none;
 }
 
 #catalog {
