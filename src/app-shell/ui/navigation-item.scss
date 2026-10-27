@@ -1,6 +1,8 @@
 // A navigation drawer destination: a full pill, the secondary container when
 // current, as Material's navigation drawer draws it.
 
+@use '../../internal/a11y';
+
 :host {
   display: block;
   -webkit-tap-highlight-color: transparent;
@@ -64,10 +66,5 @@ a {
 }
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  @include a11y.visually-hidden;
 }

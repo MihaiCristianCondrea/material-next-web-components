@@ -1,23 +1,9 @@
-:host {
-  display: block;
-  color: var(--md-sys-color-on-surface, #1d1b20);
-  background: var(--mnw-docs-vertical-tabs-container-color, transparent);
-  font-family: 'Google Sans Flex', system-ui, sans-serif;
-}
+@use 'docs-navigation-list';
 
-nav {
-  display: grid;
-  gap: 8px;
-}
-
-.heading {
-  margin: 0 0 8px;
-  color: var(--md-sys-color-primary, #6750a4);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
+@include docs-navigation-list.base(
+  var(--md-sys-color-on-surface, #1d1b20),
+  --mnw-docs-vertical-tabs-container-color
+);
 
 .item {
   --md-list-list-item-container-shape: 999px;

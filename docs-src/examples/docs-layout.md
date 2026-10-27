@@ -20,8 +20,6 @@ These three elements frame this documentation site:
 
 They are **internal candidates**: exported, used by this site, but their API may change before 1.0. They hold no state and fire no events; the content, links and routing are yours.
 
-The same modules are also exported under `material-next-web-components/docs/` (for example `docs/docs-shell.js`). Those paths are compatibility aliases.
-
 ## Live demo
 
 {% preview "docs-layout-frame" "" "demo__stage--flush" %}

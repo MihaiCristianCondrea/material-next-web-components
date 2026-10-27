@@ -57,7 +57,8 @@ const resetManifest = () => {
 const elements = () =>
   manifest().modules.flatMap((module) =>
     (module.declarations ?? [])
-      .filter((d) => d.customElement)
+      // A tag name, not just a LitElement: shared base classes have none.
+      .filter((d) => d.customElement && d.tagName)
       .map((d) => ({...d, modulePath: module.path}))
   );
 

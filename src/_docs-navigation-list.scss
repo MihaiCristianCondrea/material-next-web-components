@@ -1,0 +1,26 @@
+// What <mnw-docs-vertical-tabs> and <mnw-docs-table-of-contents> share: the
+// host, the item column and the heading. `$color` is the items' text colour;
+// `$container` the element's container custom property.
+
+@mixin base($color, $container) {
+  :host {
+    display: block;
+    color: $color;
+    background: var($container, transparent);
+    font-family: 'Google Sans Flex', system-ui, sans-serif;
+  }
+
+  nav {
+    display: grid;
+    gap: 8px;
+  }
+
+  .heading {
+    margin: 0 0 8px;
+    color: var(--md-sys-color-primary, #6750a4);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}

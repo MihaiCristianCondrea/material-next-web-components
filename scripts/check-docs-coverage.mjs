@@ -48,10 +48,10 @@ const pages = [
 ].filter((f) => f.endsWith('.md'));
 const frontMatter = pages.map((f) => read(f).split('---')[1] ?? '').join('\n');
 const manifest = JSON.parse(read('custom-elements.json'));
-const aliases = new Set(['md-expressive-tab-bar']);
 for (const module of manifest.modules) {
   for (const d of module.declarations ?? []) {
-    if (!d.customElement || aliases.has(d.tagName)) continue;
+    // Shared base classes extend LitElement but register no tag.
+    if (!d.customElement || !d.tagName) continue;
     if (!new RegExp(`tagName:.*\\b${d.tagName}\\b`).test(frontMatter)) {
       problems.push(
         `<${d.tagName}> has no reference page (tagName in docs-src/examples/*.md)`
@@ -65,8 +65,7 @@ const exportsMap = JSON.parse(read('package.json')).exports;
 for (const key of Object.keys(exportsMap)) {
   if (key === '.' || key === './package.json' || key.includes('*')) continue;
   const name = key.replace(/^\.\//, '');
-  const base = name.replace(/^docs\//, '');
-  if (!install.includes(name) && !install.includes(base)) {
+  if (!install.includes(name)) {
     problems.push(
       `package export ${key} is not mentioned in docs-src/install.md`
     );

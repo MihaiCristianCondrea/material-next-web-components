@@ -11,6 +11,7 @@ import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {repeat} from 'lit/directives/repeat.js';
+import {prefersReducedMotion} from '../../internal/environment.js';
 import {marketingAsset} from '../../marketing/ui/assets.js';
 import {
   migrateLegacyLauncherId,
@@ -56,9 +57,6 @@ const listAttribute = {
     (value ?? '').split(/[\s,]+/).filter(Boolean),
   toAttribute: (value: string[]) => value.join(' '),
 };
-
-const reducedMotion = () =>
-  globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 /**
  * An apps button that opens the visitor's favorite products, consoles and
@@ -157,6 +155,10 @@ export class MaterialNextProductLauncher extends LitElement {
     super.connectedCallback();
     this.addEventListener('keydown', this.onKeyDown);
     this.addEventListener('focusout', this.onFocusOut);
+    // Moved in the DOM: the store was let go on disconnect. Without it now,
+    // the next edit would not save, and the update it causes would reload
+    // the stored list over it.
+    if (this.hasUpdated && !this.activeStore) this.connectStore();
   }
 
   override disconnectedCallback() {
@@ -166,6 +168,22 @@ export class MaterialNextProductLauncher extends LitElement {
     this.stopListening();
     this.endDrag();
     super.disconnectedCallback();
+  }
+
+  /** Opens the store this launcher's properties name and loads from it. */
+  private connectStore() {
+    this.unsubscribe?.();
+    this.activeStore =
+      this.store ??
+      createLauncherPreferenceStore({
+        defaults: this.catalog.defaultFavorites,
+        key: this.storageKey,
+        migrate: migrateLegacyLauncherId,
+      });
+    this.ids = this.activeStore.load();
+    this.unsubscribe = this.activeStore.subscribe((ids) => {
+      this.ids = ids;
+    });
   }
 
   /** Opens the panel and moves focus into it. */
@@ -201,18 +219,7 @@ export class MaterialNextProductLauncher extends LitElement {
       changed.has('storageKey') ||
       changed.has('catalog')
     ) {
-      this.unsubscribe?.();
-      this.activeStore =
-        this.store ??
-        createLauncherPreferenceStore({
-          defaults: this.catalog.defaultFavorites,
-          key: this.storageKey,
-          migrate: migrateLegacyLauncherId,
-        });
-      this.ids = this.activeStore.load();
-      this.unsubscribe = this.activeStore.subscribe((ids) => {
-        this.ids = ids;
-      });
+      this.connectStore();
     }
     if (changed.has('open') && !this.open) {
       // Before render makes the panel inert, which drops focus to the body.
@@ -490,7 +497,7 @@ export class MaterialNextProductLauncher extends LitElement {
   // Tiles slide to their new places instead of jumping (FLIP).
 
   private capturePositions() {
-    if (reducedMotion()) return;
+    if (prefersReducedMotion()) return;
     this.positions = new Map(
       [...this.renderRoot.querySelectorAll<HTMLElement>('[data-favorite]')].map(
         (tile) => [tile.dataset.favorite!, tile.getBoundingClientRect()]

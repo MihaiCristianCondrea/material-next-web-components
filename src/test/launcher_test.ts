@@ -529,6 +529,26 @@ suite('mnw-product-launcher', () => {
     assert.notInclude(content, 'Smart Cleaner');
   });
 
+  test('a launcher moved in the DOM keeps its store', async () => {
+    const storage = memoryStorage();
+    storage.data.set(
+      'mnw-launcher:favorites',
+      JSON.stringify({version: 1, favoriteIds: ['web:repo']})
+    );
+    const {el} = await mount(storage);
+    assert.deepEqual(el.favoriteIds, ['web:repo']);
+    // An app re-rendering its top bar detaches and reattaches the element.
+    const parent = el.parentElement!;
+    el.remove();
+    parent.append(el);
+    // Straight after the move, before any update: reset must forget the
+    // stored list, and the update it causes must not reload it.
+    el.reset();
+    await el.updateComplete;
+    assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+    assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
+  });
+
   test('a broken image falls back to the icon', async () => {
     const broken = createLauncherCatalog({
       items: [

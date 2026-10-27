@@ -20,8 +20,8 @@
     "docs:build": "rollup -c",
     "docs:assets": "npm run build:scss && cp docs-src/docs.css docs/",
     "docs:serve": "wds --root-dir=docs --node-resolve --watch",
-    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\"",
-    "analyze:watch": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\" --watch",
+    "analyze": "cem analyze --litelement --globs \"src/**/*.ts\" --exclude \"src/test/**\" --exclude \"src/docs/**\" --exclude \"src/**/*-styles.ts\"",
+    "analyze:watch": "npm run analyze -- --watch",
     "serve": "wds --watch",
     "serve:prod": "MODE=prod npm run serve",
     "test": "npm run test:dev && npm run test:prod",
@@ -113,26 +113,6 @@
       "default": "./dist/docs-vertical-tabs.js"
     },
     "./docs-table-of-contents.js": {
-      "types": "./dist/docs-table-of-contents.d.ts",
-      "default": "./dist/docs-table-of-contents.js"
-    },
-    "./docs/docs-page.js": {
-      "types": "./dist/docs-page.d.ts",
-      "default": "./dist/docs-page.js"
-    },
-    "./docs/docs-shell.js": {
-      "types": "./dist/docs-shell.d.ts",
-      "default": "./dist/docs-shell.js"
-    },
-    "./docs/docs-top-app-bar.js": {
-      "types": "./dist/docs-top-app-bar.d.ts",
-      "default": "./dist/docs-top-app-bar.js"
-    },
-    "./docs/docs-vertical-tabs.js": {
-      "types": "./dist/docs-vertical-tabs.d.ts",
-      "default": "./dist/docs-vertical-tabs.js"
-    },
-    "./docs/docs-table-of-contents.js": {
       "types": "./dist/docs-table-of-contents.d.ts",
       "default": "./dist/docs-table-of-contents.js"
     },

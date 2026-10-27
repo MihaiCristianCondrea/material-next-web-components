@@ -83,6 +83,12 @@ export const styles = css`
     --md-primary-tab-label-text-size: 1rem;
     --md-primary-tab-label-text-weight: 500;
     --md-primary-tab-active-hover-state-layer-opacity: 0;
+    --md-primary-tab-pressed-state-layer-opacity: 0;
+    --md-primary-tab-active-pressed-state-layer-opacity: 0;
+    --md-primary-tab-pressed-label-text-color: var(--_label);
+    --md-primary-tab-pressed-icon-color: var(--_label);
+    --md-primary-tab-active-pressed-label-text-color: var(--_on-selected);
+    --md-primary-tab-active-pressed-icon-color: var(--_on-selected);
   }
 
   md-tabs::part(divider) {

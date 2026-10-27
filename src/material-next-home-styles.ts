@@ -159,7 +159,7 @@ export const styles = css`
   }
 
   mnw-code-block,
-  md-expressive-tab-bar,
+  mnw-expressive-tab-bar,
   mnw-app-showcase {
     max-width: 100%;
     min-width: 0;

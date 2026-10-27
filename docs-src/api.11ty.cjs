@@ -2,11 +2,16 @@ const relative = require('./_includes/relative-path.cjs');
 const site = require('./_data/site.cjs');
 const {apiTables, elements, escapeHtml} = require('./_includes/lib.cjs');
 
-// Compatibility aliases: documented with the element they alias.
-const ALIASES = {'md-expressive-tab-bar': 'mnw-expressive-tab-bar'};
+// Modules inside a folder are imported through that folder's entry point.
+const ENTRY_POINTS = {
+  'src/marketing/': 'marketing.js',
+  'src/app-shell/': 'app-shell.js',
+  'src/launcher/': 'launcher.js',
+};
 
 const importPathOf = (modulePath) => {
-  if (modulePath.startsWith('src/marketing/')) return 'material-next-web-components/marketing.js';
+  const entry = Object.entries(ENTRY_POINTS).find(([folder]) => modulePath.startsWith(folder));
+  if (entry) return `material-next-web-components/${entry[1]}`;
   return `material-next-web-components/${modulePath.replace(/^src\//, '').replace(/\.ts$/, '.js')}`;
 };
 
@@ -29,7 +34,7 @@ module.exports = class Api {
   render(data) {
     const pages = data.collections.reference ?? [];
     const pageFor = (tag) => pages.find((p) => [].concat(p.data.tagName ?? []).includes(tag));
-    const all = elements().filter((e) => !ALIASES[e.tagName]);
+    const all = elements();
     const groups = site.categories
       .filter((c) => c.id !== 'guides')
       .map((category) => ({
@@ -53,16 +58,11 @@ module.exports = class Api {
 ${members
   .map((e) => {
     const page = pageFor(e.tagName);
-    const aliases = Object.entries(ALIASES)
-      .filter(([, target]) => target === e.tagName)
-      .map(([alias]) => `<code>&lt;${alias}&gt;</code>`);
     return `<h3 id="${e.tagName}"><code>&lt;${e.tagName}&gt;</code></h3>
 <p class="api-meta"><code>import '${importPathOf(e.modulePath)}';</code> · class <code>${escapeHtml(e.name)}</code> · <a href="${relative(
       data.page.url,
       page.url
-    )}">${escapeHtml(page.data.name)} guide and demo</a>${
-      aliases.length ? ` · also registered as ${aliases.join(', ')} (compatibility alias)` : ''
-    }</p>
+    )}">${escapeHtml(page.data.name)} guide and demo</a></p>
 ${apiTables(e.tagName)}`;
   })
   .join('\n')}`

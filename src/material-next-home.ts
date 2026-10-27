@@ -147,10 +147,10 @@ export class MaterialNextHome extends LitElement {
             <p>
               Icons can be placed on the top, bottom, start, or end of each tab.
             </p>
-            <md-expressive-tab-bar icon-position="top"></md-expressive-tab-bar>
-            <md-expressive-tab-bar
+            <mnw-expressive-tab-bar icon-position="top"></mnw-expressive-tab-bar>
+            <mnw-expressive-tab-bar
               icon-position="bottom"
-            ></md-expressive-tab-bar>
+            ></mnw-expressive-tab-bar>
           </section>
 
           <section id="app-showcase" class="example-panel">
@@ -163,7 +163,7 @@ export class MaterialNextHome extends LitElement {
             <mnw-code-block
               language="html"
               copy
-              code='<md-expressive-tab-bar icon-position="end"></md-expressive-tab-bar>'
+              code='<mnw-expressive-tab-bar icon-position="end"></mnw-expressive-tab-bar>'
             ></mnw-code-block>
           </section>
         </section>

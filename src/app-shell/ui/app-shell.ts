@@ -8,6 +8,7 @@ import '@material/web/iconbutton/icon-button.js';
 import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {prefersReducedMotion} from '../../internal/environment.js';
 import {findActiveDestination} from '../domain/active-destination.js';
 import {
   appShellLayoutPolicy,
@@ -36,9 +37,6 @@ export type NavigationModeChangeEvent = CustomEvent<{
 }>;
 
 const DESTINATIONS = 'mnw-navigation-item, a[href]';
-
-const reducedMotion = () =>
-  globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
 /**
  * An application's frame: a navigation drawer, a top app bar with the
@@ -326,7 +324,7 @@ export class MaterialNextAppShell extends LitElement {
   }
 
   private playHeading() {
-    if (reducedMotion()) return;
+    if (prefersReducedMotion()) return;
     this.headline?.animate?.(
       [
         {opacity: 0, transform: 'translateY(4px)'},

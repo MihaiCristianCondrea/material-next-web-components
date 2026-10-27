@@ -10,11 +10,13 @@ description: What is stable, what is experimental, and what comes next.
 
 | Part                 | Import path                                          | Status             | Notes                                                                                         |
 | -------------------- | ---------------------------------------------------- | ------------------ | --------------------------------------------------------------------------------------------- |
-| Code block           | `material-next-web-components/code-block.js`         | Stable             | Covered by compatibility expectations from 0.2.                                               |
-| Expressive tab bar   | `material-next-web-components/expressive-tab-bar.js` | Experimental       | `<md-expressive-tab-bar>` stays as a compatibility alias of `<mnw-expressive-tab-bar>`.       |
+| Code block           | `material-next-web-components/code-block.js`         | Stable             | Breaking changes only in a major version, from the first release.                             |
+| Expressive tab bar   | `material-next-web-components/expressive-tab-bar.js` | Experimental       | One sliding selection pill; links or JavaScript routing through `navigate`.                   |
 | App showcase         | `material-next-web-components/app-showcase.js`       | Experimental       | Reads any endpoint in the documented shapes.                                                  |
 | Home view            | `material-next-web-components/material-next-home.js` | Experimental       | Material Next's own landing view; most copy is fixed.                                         |
 | Marketing hub        | `material-next-web-components/marketing.js`          | Experimental       | Elements, controllers, embed API and assets, from Android Insider's and Smart Cleaner's hubs. |
+| App shell            | `material-next-web-components/app-shell.js`          | Experimental       | Modal and permanent drawers; the app owns routing. Rail and bottom bar not yet.               |
+| Product launcher     | `material-next-web-components/launcher.js`           | Experimental       | Editable favorites in local storage, admin redirects, the author's project catalog.           |
 | Documentation layout | `material-next-web-components/docs-*.js`             | Internal candidate | Used by this site; may change before 1.0.                                                     |
 
 ## Maturity levels

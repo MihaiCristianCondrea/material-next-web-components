@@ -3,8 +3,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+import {
+  safeLocalStorage,
+  type KeyValueStorage,
+} from '../../internal/environment.js';
 import {normalizeFavoriteIds} from '../domain/launcher-catalog.js';
 import type {LauncherItemId} from '../domain/launcher-item.js';
+
+export type {KeyValueStorage};
 
 /** Where a visitor's favorites persist. A launcher works the same without it. */
 export interface LauncherPreferenceStore {
@@ -17,24 +23,9 @@ export interface LauncherPreferenceStore {
   subscribe(listener: (favoriteIds: LauncherItemId[]) => void): () => void;
 }
 
-export interface KeyValueStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-}
-
 export const DEFAULT_LAUNCHER_STORAGE_KEY = 'mnw-launcher:favorites';
 
 const VERSION = 1;
-
-const safeLocalStorage = (): KeyValueStorage | undefined => {
-  try {
-    return globalThis.localStorage;
-  } catch {
-    // Storage can throw in private windows or sandboxed frames.
-    return undefined;
-  }
-};
 
 /** Reads `{version, favoriteIds}`, the older `{favoriteIds}` or a bare list. */
 const parse = (raw: string): unknown => {

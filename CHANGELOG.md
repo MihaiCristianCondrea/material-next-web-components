@@ -35,6 +35,8 @@ release has been published yet. Dated release sections begin when a release ship
 - Removed the marketing hero and its headline and description fields. The standalone marketing bar no longer exposes a context label or trailing promotional actions.
 - Removed Codex and Smart Cleaner from the built-in launcher, the old launcher artwork, the favorites/redirects counts and the extra shaded favorites container.
 - Removed the inherited Lit starter release history; it was not Material Next release history.
+- Removed the `<md-expressive-tab-bar>` alias and the `material-next-web-components/docs/*.js` export aliases before the first release. Use `<mnw-expressive-tab-bar>` and the top-level `docs-*.js` modules; `md-` stays Material Web's prefix.
+- Removed duplicated code: the docs navigation lists share one base class and stylesheet, and the elements and stores share one storage, reduced-motion and visually-hidden helper.
 
 ### Fixed
 
@@ -43,3 +45,6 @@ release has been published yet. Dated release sections begin when a release ship
 - Fixed launcher hover tiles showing an inset outline instead of a filled surface.
 - Fixed tab-link cancellation so canceled navigation leaves the current page unchanged.
 - Fixed serif fallbacks in marketing selects and segmented controls, clipped phone navigation and misaligned catalog icons.
+- Fixed the expressive tab bar filling a tab twice when switching: the pressed state layer no longer fills the tab before the selection pill slides in, and a scroll or resize during the slide retargets it instead of snapping.
+- Fixed a product launcher moved in the DOM letting go of its store until its next update: `reset()` then kept the stored list, and changes from other tabs were missed.
+- Fixed the API reference showing internal module paths instead of the `app-shell.js` and `launcher.js` entry points.

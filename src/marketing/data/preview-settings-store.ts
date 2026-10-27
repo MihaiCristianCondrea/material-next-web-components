@@ -4,6 +4,10 @@
  */
 
 import {
+  safeLocalStorage,
+  type KeyValueStorage,
+} from '../../internal/environment.js';
+import {
   DEFAULT_PREVIEW_SETTINGS,
   sanitizeSettings,
   type PreviewSettings,
@@ -14,20 +18,6 @@ export interface PreviewSettingsStore {
   load(): PreviewSettings;
   save(settings: PreviewSettings): void;
 }
-
-interface KeyValueStorage {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-}
-
-const safeLocalStorage = (): KeyValueStorage | undefined => {
-  try {
-    return globalThis.localStorage;
-  } catch {
-    // Storage can throw in private windows or sandboxed frames.
-    return undefined;
-  }
-};
 
 /**
  * Stores settings per product, so two hubs served from the same origin
@@ -43,7 +33,7 @@ export const createPreviewSettingsStore = ({
   productId: string;
   palettes: readonly string[];
   defaults?: PreviewSettings;
-  storage?: KeyValueStorage;
+  storage?: Pick<KeyValueStorage, 'getItem' | 'setItem'>;
 }): PreviewSettingsStore => {
   const key = `mnw-marketing:${productId}:preview`;
   let memory: PreviewSettings = {...defaults};

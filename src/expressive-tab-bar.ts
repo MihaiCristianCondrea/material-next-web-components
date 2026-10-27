@@ -15,6 +15,9 @@ import {
   exampleNavigationItems,
 } from './docs-navigation.js';
 import {styles} from './expressive-tab-bar-styles.js';
+import {prefersReducedMotion} from './internal/environment.js';
+
+const INDICATOR_DURATION = 350;
 
 export type ExpressiveTabIconPosition = 'top' | 'bottom' | 'start' | 'end';
 
@@ -41,8 +44,8 @@ const defaultTabs: ExpressiveTabItem[] = exampleNavigationItems;
  * @csspart tabs - The underlying Material Web tabs element.
  * @csspart tab - Each Material Web primary tab.
  */
-@customElement('md-expressive-tab-bar')
-export class MdExpressiveTabBar extends LitElement {
+@customElement('mnw-expressive-tab-bar')
+export class MaterialNextExpressiveTabBar extends LitElement {
   static override styles = styles;
 
   /** Accessible label for the navigation landmark. */
@@ -117,24 +120,30 @@ export class MdExpressiveTabBar extends LitElement {
     if (!indicator || !track) return;
     indicator.hidden = !selected;
     if (!selected) return;
+    // Where the selection is drawn now, mid-slide included.
     const before = indicator.getBoundingClientRect();
     const parent = track.getBoundingClientRect();
     const target = selected.getBoundingClientRect();
+    // A scroll or resize during a slide (md-tabs scrolls the new tab into
+    // view) retargets the slide for its remaining time instead of snapping.
+    const running = this.indicatorAnimation?.playState === 'running';
+    const elapsed = Number(this.indicatorAnimation?.currentTime ?? 0);
+    const duration = animate
+      ? INDICATOR_DURATION
+      : running
+        ? Math.max(0, INDICATOR_DURATION - elapsed)
+        : 0;
     this.indicatorAnimation?.cancel();
     const left = target.left - parent.left;
     indicator.style.left = `${left}px`;
     indicator.style.width = `${target.width}px`;
-    if (
-      animate &&
-      this.indicatorReady &&
-      !matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
+    if (duration > 0 && this.indicatorReady && !prefersReducedMotion()) {
       this.indicatorAnimation = indicator.animate(
         [
           {left: `${before.left - parent.left}px`, width: `${before.width}px`},
           {left: `${left}px`, width: `${target.width}px`},
         ],
-        {duration: 350, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
+        {duration, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
       );
     }
     this.indicatorReady = true;
@@ -280,13 +289,8 @@ export class MdExpressiveTabBar extends LitElement {
   }
 }
 
-/** Backwards-friendly alias for product code that prefers the mnw prefix. */
-@customElement('mnw-expressive-tab-bar')
-export class MaterialNextExpressiveTabBar extends MdExpressiveTabBar {}
-
 declare global {
   interface HTMLElementTagNameMap {
-    'md-expressive-tab-bar': MdExpressiveTabBar;
     'mnw-expressive-tab-bar': MaterialNextExpressiveTabBar;
   }
 }

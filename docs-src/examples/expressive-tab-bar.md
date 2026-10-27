@@ -16,8 +16,6 @@ order: 20
 
 Use plain Material Web `md-tabs` for panels that switch content in place without a URL, and a navigation bar or rail for an app's top-level destinations.
 
-`<md-expressive-tab-bar>` is the same element under its first name. It stays registered as a compatibility alias; new code uses `mnw-expressive-tab-bar`.
-
 ## Live demo
 
 {% demo "expressive-tab-bar" "The bar cancels navigate, so the links do not move the page." "demo__stage--column" %}

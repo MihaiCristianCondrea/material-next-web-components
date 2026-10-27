@@ -66,6 +66,15 @@ md-tabs {
   --md-primary-tab-label-text-size: 1rem;
   --md-primary-tab-label-text-weight: 500;
   --md-primary-tab-active-hover-state-layer-opacity: 0;
+  // The sliding selection is the press feedback. Material's pressed state
+  // layer would fill the tab first and the selection fill it again as it
+  // arrives, which reads as a flicker; the label keeps its colour too.
+  --md-primary-tab-pressed-state-layer-opacity: 0;
+  --md-primary-tab-active-pressed-state-layer-opacity: 0;
+  --md-primary-tab-pressed-label-text-color: var(--_label);
+  --md-primary-tab-pressed-icon-color: var(--_label);
+  --md-primary-tab-active-pressed-label-text-color: var(--_on-selected);
+  --md-primary-tab-active-pressed-icon-color: var(--_on-selected);
 }
 md-tabs::part(divider) {
   display: none;

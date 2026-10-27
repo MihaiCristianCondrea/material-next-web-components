@@ -1,6 +1,8 @@
 // Google-style apps panel: one rounded favorites surface above a plain grid.
 // Artwork stays stable; only the tile surface highlights on hover.
 
+@use '../../internal/a11y';
+
 :host {
   --_ease: cubic-bezier(0.2, 0, 0, 1);
   // Expressive "fast spatial" spring, for things that move.
@@ -265,13 +267,7 @@ h2 {
 }
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  @include a11y.visually-hidden;
 }
 
 // Editing --------------------------------------------------------------------
