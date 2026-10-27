@@ -95,7 +95,9 @@ export const mountMarketingHub = ({
     const start = (
       document as Document & {startViewTransition?: (cb: () => void) => void}
     ).startViewTransition;
-    if (start) start.call(document, show);
+    // A hidden page has nothing to animate, and its transition would wait.
+    if (start && document.visibilityState === 'visible')
+      start.call(document, show);
     else show();
   };
 

@@ -435,6 +435,15 @@ suite('marketing elements', () => {
   });
 });
 
+/** Resolves once `check()` holds; fails after `timeout` ms. */
+const until = async (check: () => boolean, timeout = 3000) => {
+  const end = performance.now() + timeout;
+  while (!check()) {
+    if (performance.now() > end) throw new Error(`Timed out: ${check}`);
+    await new Promise((r) => setTimeout(r, 16));
+  }
+};
+
 suite('marketing hub', () => {
   test('opens a screen and returns to the gallery without a page load', async () => {
     const start = location.href;
@@ -453,8 +462,9 @@ suite('marketing hub', () => {
       assert.include(card.getAttribute('href')!, `${location.pathname}?id=a`);
 
       hub.go(card.getAttribute('href')!);
-      await new Promise((r) => setTimeout(r, 50));
-      assert.equal(hub.page(), 'prototype');
+      // The switch runs in a view transition's callback where the browser has
+      // them, which a busy or headless browser can run several frames later.
+      await until(() => hub.page() === 'prototype');
       assert.exists(root.querySelector('mnw-prototype-layout'));
       assert.notExists(root.querySelector('mnw-marketing-shell'));
       assert.equal(history.state?.mnwHubFrom, 'gallery');
@@ -464,8 +474,7 @@ suite('marketing hub', () => {
       );
       hub.go(location.pathname);
       await back;
-      await new Promise((r) => setTimeout(r, 50));
-      assert.equal(hub.page(), 'gallery');
+      await until(() => hub.page() === 'gallery');
       assert.exists(root.querySelector('mnw-marketing-shell'));
     } finally {
       hub.destroy();

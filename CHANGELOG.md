@@ -6,7 +6,9 @@ Last updated: October 27, 2026.
 
 # Unreleased
 
-**Version:** `0.0.5`
+**Version:** `0.0.6`
+
+0.0.5 was tagged, but its publish run failed and it never reached npm. 0.0.6 ships its changes with the fix below.
 
 ### Added
 
@@ -23,6 +25,7 @@ Last updated: October 27, 2026.
 
 ### Fixed
 
+- The marketing hub's page switch waited for a view transition even when the page was hidden, so a background or headless tab could stay on the old view. Hidden pages switch at once. The hub test that failed the 0.0.5 publish now waits for the switch instead of a fixed 50ms.
 - `appearance="outlined"` squared off the modal drawer and drew a line along its edge. The modal drawer keeps its rounded corners; only a permanent drawer has the edge line.
 - A palette select in the preview settings panel made the panel scroll when its menu opened. Selects open their menus in the top layer, and the panel no longer keeps a transform after its entrance.
 
