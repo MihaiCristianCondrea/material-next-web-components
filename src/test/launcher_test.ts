@@ -135,7 +135,24 @@ suite('launcher domain', () => {
       ],
     });
     assert.lengthOf(apps.items, 2);
-    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 10);
+    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 9);
+  });
+
+  test('the default catalog favors both admin consoles and drops App Toolkit', () => {
+    assert.deepEqual(PROJECT_LAUNCHER_CATALOG.defaultFavorites.slice(0, 2), [
+      'console:tutorials-admin',
+      'console:apps-metadata',
+    ]);
+    const metadata = PROJECT_LAUNCHER_CATALOG.items.find(
+      (item) => item.id === 'console:apps-metadata'
+    )!;
+    assert.equal(metadata.title, 'Apps Metadata Admin Console');
+    assert.equal(metadata.image, 'asset:launcher/apps-metadata.svg');
+    assert.notExists(
+      PROJECT_LAUNCHER_CATALOG.items.find(
+        (item) => item.id === 'web:app-toolkit'
+      )
+    );
   });
 
   test('the current product, exclusions and the page URL hide entries', () => {

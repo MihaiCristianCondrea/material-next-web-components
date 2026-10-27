@@ -370,4 +370,85 @@ suite('mnw-app-shell', () => {
     window.scrollTo(0, 0);
     tall.remove();
   });
+
+  test('only the destinations scroll; header, brand and footer stay', async () => {
+    const {shell} = await mount(1000, 'navigation-mode="permanent"');
+    const footer = document.createElement('div');
+    footer.slot = 'navigation-footer';
+    footer.textContent = 'Theme';
+    shell.append(footer);
+    for (let i = 0; i < 40; i++) {
+      const item = document.createElement('mnw-navigation-item');
+      item.slot = 'navigation';
+      item.setAttribute('href', `/x/${i}`);
+      item.textContent = `Item ${i}`;
+      shell.append(item);
+    }
+    await frame();
+    const root = shell.shadowRoot!;
+    const drawer = root.querySelector<HTMLElement>('.drawer')!;
+    const destinations = root.querySelector<HTMLElement>('.destinations')!;
+    assert.equal(getComputedStyle(drawer).overflowY, 'hidden');
+    assert.isAbove(destinations.scrollHeight, destinations.clientHeight);
+    const before = footer.getBoundingClientRect().top;
+    destinations.scrollTop = 400;
+    await frame();
+    assert.equal(footer.getBoundingClientRect().top, before);
+    assert.isAtMost(
+      footer.getBoundingClientRect().bottom,
+      drawer.getBoundingClientRect().bottom + 0.5
+    );
+  });
+
+  test('items space themselves when an app wraps them', async () => {
+    const host = await fixture<HTMLDivElement>(
+      html`<div style="width:1000px">
+        <mnw-app-shell navigation-mode="permanent">
+          <div slot="navigation">
+            <mnw-navigation-item href="/a">A</mnw-navigation-item>
+            <mnw-navigation-item href="/b">B</mnw-navigation-item>
+          </div>
+        </mnw-app-shell>
+      </div>`
+    );
+    await frame();
+    const [a, b] = [...host.querySelectorAll('mnw-navigation-item')].map(
+      (item) => item.shadowRoot!.querySelector('a')!.getBoundingClientRect()
+    );
+    const gap = b.top - a.bottom;
+    assert.closeTo(gap, 4, 0.5);
+  });
+
+  test('outlined appearance with a plain drawer heading', async () => {
+    const {shell} = await mount(
+      400,
+      'appearance="outlined" drawer-heading="Menu"'
+    );
+    const root = shell.shadowRoot!;
+    const bar = root.querySelector<HTMLElement>('.bar')!;
+    assert.equal(getComputedStyle(bar).borderBottomStyle, 'solid');
+    shell.openDrawer();
+    await shell.updateComplete;
+    const header = root.querySelector<HTMLElement>('.drawer-header')!;
+    assert.equal(header.querySelector('h2')!.textContent, 'Menu');
+    assert.equal(getComputedStyle(header).borderBottomStyle, 'solid');
+    const close = header.querySelector<HTMLElement>('.drawer-close')!;
+    assert.equal(close.getAttribute('aria-label'), 'Close menu');
+    close.click();
+    await shell.updateComplete;
+    assert.isFalse(shell.drawerOpen);
+  });
+
+  test('large navigation size and a trailing icon', async () => {
+    const {shell} = await mount(1000, 'navigation-size="large"');
+    const [home] = items(shell);
+    home.trailingIcon = 'open_in_new';
+    await home.updateComplete;
+    const link = home.shadowRoot!.querySelector<HTMLElement>('a')!;
+    assert.equal(link.getBoundingClientRect().height, 56);
+    assert.equal(
+      home.shadowRoot!.querySelector('.trailing md-icon')!.textContent,
+      'open_in_new'
+    );
+  });
 });

@@ -61,14 +61,12 @@ export const styles = css`
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 8px;
     margin: 0;
-    padding: 12px;
+    padding: 0;
     border: 0;
     background: var(--_frame);
     color: inherit;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    overflow: hidden;
   }
 
   :host([layout='permanent']) .drawer {
@@ -157,18 +155,74 @@ export const styles = css`
       opacity: 0;
     }
   }
+  .drawer-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-sizing: border-box;
+    min-height: var(--_bar-height);
+    padding: 0 12px 0 24px;
+  }
+
+  .drawer-heading {
+    margin: 0;
+    overflow: hidden;
+    color: var(--_on-surface);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.75rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .brand {
-    padding: 8px 12px 8px;
+    flex: none;
+    padding: 20px 24px 8px;
+  }
+
+  .brand[hidden] {
+    display: none;
   }
 
   .destinations {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
-    gap: 4px;
+    min-height: 0;
+    padding: 8px 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .footer {
-    margin-top: auto;
+    flex: none;
+    padding: 0 12px 12px;
+  }
+
+  :host([navigation-size='large']) .drawer {
+    --mnw-navigation-item-height: 56px;
+    --mnw-navigation-item-label-size: 1rem;
+    --mnw-navigation-item-line-height: 1.5rem;
+  }
+
+  :host([appearance='outlined']) {
+    --_frame: var(--_surface);
+    --_radius: 0px;
+  }
+
+  :host([appearance='outlined']) .drawer-header {
+    border-bottom: 1px solid var(--_outline-variant);
+  }
+
+  :host([appearance='outlined']) .drawer {
+    border-inline-end: 1px solid var(--_outline-variant);
+  }
+
+  :host([appearance='outlined']) .drawer[popover],
+  :host([appearance='outlined'][layout='modal']) .drawer {
+    border-radius: 0;
   }
 
   .main {
@@ -196,8 +250,16 @@ export const styles = css`
     transition: background-color 150ms linear;
   }
 
-  :host([scrolled][layout='modal']) .bar {
+  :host([scrolled][layout='modal']:not([appearance='outlined'])) .bar {
     background: var(--_scrolled);
+  }
+
+  :host([appearance='outlined']) .bar {
+    border-bottom: 1px solid var(--_outline-variant);
+  }
+
+  :host([appearance='outlined'][layout='permanent']) .bar::after {
+    display: none;
   }
 
   .leading {

@@ -11,14 +11,25 @@ Last updated: October 27, 2026.
 - Added expandable drawer categories with `mnw-navigation-group`. Active destinations reveal their group and remain mounted when it closes.
 - Added `mnw-site-footer`, a rounded copyright bar with optional social links, and a page footer slot on the app shell.
 - App shell destinations support explicit hash routes such as `active-path="#projects"`.
+- `appearance="outlined"` on `<mnw-app-shell>`: outline-variant lines under the top app bar, under the drawer header and along the drawer, on flat surfaces.
+- `drawer-heading` on `<mnw-app-shell>`: a plain drawer title such as **Menu**, with a close button in the modal layout, for sites without a product brand.
+- `navigation-size="large"` on `<mnw-app-shell>`: 56px destinations and categories with 16px labels, as in Material Components.
+- `trailing-icon` and a `trailing` slot on `<mnw-navigation-item>`, for example `open_in_new` on a link that leaves the site.
+- The launcher's default favorites include the **Apps Metadata Admin Console**, after Android Insider's, with its own icon.
 
 ### Changed
 
 - The marketing gallery shows its screens directly, without a count or category filter chips. The old product name, version and links footer is replaced by the copyright bar.
 - Gallery device frames stay off by default. Opening a screen shows its device frame, while explicit `frame=none` links and bare captures remain available.
 
+### Fixed
+
+- The whole drawer scrolled, taking the theme picker and policy links with it. Only the destinations scroll now; the header, brand and `navigation-footer` stay in place.
+- Destinations wrapped in an app's own element (`<div slot="navigation">`) lost the space between them. Destinations and categories now pad themselves.
+
 ### Removed
 
+- Removed App Toolkit from the launcher's default catalog.
 - Removed the marketing shell's category filter API and product footer metadata fields.
 
 ### Security

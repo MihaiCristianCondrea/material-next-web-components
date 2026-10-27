@@ -19,7 +19,7 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher lists Android Insider Admin Console, GitHub, the developer’s Google Play account, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
+Without a `catalog`, the launcher's favorites are the Android Insider and Apps Metadata admin consoles, GitHub, the developer’s Google Play account and Material Next, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
 
 ## Live demo
 

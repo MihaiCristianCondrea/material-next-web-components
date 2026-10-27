@@ -145,6 +145,50 @@ Next steps for consumers:
    open/closed preference with the host; the shell should not infer it from the
    repository name. A rail or bottom navigation remains a separate future mode.
 
+### Outlined appearance and a plain drawer title
+
+A site without a product brand (a personal site, a small tool) can use flat
+surfaces divided by lines and a plain **Menu** title, as github-dev-tools does:
+
+```html
+<mnw-app-shell
+  appearance="outlined"
+  drawer-heading="Menu"
+  navigation-mode="modal"
+>
+  …
+</mnw-app-shell>
+```
+
+- `appearance="outlined"` draws an outline-variant line under the top app bar,
+  under the drawer header and along the drawer's edge. The bar keeps one
+  surface while content scrolls, and the permanent layout has no rounded pane.
+- `drawer-heading` puts a title row at the top of the drawer, as tall as the
+  top app bar so their lines meet, with a close button in the modal layout. The
+  `brand` slot still shows under it when filled.
+
+### Destination sizes and trailing icons
+
+`navigation-size="large"` gives every destination and category 56px rows and
+16px labels, as Material Components' navigation drawer draws them; the default
+`standard` rows are 48px. A destination's `trailing-icon` (or `trailing` slot)
+sits at its end edge; use `open_in_new` for links that leave the site:
+
+```html
+<mnw-navigation-item
+  href="https://blog.example.com/"
+  target="_blank"
+  icon="article"
+  trailing-icon="open_in_new"
+>
+  Blog
+</mnw-navigation-item>
+```
+
+Each destination and category pads itself by 2px above and below, so the rhythm
+holds when you wrap them in your own element. Only the destinations scroll: the
+drawer header, `brand` and `navigation-footer` stay in place.
+
 ### Theming
 
 The shell reads Material's `--md-sys-color-*` tokens: `surface` for the screen and compact app bar, `surface-container` for the compact bar once content scrolls under it, `surface-container-low` for the drawer and the connected frame, `secondary-container` for the current destination. Sizes are custom properties (see below).

@@ -13,6 +13,7 @@ export const styles = css`
   ${scrollbarStyles}
   :host {
     display: block;
+    padding-block: 2px;
     color: var(--md-sys-color-on-surface-variant, #44474c);
   }
 
@@ -22,14 +23,18 @@ export const styles = css`
     align-items: center;
     gap: 12px;
     width: 100%;
-    min-height: 48px;
+    min-height: var(--mnw-navigation-item-height, 48px);
     box-sizing: border-box;
     padding: 10px 16px;
     border: 0;
     border-radius: 999px;
     background: transparent;
     color: inherit;
-    font: 500 14px/20px
+    font: 500
+      var(--mnw-navigation-item-label-size, 0.875rem)/var(
+        --mnw-navigation-item-line-height,
+        1.25rem
+      )
       var(--md-ref-typeface-plain, 'Google Sans Flex', system-ui, sans-serif);
     text-align: start;
     cursor: pointer;
@@ -84,7 +89,6 @@ export const styles = css`
 
   ::slotted(mnw-navigation-item) {
     display: block;
-    margin-block: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {

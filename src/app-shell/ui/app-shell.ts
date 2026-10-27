@@ -31,6 +31,8 @@ export interface NavigationRequestDetail {
 }
 
 export type NavigationRequestEvent = CustomEvent<NavigationRequestDetail>;
+export type AppShellAppearance = 'tonal' | 'outlined';
+export type AppShellNavigationSize = 'standard' | 'large';
 export type DrawerToggleEvent = CustomEvent<{open: boolean}>;
 export type NavigationModeChangeEvent = CustomEvent<{
   mode: AppShellNavigationMode;
@@ -63,6 +65,7 @@ const DESTINATIONS = 'mnw-navigation-item, a[href]';
  * @fires drawer-toggle - `{open}`: the modal drawer opened or closed.
  * @fires navigation-mode-change - `{mode}`: the layout switched between `modal` and `permanent`.
  * @csspart drawer - The navigation drawer.
+ * @csspart drawer-header - The row with `drawer-heading` and the close button.
  * @csspart top-app-bar - The top app bar.
  * @csspart headline - The screen's title.
  * @csspart content - The `<main>` element around the screen.
@@ -121,6 +124,29 @@ export class MaterialNextAppShell extends LitElement {
   /** Accessible name of the navigation landmark. */
   @property({attribute: 'navigation-label'})
   navigationLabel = 'Navigation';
+
+  /**
+   * `tonal` (default): the bar takes a tone once content scrolls under it,
+   * and the permanent drawer frames a rounded content pane. `outlined`: flat
+   * surfaces divided by outline-variant lines, under the bar and the drawer
+   * header and along the drawer's edge.
+   */
+  @property({reflect: true})
+  appearance: AppShellAppearance = 'tonal';
+
+  /**
+   * A plain title at the top of the drawer, for example `Menu`, with a close
+   * button in the modal layout. For sites without a product brand; the
+   * `brand` slot still shows below it when filled.
+   */
+  @property({attribute: 'drawer-heading'})
+  drawerHeading = '';
+
+  /** `standard` 48px destinations; `large` 56px ones with 16px labels, as Material Components draws them. */
+  @property({reflect: true, attribute: 'navigation-size'})
+  navigationSize: AppShellNavigationSize = 'standard';
+
+  @state() private hasBrand = false;
 
   @state() private width = 0;
 
@@ -528,7 +554,33 @@ export class MaterialNextAppShell extends LitElement {
           .inert=${modal && !this.drawerOpen}
           @keydown=${this.onDrawerKeyDown}
         >
-          <div class="brand"><slot name="brand"></slot></div>
+          ${
+            this.drawerHeading
+              ? html`<div class="drawer-header" part="drawer-header">
+                  <h2 class="drawer-heading">${this.drawerHeading}</h2>
+                  ${
+                    modal
+                      ? html`<md-icon-button
+                          class="drawer-close"
+                          aria-label="Close ${this.drawerHeading.toLowerCase()}"
+                          title="Close"
+                          @click=${() => this.closeDrawer()}
+                          ><md-icon>close</md-icon></md-icon-button
+                        >`
+                      : nothing
+                  }
+                </div>`
+              : nothing
+          }
+          <div class="brand" ?hidden=${!this.hasBrand}>
+            <slot
+              name="brand"
+              @slotchange=${(e: Event) => {
+                this.hasBrand =
+                  (e.target as HTMLSlotElement).assignedNodes().length > 0;
+              }}
+            ></slot>
+          </div>
           <div class="destinations" @click=${this.onNavigationClick}>
             <slot
               name="navigation"

@@ -496,11 +496,17 @@ await check(
     const before = await launcherTitles(p, launcher);
     if (
       before.some((title) =>
-        ['Tutorials admin', 'Codex', 'Smart Cleaner'].includes(title)
+        ['Tutorials admin', 'Codex', 'Smart Cleaner', 'App Toolkit'].includes(
+          title
+        )
       )
     )
       throw new Error('a removed product is still offered');
-    if (before.includes('Material Next') || before.length !== 3)
+    if (
+      before.includes('Material Next') ||
+      before.length !== 4 ||
+      before[1] !== 'Apps Metadata Admin Console'
+    )
       throw new Error(`the current product shows: ${before.join(', ')}`);
     await p.locator(`${launcher} .edit`).click();
     const editing = p.locator(`${launcher} .tile--editing`).first();
@@ -520,13 +526,16 @@ await check(
     await p.locator(`${launcher} .done`).click();
     await expectText(
       logOf(p),
-      /launcher-change .*"shortcut:github".*"console:tutorials-admin".*console:play-console"\]/
+      /launcher-change .*"console:apps-metadata".*"console:tutorials-admin".*console:play-console"\]/
     );
     await p.reload({waitUntil: 'networkidle'});
     await settle(p);
     await p.locator(`${launcher} .trigger`).click();
     const after = await launcherTitles(p, launcher);
-    if (after[0] !== 'GitHub profile' || after.at(-1) !== 'Play Console')
+    if (
+      after[0] !== 'Apps Metadata Admin Console' ||
+      after.at(-1) !== 'Play Console'
+    )
       throw new Error(`favorites did not persist: ${after.join(', ')}`);
     const stored = await p.evaluate(() =>
       JSON.parse(localStorage.getItem('mnw-docs-demo:launcher'))

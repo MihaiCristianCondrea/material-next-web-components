@@ -55,21 +55,12 @@ export const PROJECT_LAUNCHER_ITEMS = [
     product: 'material-next',
   }),
   launcherItem({
-    kind: 'web',
-    key: 'app-toolkit',
-    title: 'App Toolkit',
-    subtitle: 'Android library',
-    href: 'https://github.com/MihaiCristianCondrea/App-Toolkit-for-Android',
-    icon: 'widgets',
-    product: 'app-toolkit',
-  }),
-  launcherItem({
     kind: 'console',
     key: 'apps-metadata',
-    title: 'Apps metadata',
-    subtitle: 'Admin console',
+    title: 'Apps Metadata Admin Console',
     href: 'https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin',
     icon: 'dataset',
+    image: 'asset:launcher/apps-metadata.svg',
     product: 'apps-metadata',
   }),
   launcherItem({
@@ -110,6 +101,7 @@ export const PROJECT_LAUNCHER_CATALOG = createLauncherCatalog({
   items: PROJECT_LAUNCHER_ITEMS,
   defaultFavorites: [
     'console:tutorials-admin',
+    'console:apps-metadata',
     'shortcut:github',
     'shortcut:google-play',
     'web:material-next',

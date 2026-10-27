@@ -20,6 +20,8 @@ import {styles} from './navigation-item-styles.js';
  * @slot - The label. Overrides `label`.
  * @slot icon - A custom icon, for example an image or an SVG. Overrides `icon`.
  * @slot badge - Trailing text, for example a count.
+ * @slot trailing - A custom trailing icon. Overrides `trailing-icon`.
+ * @cssprop --mnw-navigation-item-height - Minimum height. Default `48px`; `56px` in a shell with `navigation-size="large"`.
  * @csspart link - The link.
  * @cssprop --mnw-navigation-item-height - Height of the item. Default `48px`.
  */
@@ -38,6 +40,13 @@ export class MaterialNextNavigationItem extends LitElement {
   /** A Material Symbols name, when the `icon` slot is empty. */
   @property()
   icon = '';
+
+  /**
+   * A Material Symbols name shown at the end, when the `trailing` slot is
+   * empty: `open_in_new` for a link that leaves the site.
+   */
+  @property({attribute: 'trailing-icon'})
+  trailingIcon = '';
 
   /** `_blank` opens a new tab; the shell then lets the link go without asking. */
   @property()
@@ -78,6 +87,15 @@ export class MaterialNextNavigationItem extends LitElement {
       >
       <span class="label"><slot>${this.label}</slot></span>
       <span class="badge"><slot name="badge"></slot></span>
+      <span class="trailing"
+        ><slot name="trailing"
+          >${
+            this.trailingIcon
+              ? html`<md-icon aria-hidden="true">${this.trailingIcon}</md-icon>`
+              : nothing
+          }</slot
+        ></span
+      >
       ${
         blank
           ? html`<span class="visually-hidden">(opens in a new tab)</span>`

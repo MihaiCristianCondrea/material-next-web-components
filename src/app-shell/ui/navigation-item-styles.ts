@@ -13,6 +13,7 @@ export const styles = css`
   ${scrollbarStyles}
   :host {
     display: block;
+    padding-block: 2px;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -28,10 +29,10 @@ export const styles = css`
     outline: none;
     color: var(--md-sys-color-on-surface-variant, #44474c);
     font: inherit;
-    font-size: 0.875rem;
+    font-size: var(--mnw-navigation-item-label-size, 0.875rem);
     font-weight: 500;
     letter-spacing: 0.006em;
-    line-height: 1.25rem;
+    line-height: var(--mnw-navigation-item-line-height, 1.25rem);
     text-decoration: none;
     --md-focus-ring-shape: 999px;
     --md-ripple-hover-color: var(--md-sys-color-on-surface, #1b1c1e);
@@ -74,6 +75,19 @@ export const styles = css`
   .badge {
     flex: none;
     font-size: 0.75rem;
+  }
+
+  .trailing {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .trailing md-icon,
+  ::slotted([slot='trailing']) {
+    --md-icon-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-inline-end: -8px;
   }
 
   .visually-hidden {

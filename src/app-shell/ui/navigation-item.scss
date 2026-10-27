@@ -5,6 +5,7 @@
 
 :host {
   display: block;
+  padding-block: 2px;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -20,10 +21,10 @@ a {
   outline: none;
   color: var(--md-sys-color-on-surface-variant, #44474c);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--mnw-navigation-item-label-size, 0.875rem);
   font-weight: 500;
   letter-spacing: 0.006em;
-  line-height: 1.25rem;
+  line-height: var(--mnw-navigation-item-line-height, 1.25rem);
   text-decoration: none;
   --md-focus-ring-shape: 999px;
   --md-ripple-hover-color: var(--md-sys-color-on-surface, #1b1c1e);
@@ -63,6 +64,21 @@ a {
 .badge {
   flex: none;
   font-size: 0.75rem;
+}
+
+// A trailing icon, for example open_in_new on a link that leaves the site.
+.trailing {
+  display: inline-flex;
+  flex: none;
+}
+
+// 16px from the end edge, as Material Components places a trailing icon.
+.trailing md-icon,
+::slotted([slot='trailing']) {
+  --md-icon-size: 20px;
+  width: 20px;
+  height: 20px;
+  margin-inline-end: -8px;
 }
 
 .visually-hidden {
