@@ -1223,7 +1223,7 @@ await check(
   async (p) => {
     const text = await p.locator('.docs-route-content').textContent();
     if (
-      !text.includes('Unreleased') ||
+      !text.includes('0.0.3') ||
       !text.includes('0.0.1') ||
       !text.includes('October 27, 2026') ||
       !text.includes('Added') ||
