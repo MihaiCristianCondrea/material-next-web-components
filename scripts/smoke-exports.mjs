@@ -1,4 +1,5 @@
 const entries = [
+  'site-footer.js',
   'material-next-home.js',
   'code-block.js',
   'app-showcase.js',

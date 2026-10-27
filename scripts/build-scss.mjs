@@ -5,6 +5,7 @@ import {format, resolveConfig} from 'prettier';
 const formatOptions = await resolveConfig('package.json');
 
 const outputs = [
+  {input: 'src/site-footer.scss', output: 'src/site-footer-styles.ts', lit: true},
   {
     input: 'src/material-next-home.scss',
     output: 'src/material-next-home-styles.ts',

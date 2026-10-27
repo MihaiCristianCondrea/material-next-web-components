@@ -436,15 +436,23 @@ await check(
     await p.locator(`${root} .pn-time`).filter({hasText: '00:45'}).waitFor();
   }
 );
-await check('filter the sample gallery', 'demos/marketing-hub/', async (p) => {
-  await p.locator('mnw-screen-card').first().waitFor();
-  await p
-    .locator('mnw-marketing-shell md-filter-chip', {hasText: 'Focus'})
-    .click();
-  await p.waitForFunction(
-    () => document.querySelectorAll('mnw-screen-card').length === 1
-  );
-});
+await check(
+  'the sample gallery shows every screen without category filters',
+  'demos/marketing-hub/',
+  async (p) => {
+    await p.locator('mnw-screen-card').first().waitFor();
+    if ((await p.locator('mnw-screen-card').count()) !== 3)
+      throw new Error('missing gallery screens');
+    if (
+      await p
+        .locator('mnw-marketing-shell')
+        .evaluate(
+          (el) => el.shadowRoot.querySelectorAll('md-filter-chip').length
+        )
+    )
+      throw new Error('category filters remain');
+  }
+);
 await check(
   'compare on the prototype page',
   'demos/marketing-hub/screen.html?id=focus',
@@ -1001,8 +1009,12 @@ await check(
     const shell = p.locator('mnw-marketing-shell');
     if (await shell.locator('.hero, mnw-play-badge, mnw-github-badge').count())
       throw new Error('promotional hero or badge still rendered');
-    if (!(await shell.locator('#catalog h2').count()))
-      throw new Error('missing catalog page heading');
+    if (
+      await shell.locator('#catalog h2, [aria-label="Filter screens"]').count()
+    )
+      throw new Error('unnecessary catalog header or filter remains');
+    if (!(await shell.locator('mnw-site-footer').count()))
+      throw new Error('missing shared copyright footer');
   }
 );
 await check(
@@ -1070,6 +1082,79 @@ await check(
   }
 );
 await check(
+  'drawer categories expand, collapse and preserve their destinations',
+  'examples/navigation-group/',
+  async (p) => {
+    const group = p.locator('[data-demo] mnw-navigation-group');
+    const toggle = group.getByRole('button', {name: /Profile/});
+    if ((await toggle.getAttribute('aria-expanded')) !== 'false')
+      throw new Error('category starts expanded');
+    await group.evaluate((el) => {
+      window.__groupItem = el.querySelector('mnw-navigation-item');
+    });
+    await toggle.click();
+    await group
+      .getByRole('link', {name: 'Contact', exact: true})
+      .waitFor({state: 'visible'});
+    await toggle.focus();
+    await p.keyboard.press('Space');
+    if ((await toggle.getAttribute('aria-expanded')) !== 'false')
+      throw new Error('Space did not collapse category');
+    if (
+      !(await group.evaluate(
+        (el) => el.shadowRoot.querySelector('.children').inert
+      ))
+    )
+      throw new Error('collapsed destinations remain interactive');
+    await p.keyboard.press('Enter');
+    if (
+      !(await group.evaluate(
+        (el) => el.querySelector('mnw-navigation-item') === window.__groupItem
+      ))
+    )
+      throw new Error('category replaced destinations');
+  }
+);
+await check(
+  'the shared copyright footer wraps and preserves named social links',
+  'examples/site-footer/',
+  async (p) => {
+    const footer = p.locator('[data-demo] mnw-site-footer');
+    if (
+      !(await footer.locator('footer').innerText()).includes(
+        'Copyright © 2020–2026, Mihai-Cristian Condrea'
+      )
+    )
+      throw new Error('incorrect copyright');
+    if (
+      (await footer
+        .getByRole('link', {name: 'GitHub profile', exact: true})
+        .count()) !== 1
+    )
+      throw new Error('missing social link');
+  }
+);
+await check(
+  'gallery frames start off and screen detail opens with its device frame',
+  'demos/marketing-hub/',
+  async (p) => {
+    if (await p.locator('mnw-device-frame').count())
+      throw new Error('gallery starts framed');
+    if (
+      await p.locator('.catalog-header, [aria-label="Filter screens"]').count()
+    )
+      throw new Error('catalog heading or filters remain');
+    const href = await p
+      .locator('mnw-screen-card')
+      .first()
+      .getAttribute('href');
+    await p.goto(href, {waitUntil: 'networkidle'});
+    await p.locator('mnw-device-frame').waitFor();
+    if ((await p.locator('mnw-device-frame').count()) !== 1)
+      throw new Error('detail has no frame');
+  }
+);
+await check(
   'marketing composes the shared shell in both desktop modes',
   'demos/marketing-hub/',
   async (p) => {
@@ -1122,7 +1207,7 @@ await check(
   'the palette button themes the site and remembers the choice',
   'install/',
   async (p) => {
-    const footer = await p.locator('.site-footer__links').textContent();
+    const footer = await p.locator('mnw-site-footer.site-footer').textContent();
     if (/GitHub|Changelog/.test(footer))
       throw new Error('the footer repeats links from the top app bar');
     const primary = () =>

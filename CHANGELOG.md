@@ -4,6 +4,29 @@ Last updated: October 27, 2026.
 
 ---
 
+# 0.0.4 (Unreleased)
+
+### Added
+
+- Added expandable drawer categories with `mnw-navigation-group`. Active destinations reveal their group and remain mounted when it closes.
+- Added `mnw-site-footer`, a rounded copyright bar with optional social links, and a page footer slot on the app shell.
+- App shell destinations support explicit hash routes such as `active-path="#projects"`.
+
+### Changed
+
+- The marketing gallery shows its screens directly, without a count or category filter chips. The old product name, version and links footer is replaced by the copyright bar.
+- Gallery device frames stay off by default. Opening a screen shows its device frame, while explicit `frame=none` links and bare captures remain available.
+
+### Removed
+
+- Removed the marketing shell's category filter API and product footer metadata fields.
+
+### Security
+
+- App showcase metadata accepts only HTTP(S) icon and store URLs; invalid store links fall back to Google Play.
+
+---
+
 # 0.0.3 (October 27, 2026)
 
 ### Fixed

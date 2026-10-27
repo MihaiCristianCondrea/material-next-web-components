@@ -8,11 +8,15 @@ import {customElement, property} from 'lit/decorators.js';
 import {marketingAsset} from './assets.js';
 import {styles} from './badges-styles.js';
 
+/** Trademark line for pages displaying the Google Play badge. */
+export const PLAY_TRADEMARK =
+  'Google Play and the Google Play logo are trademarks of Google LLC.';
+
 /**
  * Google's official "Get it on Google Play" badge, unaltered. Size it with
  * `--mnw-play-badge-height`; Google's guidelines allow scaling the artwork
  * whole, never redrawing, recolouring, cropping or animating it. Pages that
- * show it carry the trademark line (the marketing shell's footer does).
+ * show it carry PLAY_TRADEMARK alongside their store links.
  *
  * @cssprop --mnw-play-badge-height - Badge height, clear space included. Default `56px`.
  */

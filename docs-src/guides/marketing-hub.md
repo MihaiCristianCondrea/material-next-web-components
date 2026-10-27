@@ -20,7 +20,7 @@ A marketing hub is a small web project, usually `marketing/ui` in the app's repo
 
 This guide builds one for **Pocket Notes**, a sample app with three screens. Its files are in this repository under `src/docs/sample-app/` and `docs-src/demos/assets/pocket-notes.css`, small enough to copy as a starting point.
 
-{% preview "marketing-gallery-frame" "The finished sample hub. It is a demonstration: Pocket Notes is not a real app, and its store link goes to Google Play's home page." "demo__stage--flush" %}
+{% preview "marketing-gallery-frame" "The finished sample hub. It is a demonstration: Pocket Notes is not a real app." "demo__stage--flush" %}
 
 <p><a class="demo-open" href="../../demos/marketing-hub/">Open the sample hub in its own tab <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span></a></p>
 
@@ -28,7 +28,7 @@ This guide builds one for **Pocket Notes**, a sample app with three screens. Its
 
 | The library provides                                                                           | The app provides                                                   |
 | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| The gallery page: shell, top app bar, preview settings, category filter, cards, footer         | Its **screens**: Lit templates translated from its Composables     |
+| The gallery page: shell, top app bar, preview settings, cards, footer                          | Its **screens**: Lit templates translated from its Composables     |
 | The prototype page: inspector, compare mode, window sizes, capture mode                        | Its **theme**: palettes as `[data-palette]` CSS, fonts, kit styles |
 | `ScreenHost`: state, `set()` and `go()`, palette and theme, device frames, the animation clock | Its **product config**: name, icon, links                          |
 | The embed API for videos and capture scripts                                                   | Its own motion parts, illustrations and campaign code              |
@@ -50,7 +50,7 @@ One object describes the app to the hub. Keep it in `src/config/product.js`.
 
 {% source "src/docs/sample-app/product.ts" %}
 
-`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. `storeUrl` adds the Google Play footer link and Google's trademark line; `repositoryUrl` adds a Source footer link. The full shape is on the [marketing shell](../../examples/marketing-shell/#product) page.
+`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. The full shape is on the [marketing shell](../../examples/marketing-shell/#product) page.
 
 ## Screens
 
@@ -63,7 +63,7 @@ The important fields:
 | Field                        |                                                                                                                                 |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `id`, `title`, `description` | Shown on its card; the title also names it in the inspector. Ids must be unique; `createScreenRegistry()` throws on duplicates. |
-| `category`, `categoryLabel`  | Groups the catalog. The filter chips appear with two or more categories.                                                        |
+| `category`, `categoryLabel`  | Optional category text shown on the screen card.                                                                                |
 | `palette`                    | The palette of the reference capture, used when the hub's palette is "As captured".                                             |
 | `defaults`                   | The initial state. Every render gets `{...defaults, ...state}`.                                                                 |
 | `controls`                   | Optional tweaks for the inspector: presets, choices, toggles, sliders.                                                          |
@@ -256,3 +256,5 @@ Add the destination to `.gitignore`: it is generated.
 6. Captures and videos through the prototype page's capture mode or `createMarketingEmbed()`.
 
 The [Marketing API](../marketing-api/) page lists every export of `material-next-web-components/marketing.js`.
+
+Gallery frames default to off. Opening a screen from a card shows its frame by default; the inspector can turn it off. Explicit `frame=none` links stay frameless.

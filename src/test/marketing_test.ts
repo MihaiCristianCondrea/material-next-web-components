@@ -162,7 +162,7 @@ suite('marketing data', () => {
     );
     assert.equal(href.searchParams.get('nav'), 'buttons');
     assert.isFalse(href.searchParams.has('theme'));
-    assert.equal(href.searchParams.get('frame'), 'none');
+    assert.isFalse(href.searchParams.has('frame'));
   });
 });
 
@@ -219,44 +219,55 @@ suite('ScreenHost', () => {
   });
 });
 
+suite('screen frame defaults', () => {
+  test('details default to a frame, explicit frameless links and bare captures stay frameless', () => {
+    assert.isTrue(
+      parsePrototypeView(new URLSearchParams('id=a'), {palettes: []})
+        .deviceFrame
+    );
+    assert.isFalse(
+      parsePrototypeView(new URLSearchParams('id=a&frame=none'), {palettes: []})
+        .deviceFrame
+    );
+    assert.isFalse(
+      parsePrototypeView(new URLSearchParams('id=a&panel=none'), {palettes: []})
+        .deviceFrame
+    );
+  });
+});
+
 suite('marketing elements', () => {
-  test('shell keeps its app bar clean and product links in the footer', async () => {
+  test('shell keeps its app bar clean and uses the shared copyright footer', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
         .product=${{
           id: 'demo',
           name: 'Demo',
           icon: '',
-          storeUrl: 'https://play.google.com/store/apps/details?id=demo',
-          repositoryUrl: 'https://github.com/example/demo',
         }}
-        .count=${1}
         ><div>card</div></mnw-marketing-shell
       >`
     );
     const root = el.shadowRoot!;
     assert.notExists(root.querySelector('.hero'));
     assert.notExists(root.querySelector('mnw-play-badge, mnw-github-badge'));
-    assert.exists(root.querySelector('footer a[href*="play.google.com"]'));
-    assert.exists(root.querySelector('footer a[href*="github.com"]'));
-    assert.include(
-      root.querySelector('footer')?.textContent ?? '',
-      'trademarks of Google LLC'
+    assert.exists(root.querySelector('mnw-site-footer[slot="footer"]'));
+    assert.notExists(
+      root.querySelector('.catalog-header, md-chip-set, .count')
     );
     assert.exists(root.querySelector('.grid slot'));
   });
 
-  test('shell hides the store parts without a store URL and shows the empty state', async () => {
+  test('shell shows a fallback when no cards are supplied', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
         .product=${{id: 'demo', name: 'Demo', icon: ''}}
-        .count=${0}
       ></mnw-marketing-shell>`
     );
     const root = el.shadowRoot!;
     assert.notExists(root.querySelector('mnw-play-badge'));
     assert.notInclude(
-      root.querySelector('footer')?.textContent ?? '',
+      root.querySelector('mnw-site-footer')?.textContent ?? '',
       'trademarks'
     );
     assert.exists(root.querySelector('.empty'));
@@ -280,7 +291,6 @@ suite('marketing elements', () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
         .product=${{id: 'demo', name: 'Demo', icon: ''}}
-        .count=${1}
         navigation-mode="permanent"
       >
         <div id="kept">Screen state</div></mnw-marketing-shell

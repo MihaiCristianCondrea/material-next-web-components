@@ -55,6 +55,7 @@ const DESTINATIONS = 'mnw-navigation-item, a[href]';
  * @slot - The screen.
  * @slot brand - The top of the drawer: a logo and the app's name.
  * @slot navigation - `<mnw-navigation-item>` elements, links, or groups of them with your own headings.
+ * @slot footer - A page footer, below the main content.
  * @slot navigation-footer - The bottom of the drawer: a theme picker, legal links.
  * @slot actions - The top app bar's trailing actions, for example `<mnw-product-launcher>`.
  * @fires navigation-request - Cancelable. `{href, url, item}`: a destination was activated. `preventDefault()` keeps the browser from following the link.
@@ -286,7 +287,7 @@ export class MaterialNextAppShell extends LitElement {
     } else if (focused.area === 'menu') {
       // The menu disappears beside a permanent drawer.
       const destination = this.currentDestination() ?? this.destinations()[0];
-      if (destination) destination.focus({preventScroll: true});
+      if (destination) await this.focusDestination(destination);
       else this.focusHeading();
     } else {
       focused.element.focus({preventScroll: true});
@@ -304,7 +305,9 @@ export class MaterialNextAppShell extends LitElement {
     if (open) {
       // The top layer escapes the transforms and stacking of the page.
       if (native && !drawer.matches(':popover-open')) drawer.showPopover();
-      (this.currentDestination() ?? this.destinations()[0])?.focus();
+      void this.focusDestination(
+        this.currentDestination() ?? this.destinations()[0]
+      );
     } else {
       if (native && drawer.matches(':popover-open')) drawer.hidePopover();
       const focus = this.focusAfterClose;
@@ -346,6 +349,26 @@ export class MaterialNextAppShell extends LitElement {
         ...element.querySelectorAll<HTMLElement>(DESTINATIONS),
       ]
     );
+  }
+
+  private async focusDestination(item?: HTMLElement) {
+    if (!item) return;
+    let parent = item.parentElement;
+    while (parent && parent !== this) {
+      if (parent.localName === 'mnw-navigation-group') {
+        const group = parent as HTMLElement & {
+          open: boolean;
+          updateComplete: Promise<unknown>;
+        };
+        group.open = true;
+        await group.updateComplete;
+      }
+      parent = parent.parentElement;
+    }
+    await (item as HTMLElement & {updateComplete?: Promise<unknown>})
+      .updateComplete;
+    if (this.layout !== 'modal' || this.drawerOpen)
+      item.focus({preventScroll: true});
   }
 
   private currentDestination() {
@@ -532,6 +555,7 @@ export class MaterialNextAppShell extends LitElement {
           <main id="content" class="content" part="content" tabindex="-1">
             <slot></slot>
           </main>
+          <slot name="footer"></slot>
         </div>
       </div>
     `;

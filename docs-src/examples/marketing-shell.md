@@ -1,7 +1,7 @@
 ---
 tags: reference
 name: Marketing shell
-description: "The whole marketing hub page around an app's screen cards: top app bar, preview settings, category filter and footer."
+description: "The whole marketing hub page around an app's screen cards: top app bar, preview settings, screen catalog and copyright footer."
 category: marketing
 icon: storefront
 status: experimental
@@ -12,7 +12,7 @@ order: 100
 
 ## Overview
 
-`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings behind the **Preview settings** button in the top app bar, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
+`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings behind the **Preview settings** button in the top app bar, the screen catalog, and a shared copyright footer. The cards go in its default slot.
 
 Most apps never use it directly: [`mountMarketingGallery()`](../../guides/marketing-hub/#the-gallery) renders it, fills it with live cards and wires every event. Use the element yourself only to build a different gallery (other card content, another data source) with the same page.
 
@@ -24,7 +24,7 @@ The sample gallery uses the default `navigation-mode="modal"`. The menu opens
 the drawer at every width, including desktop; the content fills the available
 width while it is closed.
 
-{% preview "marketing-gallery-modal" "The default gallery, with a closed desktop drawer. Change the theme, palette or device frame, filter by category, and open a card." "demo__stage--flush" %}
+{% preview "marketing-gallery-modal" "The default gallery, with a closed desktop drawer. Change the theme, palette or device frame, and open a card." "demo__stage--flush" %}
 
 ### Connected drawer (optional)
 
@@ -35,7 +35,7 @@ width the same navigation becomes a modal drawer.
 
 ## Usage
 
-The shell is controlled: it shows `settings` and `category`, and reports changes as events for you to apply.
+The shell is controlled: it shows `settings`, and reports changes as events for you to apply.
 
 ```ts
 import 'material-next-web-components/marketing.js';
@@ -53,21 +53,11 @@ shell.product = {
   id: 'pocket-notes',
   name: 'Pocket Notes',
   icon: '/logos/icon.svg',
-  storeUrl: 'https://play.google.com/store/apps/details?id=com.example.notes',
-  repositoryUrl: 'https://github.com/example/pocket-notes',
 };
 shell.palettes = ['ocean', 'clay'];
-shell.categories = [
-  {id: 'notes', label: 'Notes'},
-  {id: 'focus', label: 'Focus'},
-];
 shell.settings = DEFAULT_PREVIEW_SETTINGS;
-shell.count = 0;
 shell.addEventListener('settings-change', (event) => {
   shell.settings = event.detail; // and apply them to your cards
-});
-shell.addEventListener('category-change', (event) => {
-  shell.category = event.detail.category; // "" is every category
 });
 document.body.append(shell);
 ```
@@ -102,34 +92,29 @@ With `mountMarketingGallery()`, pass `actions: () => html\`...\``; it renders
 in light DOM, so your page's styles apply. Give icon-only actions an
 `aria-label`.
 
-`product`, `settings`, `defaults`, `palettes` and `categories` are objects or arrays, so they are JavaScript properties only. `category`, `count` and `catalog-title` also have attributes.
+`product`, `settings`, `defaults` and `palettes` are JavaScript properties. The catalog shows its slotted cards directly.
 
 ## Product
 
 `product` is a `MarketingProduct`:
 
-| Field              | Type                     |                                                                   |
-| ------------------ | ------------------------ | ----------------------------------------------------------------- |
-| `id`               | `string`                 | Required. Namespaces the saved preview settings.                  |
-| `name`             | `string`                 | Required. Top app bar, footer.                                    |
-| `icon`             | `string`                 | Required. URL of a square icon.                                   |
-| `storeUrl`         | `string`                 | Optional. Shows a Google Play footer link and the trademark line. |
-| `repositoryUrl`    | `string`                 | Optional. Shows a Source footer link.                             |
-| `privacyUrl`       | `string`                 | Optional. Privacy Policy link in the drawer footer.               |
-| `codeOfConductUrl` | `string`                 | Optional. Code of Conduct link in the drawer footer.              |
-| `links`            | `{label, href, icon?}[]` | Optional. More footer links.                                      |
-| `version`          | `string`                 | Optional. Footer only.                                            |
-| `credit`           | `string`                 | Optional. Footer line, such as the developer's name.              |
+| Field              | Type     |                                                      |
+| ------------------ | -------- | ---------------------------------------------------- |
+| `id`               | `string` | Required. Namespaces the saved preview settings.     |
+| `name`             | `string` | Required. Top app bar and drawer.                    |
+| `icon`             | `string` | Required. URL of a square icon.                      |
+| `privacyUrl`       | `string` | Optional. Privacy Policy link in the drawer footer.  |
+| `codeOfConductUrl` | `string` | Optional. Code of Conduct link in the drawer footer. |
 
 ## API
 
 {% api "mnw-marketing-shell" %}
 
-The category chips appear when there are two or more categories. With `count` at `0` the default slot is not rendered and the `empty` slot shows instead.
+An empty default slot shows the `empty` fallback.
 
 ## Accessibility
 
-- A "Skip to screens" link comes first. The shared app bar names the page; the screen catalog has an `<h2>` with its count.
+- The app shell provides a skip link to the main content. The app bar names the page and the catalog is a labelled Screens region.
 - **Preview settings** is an icon button with `aria-expanded`; it opens a labelled dialog of Material Web segmented buttons, a select and a switch, each with a visible label. Escape or a click outside closes it and returns focus to the button. `settings-open` reflects whether it is open.
 - With `prefers-reduced-motion`, the top app bar's tone transition and the cards' entrance animation and shadow transition are off.
 

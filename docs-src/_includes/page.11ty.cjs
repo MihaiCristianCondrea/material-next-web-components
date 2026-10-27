@@ -86,20 +86,12 @@ module.exports = function (data) {
           ${content}
         </div>
       </mnw-docs-page>
-      <footer slot="footer" class="site-footer">
-        <div class="site-footer__inner">
-          <div>
-            <p class="site-footer__name">Material Next</p>
-            <p>Material Design web components for Lit, by Mihai-Cristian Condrea. BSD-3-Clause.</p>
-          </div>
-          <nav class="site-footer__links" aria-label="Project">
-            <a href="${site.repository}/issues">Issues</a>
-            <a href="${to('/release/')}">Release checklist</a>
-            <a href="https://lit.dev/">Built with Lit</a>
-            <a href="https://material-web.dev/">Material Web</a>
-          </nav>
-        </div>
-      </footer>
+      <mnw-site-footer slot="footer" class="site-footer" links-label="Project">
+        <a href="${site.repository}/issues">Issues</a>
+        <a href="${to('/release/')}">Release checklist</a>
+        <a href="https://lit.dev/">Built with Lit</a>
+        <a href="https://material-web.dev/">Material Web</a>
+      </mnw-site-footer>
     </mnw-docs-shell>
   </body>
 </html>`;

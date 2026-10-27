@@ -2,7 +2,7 @@
 
 Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
 
-> Status: `0.0.1` is on npm; `0.0.2` is in progress (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
+> Status: `0.0.3` is on npm; `0.0.4` is in progress (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
 
 ## Links
 
@@ -19,7 +19,7 @@ Install it with its peer dependencies, Lit and Material Web:
 npm install material-next-web-components lit @material/web
 ```
 
-Until then, build from source. To work on the library itself:
+To work on the library itself:
 
 ```bash
 git clone https://github.com/MihaiCristianCondrea/material-next-web-components.git
@@ -56,19 +56,22 @@ import 'material-next-web-components/code-block.js';
 | App shell                              | `material-next-web-components/app-shell.js`                                                                                                    | Experimental       |
 | Product launcher                       | `material-next-web-components/launcher.js`                                                                                                     | Experimental       |
 
+Drawer categories use `<mnw-navigation-group>` from `app-shell.js`. The shared
+copyright bar is `<mnw-site-footer>` from `site-footer.js`, with a slot for social links.
+
 ## Marketing hub
 
 `material-next-web-components/marketing.js` is a ready-made marketing hub for Android apps built with App Toolkit for Android, in the spirit of App Toolkit itself: the library does the heavy lifting, and each app's `marketing/ui` keeps only what is about the app. The app supplies:
 
 - its **screens**: Lit templates translated from its Composables, each a pure function of state (`MarketingScreen`);
 - its **theme**: App Toolkit's palettes as `[data-palette]` CSS, fonts and kit CSS;
-- its **product config**: name, icon, one-line headline and description, store and repository links.
+- its **product config**: name, icon, and legal links.
 
 The library supplies the rest:
 
 | Piece                                                                                                                            | What it is                                                                                                                                                                      |
 | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mountMarketingGallery()`                                                                                                        | The whole gallery page: shell, live screen cards, per-card theme and navigation toggles, category filter, settings saved per product                                            |
+| `mountMarketingGallery()`                                                                                                        | The whole gallery page: shell, live screen cards, per-card theme and navigation toggles, settings saved per product                                                             |
 | `mountScreenPrototype()`                                                                                                         | The prototype page: inspect or compare (theme, navigation, palette, frame), the screen's own controls and presets, phone, fold and desktop windows, capture mode (`panel=none`) |
 | `createMarketingEmbed()`                                                                                                         | `setup()`, `mount()` and `mountPart()` for Remotion and other headless tools, resolving once every element has rendered                                                         |
 | `ScreenHost`                                                                                                                     | Hosts one live screen: state, `set()` and `go()`, palette and theme, device frame, an optional per-frame clock (`tick()`) that runs only while needed                           |

@@ -13,7 +13,7 @@ import {
   DEFAULT_PREVIEW_SETTINGS,
   type PreviewSettings,
 } from '../domain/preview-settings.js';
-import {chips} from './controls.js';
+import '../../site-footer.js';
 import '../../app-shell/index.js';
 import type {
   NavigationRequestEvent,
@@ -23,27 +23,18 @@ import type {
 import './preview-controls.js';
 import {styles} from './marketing-shell-styles.js';
 
-export const ALL_CATEGORIES = '';
-
-/** Google's badge guidelines ask for this line wherever the badge appears. */
-export const PLAY_TRADEMARK =
-  'Google Play and the Google Play logo are trademarks of Google LLC.';
-
-export type CategoryChangeEvent = CustomEvent<{category: string}>;
-
 /**
  * A marketing hub composed with the shared app shell: a connected or closed
  * drawer, product heading, preview settings behind a top app bar button,
- * screen catalog and product footer.
+ * screen catalog and shared copyright footer.
  *
  * @slot - The `mnw-screen-card` elements.
- * @slot empty - Shown when no card matches the filter.
+ * @slot empty - Shown when no cards are supplied.
  * @slot actions - Top app bar actions, after the preview settings button: icon buttons, buttons or any
  *   custom element, for example `<mnw-product-launcher>`.
  * @slot navigation - App-specific navigation; defaults to the screen catalog.
  * @slot extra - App-specific sections after the catalog, for example motion parts.
  * @fires settings-change - From the preview controls.
- * @fires category-change - `{category}`; "" is every category.
  */
 @customElement('mnw-marketing-shell')
 export class MaterialNextMarketingShell extends LitElement {
@@ -64,22 +55,6 @@ export class MaterialNextMarketingShell extends LitElement {
   /** The app's palette names; empty hides the palette select. */
   @property({attribute: false})
   palettes: readonly string[] = [];
-
-  /** Catalog filter chips, as `{id, label}`; shown with two or more. */
-  @property({attribute: false})
-  categories: ReadonlyArray<{id: string; label: string}> = [];
-
-  /** Selected category id; `""` is All. */
-  @property()
-  category = ALL_CATEGORIES;
-
-  /** Cards shown under the current filter. */
-  @property({type: Number})
-  count = 0;
-
-  /** Heading of the catalog section. */
-  @property({attribute: 'catalog-title'})
-  catalogTitle = 'Screens';
 
   /** Drawer policy: automatic modal/permanent, always closed until opened, or permanent. */
   @property({attribute: 'navigation-mode'})
@@ -110,16 +85,6 @@ export class MaterialNextMarketingShell extends LitElement {
     const catalog = this.renderRoot.querySelector<HTMLElement>('#catalog');
     catalog?.scrollIntoView({behavior: 'instant', block: 'start'});
     requestAnimationFrame(() => catalog?.focus({preventScroll: true}));
-  }
-
-  private pickCategory(category: string) {
-    this.dispatchEvent(
-      new CustomEvent('category-change', {
-        detail: {category},
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   override render() {
@@ -171,7 +136,7 @@ export class MaterialNextMarketingShell extends LitElement {
         <slot slot="actions" name="actions"></slot>
         <slot slot="navigation" name="navigation">
           <mnw-navigation-item href="#catalog" icon="grid_view"
-            >${this.catalogTitle}</mnw-navigation-item
+            >Screens</mnw-navigation-item
           >
         </slot>
         <mnw-app-shell-footer
@@ -189,71 +154,19 @@ export class MaterialNextMarketingShell extends LitElement {
             );
           }}
         ></mnw-app-shell-footer>
-        <section id="catalog" tabindex="-1" aria-labelledby="catalog-title">
-          <div class="catalog-header">
-            <h2 id="catalog-title">
-              ${this.catalogTitle} <span class="count">${this.count}</span>
-            </h2>
-            ${
-              this.categories.length > 1
-                ? chips(
-                    [
-                      [ALL_CATEGORIES, 'All'] as const,
-                      ...this.categories.map((c) => [c.id, c.label] as const),
-                    ],
-                    this.category,
-                    (c) => this.pickCategory(c),
-                    'Filter screens'
-                  )
-                : nothing
-            }
+        <section id="catalog" tabindex="-1" aria-label="Screens">
+          <div class="grid">
+            <slot
+              ><div class="empty">
+                <slot name="empty">No screens available.</slot>
+              </div></slot
+            >
           </div>
-          ${
-            this.count
-              ? html`<div class="grid"><slot></slot></div>`
-              : html`<div class="empty">
-                  <slot name="empty">No screens in this category yet.</slot>
-                </div>`
-          }
         </section>
 
         <slot name="extra"></slot>
 
-        <footer>
-          <div class="footer__meta">
-            <span class="footer__product"
-              >${p.name}${p.version ? html` · ${p.version}` : nothing}</span
-            >
-            ${p.credit ? html`<span>${p.credit}</span>` : nothing}
-          </div>
-          <nav class="footer__links" aria-label="Links">
-            ${
-              p.storeUrl
-                ? html`<a href=${p.storeUrl} target="_blank" rel="noopener"
-                    ><md-icon>shop</md-icon>Google Play</a
-                  >`
-                : nothing
-            }
-            ${
-              p.repositoryUrl
-                ? html`<a href=${p.repositoryUrl} target="_blank" rel="noopener"
-                    ><md-icon>code</md-icon>Source</a
-                  >`
-                : nothing
-            }
-            ${p.links.map(
-              (l) =>
-                html`<a href=${l.href} target="_blank" rel="noopener"
-                  >${l.icon ? html`<md-icon>${l.icon}</md-icon>` : nothing}${l.label}</a
-                >`
-            )}
-          </nav>
-          ${
-            p.storeUrl
-              ? html`<span class="trademark">${PLAY_TRADEMARK}</span>`
-              : nothing
-          }
-        </footer>
+        <mnw-site-footer slot="footer"></mnw-site-footer>
       </mnw-app-shell>
     `;
   }
@@ -262,8 +175,5 @@ export class MaterialNextMarketingShell extends LitElement {
 declare global {
   interface HTMLElementTagNameMap {
     'mnw-marketing-shell': MaterialNextMarketingShell;
-  }
-  interface HTMLElementEventMap {
-    'category-change': CategoryChangeEvent;
   }
 }

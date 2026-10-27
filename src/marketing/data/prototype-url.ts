@@ -58,7 +58,7 @@ export const DEFAULT_PROTOTYPE_VIEW: PrototypeView = {
   paletteB: CAPTURED_PALETTE,
   theme: 'system',
   navType: 'gesture',
-  deviceFrame: false,
+  deviceFrame: true,
   window: 'phone',
   showAds: false,
   state: {},
@@ -99,7 +99,9 @@ export const parsePrototypeView = (
     navType: pick(params.get('nav'), NAV_TYPES, defaults.navType),
     deviceFrame: params.has('frame')
       ? params.get('frame') === 'device'
-      : defaults.deviceFrame,
+      : params.get('panel') === 'none'
+        ? false
+        : defaults.deviceFrame,
     window: pick(params.get('window'), WINDOW_NAMES, defaults.window),
     showAds: params.get('ads') === 'on',
     state,
@@ -163,7 +165,8 @@ export const prototypeHref = (
   if (navType && navType !== 'gesture') u.searchParams.set('nav', navType);
   if (palette && palette !== CAPTURED_PALETTE)
     u.searchParams.set('palette', palette);
-  u.searchParams.set('frame', deviceFrame ? 'device' : 'none');
+  if (deviceFrame !== undefined)
+    u.searchParams.set('frame', deviceFrame ? 'device' : 'none');
   if (state && Object.keys(state).length) {
     u.searchParams.set('state', JSON.stringify(state));
   }

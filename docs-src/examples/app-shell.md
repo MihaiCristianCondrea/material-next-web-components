@@ -179,3 +179,11 @@ Everything below comes from `material-next-web-components/app-shell.js`; `app-sh
 - The permanent drawer cannot be collapsed by the user.
 - The modal drawer needs the Popover API (all current browsers) for the top layer; without it, it is a fixed layer that a transformed ancestor can clip.
 - Content outside the shell stays focusable while the modal drawer is open; keep the shell as the page's root.
+
+## Drawer categories and page footer
+
+`MaterialNextNavigationGroup` is exported by `app-shell.js`. Use
+[`mnw-navigation-group`](../navigation-group/) around destinations to create expandable categories.
+`active-path="#projects"` supports hash routers; ordinary path routing keeps its existing matching.
+The `footer` slot accepts a page footer such as [`mnw-site-footer`](../site-footer/), outside the
+screen's main landmark. The drawer's own footer remains in `navigation-footer`.

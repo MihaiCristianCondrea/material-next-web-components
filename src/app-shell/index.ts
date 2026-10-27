@@ -21,3 +21,5 @@ export * from './ui/navigation-item.js';
 export * from './ui/app-shell.js';
 
 export * from './ui/app-shell-footer.js';
+
+export * from './ui/navigation-group.js';

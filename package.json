@@ -1,6 +1,6 @@
 {
   "name": "material-next-web-components",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Material Design web components for product pages, documentation and Android app marketing hubs, built with Lit and Material Web.",
   "main": "dist/material-next-home.js",
   "module": "dist/material-next-home.js",
@@ -149,7 +149,11 @@
       "types": "./dist/theme/*.d.ts",
       "default": "./dist/theme/*.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./site-footer.js": {
+      "types": "./dist/site-footer.d.ts",
+      "default": "./dist/site-footer.js"
+    }
   },
   "files": [
     "dist/",

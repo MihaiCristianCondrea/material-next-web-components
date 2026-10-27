@@ -48,6 +48,35 @@ export const findActiveDestination = (
   activePath: string,
   base?: string
 ): number => {
+  // Explicit hash routes, such as #projects, are separate destinations even
+  // though they share one document path. Ordinary path matching stays unchanged.
+  if (activePath.startsWith('#')) {
+    const current = new URL(activePath, base ?? 'http://localhost/');
+    let best = -1;
+    let longest = -1;
+    destinations.forEach((destination, index) => {
+      try {
+        const target = new URL(destination.href, base ?? 'http://localhost/');
+        if (
+          target.origin !== current.origin ||
+          target.pathname !== current.pathname ||
+          !target.hash
+        )
+          return;
+        const matches =
+          target.hash === current.hash ||
+          (destination.match !== 'exact' &&
+            current.hash.startsWith(`${target.hash}/`));
+        if (matches && target.hash.length > longest) {
+          best = index;
+          longest = target.hash.length;
+        }
+      } catch {
+        /* Invalid destinations cannot be current. */
+      }
+    });
+    return best;
+  }
   const path = destinationPath(activePath, base);
   if (!path) return -1;
   let best = -1;

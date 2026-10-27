@@ -81,6 +81,33 @@ suite('mnw-app-showcase', () => {
     );
   });
 
+  test('rejects executable icon and store URLs from remote metadata', async () => {
+    window.fetch = async () =>
+      new Response(
+        JSON.stringify([
+          {
+            ...app('Unsafe'),
+            icon: 'javascript:alert(1)',
+            storeUrl: 'data:text/html,unsafe',
+          },
+        ]),
+        {status: 200}
+      );
+    const el = await fixture(
+      html`<mnw-app-showcase
+        apps-endpoint="https://example.com/unsafe.json"
+      ></mnw-app-showcase>`
+    );
+    await waitUntil(
+      () => el.shadowRoot!.querySelectorAll('md-outlined-card').length === 1
+    );
+    assert.isNull(el.shadowRoot!.querySelector('img'));
+    assert.equal(
+      el.shadowRoot!.querySelector('.play-link')!.getAttribute('href'),
+      'https://play.google.com/store/apps/details?id=com.example.unsafe'
+    );
+  });
+
   test('uses endpoint-specific cache entries', async () => {
     const calls: string[] = [];
     window.fetch = async (input: RequestInfo | URL) => {

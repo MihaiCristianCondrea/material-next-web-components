@@ -125,3 +125,5 @@ build dependencies and runs `prepare` before packing it. This requires lifecycle
 scripts to be enabled; with scripts disabled, use the prebuilt tarball instead.
 
 `npm run docs` builds this site into `docs/`, and `npm run docs:check` checks it in a browser under the GitHub Pages path.
+
+`material-next-web-components/site-footer.js` registers the [copyright footer](../examples/site-footer/).

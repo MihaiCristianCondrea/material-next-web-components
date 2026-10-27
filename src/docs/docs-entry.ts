@@ -1,3 +1,5 @@
+import '../app-shell/ui/navigation-group.js';
+import '../site-footer.js';
 /**
  * @license
  * SPDX-License-Identifier: BSD-3-Clause

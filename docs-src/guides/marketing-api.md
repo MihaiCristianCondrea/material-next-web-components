@@ -49,8 +49,8 @@ Start with the [guide](../marketing-hub/). Exports marked **Building block** are
 | `ScreenControl`                                 | An inspector control: `presets`, `choice`, `toggle` or a slider. See the [screen inspector](../../examples/screen-inspector/#screen-controls).     |
 | `createScreenRegistry(screens): ScreenRegistry` | Indexes screens by id and throws on a duplicate. The registry has `screens`, `byId(id)` and `categories()` (each category once, in catalog order). |
 | `ScreenRegistry`                                | The registry's type.                                                                                                                               |
-| `MarketingProduct`, `ProductLink`               | The product config. Fields are on the [marketing shell](../../examples/marketing-shell/#product) page.                                             |
-| `normalizeProduct(product)`                     | **Building block.** Fills the optional fields (`links: []`, empty `version` and `credit`).                                                         |
+| `MarketingProduct`                              | The product config. Fields are on the [marketing shell](../../examples/marketing-shell/#product) page.                                             |
+| `normalizeProduct(product)`                     | **Building block.** Fills the optional drawer legal links.                                                                                         |
 
 ## Preview settings
 
@@ -116,7 +116,7 @@ Importing the entry point registers these. Each has its own page with a live dem
 | `<mnw-prototype-layout>`                 | `MaterialNextPrototypeLayout`                      | [Prototype layout](../../examples/prototype-layout/)           |
 | `<mnw-screen-inspector>`                 | `MaterialNextScreenInspector`                      | [Screen inspector](../../examples/screen-inspector/)           |
 
-Event types: `SettingsChangeEvent` (`CustomEvent<PreviewSettings>`), `CardToggleEvent` (`CustomEvent<{selected}>`) and `CategoryChangeEvent` (`CustomEvent<{category}>`).
+Event types: `SettingsChangeEvent` (`CustomEvent<PreviewSettings>`), `CardToggleEvent` (`CustomEvent<{selected}>`).
 
 ## Templates and constants
 
@@ -130,5 +130,4 @@ Event types: `SettingsChangeEvent` (`CustomEvent<PreviewSettings>`), `CardToggle
 | `controlPanel(controls, state, apply)`                        | A screen's `controls` as Material Web controls.                                    |
 | `THEME_OPTIONS`, `NAV_OPTIONS`, `WINDOW_OPTIONS`, `NAV_ICONS` | `[value, label, icon]` options for those choices, and the system navigation icons. |
 | `Option<T>`                                                   | The type of those options.                                                         |
-| `ALL_CATEGORIES`                                              | `''`: the catalog filter's "All".                                                  |
 | `PLAY_TRADEMARK`                                              | "Google Play and the Google Play logo are trademarks of Google LLC."               |

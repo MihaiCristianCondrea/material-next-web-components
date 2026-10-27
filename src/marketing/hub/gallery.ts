@@ -25,7 +25,6 @@ import {
   type ScreenRegistry,
 } from '../domain/screen.js';
 import {installHubStyles, setHubTheme} from '../ui/hub-document.js';
-import {ALL_CATEGORIES} from '../ui/marketing-shell.js';
 import '../ui/marketing-shell.js';
 import '../ui/screen-card.js';
 import {ScreenHost} from './screen-host.js';
@@ -99,7 +98,6 @@ export const mountMarketingGallery = ({
     store ??
     createPreviewSettingsStore({productId: product.id, palettes, defaults});
   let settings = settingsStore.load();
-  let category = ALL_CATEGORIES;
   const cardTheme = new Map<string, ResolvedTheme>();
   const cardNav = new Map<string, NavType>();
   const hosts = new Map<string, ScreenHost>();
@@ -111,7 +109,7 @@ export const mountMarketingGallery = ({
       theme: cardTheme.get(id) ?? settings.theme,
       navType: cardNav.get(id) ?? settings.navType,
       palette: settings.palette,
-      deviceFrame: settings.deviceFrame,
+      deviceFrame: true,
       state,
     });
 
@@ -150,25 +148,16 @@ export const mountMarketingGallery = ({
 
   const draw = () => {
     setHubTheme(theme());
-    const visible = registry.screens.filter(
-      (s) => !category || s.category === category
-    );
+    const visible = registry.screens;
     render(
       html`<mnw-marketing-shell
         .product=${product}
         .settings=${settings}
         .defaults=${defaults}
         .palettes=${palettes}
-        .categories=${registry.categories()}
-        .category=${category}
-        .count=${visible.length}
         .navigationMode=${navigationMode}
         .permanentFrom=${permanentFrom}
         @settings-change=${(e: CustomEvent<PreviewSettings>) => update(e.detail)}
-        @category-change=${(e: CustomEvent<{category: string}>) => {
-          category = e.detail.category;
-          draw();
-        }}
         >${actions ? html`<div slot="actions" style="display:flex;align-items:center;gap:8px">${actions()}</div>` : nothing}${navigation ? html`<div slot="navigation">${navigation()}</div>` : nothing}${repeat(visible, (s) => s.id, card)}${
           extra ? html`<div slot="extra">${extra()}</div>` : nothing
         }</mnw-marketing-shell

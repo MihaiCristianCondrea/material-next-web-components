@@ -279,6 +279,19 @@ function extractApps(response: AndroidAppsApiDto): AndroidAppApiDto[] {
   );
 }
 
+/** External API values may only become HTTP(S) links or images. */
+function httpUrl(value: string | undefined): string {
+  if (!value) return '';
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:'
+      ? url.href
+      : '';
+  } catch {
+    return '';
+  }
+}
+
 function mapAndroidApp(app: AndroidAppApiDto, index: number): AppItem | null {
   const packageName = app.package_name ?? app.packageName ?? app.package;
   const name = app.appName ?? app.name ?? app.title;
@@ -296,18 +309,12 @@ function mapAndroidApp(app: AndroidAppApiDto, index: number): AppItem | null {
         app.description ??
         app.summary
     ),
-    iconUrl:
-      app.icon_logo ??
-      app.iconUrl ??
-      app.iconLogo ??
-      app.icon ??
-      app.image ??
-      '',
+    iconUrl: httpUrl(
+      app.icon_logo ?? app.iconUrl ?? app.iconLogo ?? app.icon ?? app.image
+    ),
     storeUrl:
-      app.storeUrl ??
-      app.googlePlayUrl ??
-      app.url ??
-      `https://play.google.com/store/apps/details?id=${packageName}`,
+      httpUrl(app.storeUrl ?? app.googlePlayUrl ?? app.url) ||
+      `https://play.google.com/store/apps/details?id=${encodeURIComponent(packageName)}`,
   };
 }
 
