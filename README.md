@@ -146,3 +146,5 @@ Publishing a GitHub release publishes the package to npm (`.github/workflows/pub
 3. The workflow checks the tag against `package.json`, lints, builds, tests in Chromium, then publishes with npm provenance using the `NPM_KEY` repository secret.
 
 Run the workflow by hand with **dry-run** on to build and pack without publishing.
+
+The `prepare` lifecycle builds the package and manifest for local installs, Git dependencies and `npm pack`. Tarball consumers receive the built files.

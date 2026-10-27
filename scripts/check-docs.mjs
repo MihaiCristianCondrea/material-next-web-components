@@ -484,7 +484,7 @@ await check(
       )
     )
       throw new Error('a removed product is still offered');
-    if (before.includes('Material Next') || before.length !== 2)
+    if (before.includes('Material Next') || before.length !== 3)
       throw new Error(`the current product shows: ${before.join(', ')}`);
     await p.locator(`${launcher} .edit`).click();
     const editing = p.locator(`${launcher} .tile--editing`).first();
@@ -499,7 +499,7 @@ await check(
     await p.keyboard.press('Alt+ArrowLeft');
     await expectText(
       logOf(p),
-      /launcher-change .*"android-app:android-insider".*"shortcut:github"/
+      /launcher-change .*"shortcut:github".*"console:tutorials-admin"/
     );
     await p.locator(`${launcher} .tile--add`).first().click();
     await expectText(logOf(p), /console:play-console"\]/);
@@ -507,7 +507,7 @@ await check(
     await settle(p);
     await p.locator(`${launcher} .trigger`).click();
     const after = await launcherTitles(p, launcher);
-    if (after[0] !== 'Android Insider' || after.at(-1) !== 'Play Console')
+    if (after[0] !== 'GitHub profile' || after.at(-1) !== 'Play Console')
       throw new Error(`favorites did not persist: ${after.join(', ')}`);
     const stored = await p.evaluate(() =>
       JSON.parse(localStorage.getItem('mnw-docs-demo:launcher'))
@@ -716,6 +716,24 @@ await check(
     await p.locator('[data-presentation="auto"]').click();
     await until('permanent');
     await kept('switching back');
+    // A closed modal menu disappears when the permanent drawer returns.
+    await p.locator('[data-presentation="modal"]').click();
+    await until('modal');
+    await frame.locator('mnw-app-shell .leading').focus();
+    await frame.evaluate(() =>
+      window.postMessage(
+        {type: 'app-shell-presentation', mode: 'auto'},
+        location.origin
+      )
+    );
+    await until('permanent');
+    const currentFocused = await frame.evaluate(
+      () =>
+        document.activeElement ===
+        document.querySelector('mnw-navigation-item[active]')
+    );
+    if (!currentFocused)
+      throw new Error('menu focus was lost when the permanent drawer returned');
     // Focus on a destination when the drawer is put away goes to the menu.
     await frame.evaluate(() => {
       document.querySelector('mnw-navigation-item[href="feed/"]').focus();

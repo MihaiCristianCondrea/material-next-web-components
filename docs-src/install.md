@@ -95,4 +95,20 @@ npm run build      # compiles to dist/
 npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-0.0.1.tgz
 ```
 
+`npm install`, Git dependency installs and `npm pack` run `prepare`, which builds
+`dist/` and the element manifest. A packed or published package already contains
+those files; consumers do not need the library's development tools.
+
+To consume an unreleased checkout locally:
+
+```bash
+npm pack
+# In the consuming app:
+npm install /path/to/material-next-web-components-0.0.1.tgz
+```
+
+You can also use a Git dependency pinned to a full commit SHA. npm installs the
+build dependencies and runs `prepare` before packing it. This requires lifecycle
+scripts to be enabled; with scripts disabled, use the prebuilt tarball instead.
+
 `npm run docs` builds this site into `docs/`, and `npm run docs:check` checks it in a browser under the GitHub Pages path.

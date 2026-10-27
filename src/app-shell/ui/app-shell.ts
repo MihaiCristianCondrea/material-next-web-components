@@ -135,8 +135,8 @@ export class MaterialNextAppShell extends LitElement {
   private modalShown = false;
   /** Where focus goes when the modal drawer closes. */
   private focusAfterClose: 'trigger' | 'headline' | 'none' = 'trigger';
-  /** The drawer element that had focus when the layout switched. */
-  private focusBeforeSwitch?: HTMLElement;
+  /** Focused control to restore when the layout switches. */
+  private focusBeforeSwitch?: {element: HTMLElement; area: 'drawer' | 'menu'};
 
   override connectedCallback() {
     super.connectedCallback();
@@ -197,7 +197,7 @@ export class MaterialNextAppShell extends LitElement {
     if (layout !== this.layout) {
       const switched = this.hasUpdated;
       // Before render hides or moves the drawer, which would drop focus.
-      if (switched) this.focusBeforeSwitch = this.focusInDrawer();
+      if (switched) this.focusBeforeSwitch = this.focusBeforeLayoutSwitch();
       this.layout = layout;
       if (switched) {
         this.dispatchEvent(
@@ -233,9 +233,19 @@ export class MaterialNextAppShell extends LitElement {
     if (changed.has('heading') && previous !== undefined) this.playHeading();
   }
 
-  /** The focused element in the drawer's slots, if any. */
-  private focusInDrawer(): HTMLElement | undefined {
-    const active = document.activeElement;
+  /** Capture focus before the old layout removes or hides its controls. */
+  private focusBeforeLayoutSwitch():
+    {element: HTMLElement; area: 'drawer' | 'menu'} | undefined {
+    const root = this.getRootNode() as Document | ShadowRoot;
+    const active = root.activeElement;
+    if (
+      active === this &&
+      this.leading === 'menu' &&
+      (this.renderRoot as ShadowRoot).activeElement === this.leadingButton &&
+      this.leadingButton
+    ) {
+      return {element: this.leadingButton, area: 'menu'};
+    }
     if (!(active instanceof HTMLElement) || !this.contains(active)) return;
     let child: Element | null = active;
     while (child && child.parentElement !== this) child = child.parentElement;
@@ -243,7 +253,7 @@ export class MaterialNextAppShell extends LitElement {
     return slot === 'brand' ||
       slot === 'navigation' ||
       slot === 'navigation-footer'
-      ? active
+      ? {element: active, area: 'drawer'}
       : undefined;
   }
 
@@ -261,9 +271,19 @@ export class MaterialNextAppShell extends LitElement {
       const button = this.leadingButton as
         (HTMLElement & {updateComplete?: Promise<unknown>}) | undefined;
       await button?.updateComplete;
-      button?.focus();
+      // A second switch may have happened while the Material button rendered.
+      if (!this.isConnected || this.layout !== 'modal' || this.drawerOpen)
+        return;
+      if (button && button === this.leadingButton)
+        button.focus({preventScroll: true});
+      else this.focusHeading();
+    } else if (focused.area === 'menu') {
+      // The menu disappears beside a permanent drawer.
+      const destination = this.currentDestination() ?? this.destinations()[0];
+      if (destination) destination.focus({preventScroll: true});
+      else this.focusHeading();
     } else {
-      focused.focus({preventScroll: true});
+      focused.element.focus({preventScroll: true});
     }
   }
 

@@ -1,5 +1,8 @@
 import {mkdir, readdir, writeFile} from 'node:fs/promises';
 import {dirname, join, relative} from 'node:path';
+import {format, resolveConfig} from 'prettier';
+
+const formatOptions = await resolveConfig('package.json');
 
 const outputs = [
   {
@@ -69,7 +72,7 @@ for (const item of outputs) {
   await mkdir(dirname(item.output), {recursive: true});
   if (item.lit) {
     const cssText = result.css.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-    await writeFile(
+    await writeFormatted(
       item.output,
       `/**\n * @license\n * SPDX-License-Identifier: BSD-3-Clause\n *\n * Generated from ${relative(
         dirname(item.output),
@@ -77,11 +80,18 @@ for (const item of outputs) {
       )}.\n * Do not edit directly; run npm run build:scss.\n */\n\nimport {css} from 'lit';\n\nexport const styles = css\`\n${cssText}\`;\n`
     );
   } else {
-    await writeFile(
+    await writeFormatted(
       item.output,
       `/**\n * Generated from ${item.input}.\n * Do not edit directly; run npm run build:scss.\n */\n\n${result.css}`
     );
   }
+}
+
+async function writeFormatted(output, source) {
+  await writeFile(
+    output,
+    await format(source, {...formatOptions, filepath: output})
+  );
 }
 
 async function compileScss(input) {

@@ -6,6 +6,18 @@ release history; attribution remains in `LICENSE` and the source headers.
 
 ## 0.0.1 (unreleased)
 
+- Launcher: Google-style single favorites surface without counts or a default
+  redirects heading. Restore the admin entry as **Android Insider Admin Console**
+  with its existing saved ID; Codex and Smart Cleaner remain absent, including
+  with older saved favorites. Versioned docs entry URLs prevent stale modules
+  being reused after a deployment.
+- Shell: when the focused modal menu disappears into the permanent layout,
+  focus moves to the current destination. Focus restoration also works when
+  the shell is hosted in another shadow root.
+- Packaging: `prepare` builds JavaScript, declarations and the element manifest
+  for Git dependencies and tarballs. Generated styles now use the repository's
+  Prettier configuration.
+
 ### Components
 
 - Product home, app showcase, code block and expressive tab bar, built with Lit
@@ -17,7 +29,7 @@ release history; attribution remains in `LICENSE` and the source headers.
   navigation, browser history and resizing, with reduced-motion support.
 - Product launcher with editable favorites, pointer and keyboard reorder, reset,
   local persistence and separate admin redirects. The built-in catalog excludes
-  Tutorials admin, Codex and Smart Cleaner, and their old SVGs are removed.
+  Codex and Smart Cleaner; the old Tutorials, Codex and Cleaner SVGs are removed.
   Hover highlights the tile without changing the artwork's shape; favorites
   wobble throughout edit mode unless reduced motion is enabled.
 - Experimental application shell and navigation items, with a single navigation

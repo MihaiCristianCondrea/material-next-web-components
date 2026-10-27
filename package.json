@@ -32,8 +32,8 @@
     "checksize": "npm run build && rollup dist/material-next-home.js --file material-next-home.bundled.js --format esm --plugin @rollup/plugin-node-resolve | cat material-next-home.bundled.js | gzip -9 | wc -c ; rm -f material-next-home.bundled.js",
     "build:scss": "node scripts/build-scss.mjs",
     "smoke:exports": "npm run build && node scripts/smoke-exports.mjs",
-    "prepublishOnly": "npm run build && npm run analyze",
-    "docs:check": "node scripts/check-docs-coverage.mjs && node scripts/check-docs.mjs"
+    "docs:check": "node scripts/check-docs-coverage.mjs && node scripts/check-docs.mjs",
+    "prepare": "npm run build && npm run analyze"
   },
   "keywords": [
     "web-components",

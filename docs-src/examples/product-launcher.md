@@ -19,7 +19,7 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher lists GitHub, Android Insider, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
+Without a `catalog`, the launcher lists Android Insider Admin Console, GitHub, Android Insider, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
 
 ## Live demo
 
@@ -45,12 +45,12 @@ The project icons ship in `assets/marketing/launcher/`. Copy them with `npx mnw-
 
 Every entry has a `kind` and a `key`, and its id is `kind:key`:
 
-| Kind          | For                                                | Example id                  |
-| ------------- | -------------------------------------------------- | --------------------------- |
+| Kind          | For                                                | Example id                 |
+| ------------- | -------------------------------------------------- | -------------------------- |
 | `android-app` | An app's Play listing                              | `android-app:pocket-notes` |
-| `web`         | A product site or web app                          | `web:material-next`         |
-| `console`     | An admin console or API dashboard                  | `console:play-console`      |
-| `shortcut`    | Anything else: a profile, a tool, an issue tracker | `shortcut:github`           |
+| `web`         | A product site or web app                          | `web:material-next`        |
+| `console`     | An admin console or API dashboard                  | `console:play-console`     |
+| `shortcut`    | Anything else: a profile, a tool, an issue tracker | `shortcut:github`          |
 
 The kind is part of the id, so an app and its site can share a key (`android-app:pocket-notes`, `web:pocket-notes`). Keys use lowercase letters, digits, dots and dashes; `launcherItem()` rejects anything else. Stored favorites refer to ids only, so titles, URLs and icons can change without losing anyone's list.
 
@@ -135,7 +135,9 @@ Everything below comes from `material-next-web-components/launcher.js`; `launche
 
 The domain functions are pure, so a server-rendered page or a test can work out what a launcher shows without a browser.
 
-The built-in catalog no longer offers Tutorials admin, Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Favorites wobble for the duration of edit mode; reduced motion disables this animation.
+The former Tutorials admin entry is named **Android Insider Admin Console**, preserving its saved ID. The built-in catalog does not offer Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Favorites wobble for the duration of edit mode; reduced motion disables this animation.
+
+The panel follows the Google apps launcher: a single rounded favorites surface, a plain shortcuts grid underneath, and no favorites/redirects counts. `redirects-heading` is empty by default; set it to show an optional section label.
 
 ## Accessibility
 

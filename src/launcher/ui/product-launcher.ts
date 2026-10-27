@@ -73,7 +73,7 @@ const reducedMotion = () =>
  *
  * @fires launcher-change - `{favoriteIds}`: the visitor changed favorites (hidden ones included).
  * @fires launcher-toggle - `{open}`: the panel opened or closed.
- * @cssprop --mnw-launcher-width - Panel width from 600px up. Default `400px`.
+ * @cssprop --mnw-launcher-width - Panel width from 600px up. Default `360px`.
  * @cssprop --mnw-launcher-monochrome-filter - Filter for `monochrome` icons. Default `none`, `invert(1)` in dark color schemes.
  * @csspart trigger - The apps button.
  * @csspart panel - The panel surface.
@@ -118,9 +118,9 @@ export class MaterialNextProductLauncher extends LitElement {
   @property()
   heading = 'Your favorites';
 
-  /** Title of the admin redirects section. */
+  /** Optional visible heading above admin redirects; empty by default. */
   @property({attribute: 'redirects-heading'})
-  redirectsHeading = 'Admin redirects';
+  redirectsHeading = '';
 
   @state() private ids: LauncherItemId[] = [];
   @state() private editing = false;
@@ -675,17 +675,12 @@ export class MaterialNextProductLauncher extends LitElement {
           part="panel"
           role="dialog"
           aria-labelledby="heading"
-          aria-describedby="summary"
           .inert=${!this.open}
         >
           <div class="card ${this.editing ? 'card--editing' : ''}">
             <header class="header">
               <div class="heading">
                 <h2 id="heading">${this.heading}</h2>
-                <p id="summary" class="summary">
-                  ${plural(view.favorites.length, 'favorite')} ·
-                  ${plural(view.redirects.length, 'redirect')}
-                </p>
               </div>
               ${
                 this.editing
@@ -754,10 +749,17 @@ export class MaterialNextProductLauncher extends LitElement {
           </div>
           ${
             view.redirects.length
-              ? html`<h3 class="section-title" id="redirects-title">
-                    ${this.redirectsHeading}
-                  </h3>
-                  <ul class="grid" aria-labelledby="redirects-title">
+              ? html`${
+                    this.redirectsHeading
+                      ? html`<h3 class="section-title">
+                          ${this.redirectsHeading}
+                        </h3>`
+                      : nothing
+                  }
+                  <ul
+                    class="grid grid--redirects"
+                    aria-label=${this.redirectsHeading || 'Admin redirects'}
+                  >
                     ${view.redirects.map((item) =>
                       this.editing
                         ? this.addTile(item, 'redirect')

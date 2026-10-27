@@ -1,4 +1,8 @@
 const lib = require('./docs-src/_includes/lib.cjs');
+const {createHash} = require('node:crypto');
+const {existsSync, readFileSync} = require('node:fs');
+const {resolve, sep} = require('node:path');
+const {fileURLToPath, pathToFileURL} = require('node:url');
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy('docs-src/docs.css');
@@ -33,6 +37,30 @@ module.exports = function (eleventyConfig) {
       const language = token.info.trim().split(/\s+/)[0] || 'text';
       return `${lib.codeBlock(language, token.content)}\n`;
     };
+  });
+
+  eleventyConfig.addTransform('version-assets', function (content) {
+    if (!(this.page.outputPath || '').endsWith('.html')) return content;
+    const outputRoot = resolve('docs') + sep;
+    const baseHref = /<base\s+href="([^"]+)"/i.exec(content)?.[1] ?? './';
+    const documentBase = new URL(
+      baseHref,
+      pathToFileURL(resolve(this.page.outputPath))
+    );
+    if (documentBase.protocol !== 'file:') return content;
+    return content.replace(
+      /(src|href)="([^"?#]+\.(?:js|css))"/g,
+      (tag, attribute, href) => {
+        if (/^(?:[a-z]+:|\/\/|\/)/i.test(href)) return tag;
+        const file = fileURLToPath(new URL(href, documentBase));
+        if (!file.startsWith(outputRoot) || !existsSync(file)) return tag;
+        const version = createHash('sha256')
+          .update(readFileSync(file))
+          .digest('hex')
+          .slice(0, 12);
+        return `${attribute}="${href}?v=${version}"`;
+      }
+    );
   });
 
   eleventyConfig.addTransform('table-labels', function (content) {

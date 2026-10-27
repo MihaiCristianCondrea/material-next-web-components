@@ -126,7 +126,7 @@ img {
 }
 
 .material-symbols-outlined {
-  font-family: "Material Symbols Outlined";
+  font-family: 'Material Symbols Outlined';
   font-size: 20px;
   line-height: 1;
   font-weight: normal;
@@ -201,15 +201,21 @@ img {
   letter-spacing: 0.1px;
   text-decoration: none;
   white-space: nowrap;
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), color 150ms cubic-bezier(0.2, 0, 0, 1);
+  transition:
+    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .site-tab-link:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 8%,
+    transparent
+  );
   color: var(--md-sys-color-on-surface);
 }
 
-.site-tab-link[aria-current=page] {
+.site-tab-link[aria-current='page'] {
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
 }
@@ -224,7 +230,11 @@ img {
 }
 
 .icon-link:hover {
-  background: color-mix(in srgb, var(--md-sys-color-on-surface) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-on-surface) 8%,
+    transparent
+  );
 }
 
 html[data-docs-navigating] .docs-route-content {
@@ -312,7 +322,7 @@ mnw-docs-page {
   text-decoration: none;
 }
 
-.nav-fallback a[aria-current=page] {
+.nav-fallback a[aria-current='page'] {
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
 }
@@ -371,9 +381,9 @@ mnw-docs-page {
   }
   .toc-inline > summary::after,
   .side-nav > summary::after {
-    content: "expand_more";
+    content: 'expand_more';
     margin-left: auto;
-    font: 20px/1 "Material Symbols Outlined";
+    font: 20px/1 'Material Symbols Outlined';
     transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
   }
   .toc-inline[open] > summary::after,
@@ -919,7 +929,9 @@ td:first-child {
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 20px;
   background: var(--md-sys-color-surface-container-low);
-  transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1), border-color 150ms cubic-bezier(0.2, 0, 0, 1);
+  transition:
+    background-color 150ms cubic-bezier(0.2, 0, 0, 1),
+    border-color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .catalog-card:hover {
@@ -949,7 +961,7 @@ td:first-child {
 }
 
 .catalog-card h3 a::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -1171,7 +1183,11 @@ td:first-child {
 }
 
 .btn--filled:hover {
-  background: color-mix(in srgb, var(--md-sys-color-primary) 92%, var(--md-sys-color-on-primary));
+  background: color-mix(
+    in srgb,
+    var(--md-sys-color-primary) 92%,
+    var(--md-sys-color-on-primary)
+  );
 }
 
 .btn .material-symbols-outlined {
@@ -1199,7 +1215,7 @@ td:first-child {
   font-family: inherit;
 }
 
-.frame-sizes .btn[aria-pressed=true] {
+.frame-sizes .btn[aria-pressed='true'] {
   border-color: transparent;
   background: var(--md-sys-color-secondary-container);
   color: var(--md-sys-color-on-secondary-container);
@@ -1405,7 +1421,7 @@ mnw-screen-card {
   pointer-events: none;
 }
 
-.site-nav[data-indicator] .site-tab-link[aria-current=page] {
+.site-nav[data-indicator] .site-tab-link[aria-current='page'] {
   background: transparent;
 }
 

@@ -9,177 +9,185 @@
 import {css} from 'lit';
 
 export const styles = css`
-:host {
-  display: block;
-  min-width: 0;
-  color: var(--md-sys-color-on-surface, #1d1b20);
-  container-type: inline-size;
-  font-family: "Google Sans Flex", system-ui, sans-serif;
-  font-optical-sizing: auto;
-  font-variation-settings: "slnt" 0, "wdth" 100, "GRAD" 0, "ROND" 0;
-}
-
-.app-shell {
-  min-width: 0;
-  min-height: var(--mnw-home-min-height, 100vh);
-  overflow: hidden;
-  background: transparent;
-}
-
-.docs-content {
-  padding: clamp(20px, 5vw, 64px);
-}
-
-.docs-content:focus {
-  outline: none;
-}
-
-.home-view,
-.example-content {
-  display: grid;
-  gap: 24px;
-}
-
-.info-card,
-.example-panel,
-.example-nav {
-  border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
-  border-radius: 28px;
-  background: var(--md-sys-color-surface, #fffbfe);
-  box-shadow: none;
-}
-
-.home-summary {
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-  max-width: 900px;
-  margin-inline: auto;
-  padding-block: clamp(24px, 5vw, 64px);
-  text-align: center;
-}
-
-.eyebrow,
-.nav-heading {
-  margin: 0;
-  color: var(--md-sys-color-primary, #6750a4);
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-h1,
-h2,
-h3,
-p {
-  margin: 0;
-}
-
-h1 {
-  max-width: 900px;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  line-height: 0.95;
-}
-
-h2 {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-}
-
-p {
-  max-width: 760px;
-  font-size: 1rem;
-  line-height: 1.65;
-}
-
-.tagline {
-  font-size: clamp(1.25rem, 3vw, 2rem);
-  font-weight: 600;
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  width: min(100%, 1120px);
-  margin-inline: auto;
-}
-
-.info-card,
-.example-panel,
-.example-nav {
-  display: grid;
-  gap: 18px;
-  padding: 24px;
-}
-
-.notice-card {
-  background: var(--md-sys-color-surface, #fffbfe);
-  color: var(--md-sys-color-on-surface, #1d1b20);
-}
-
-.examples-view {
-  display: grid;
-  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(180px, 240px);
-  gap: 24px;
-  align-items: start;
-}
-
-.example-nav,
-.toc-nav {
-  position: sticky;
-  top: 104px;
-  align-self: start;
-}
-
-.toc-nav {
-  border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
-  border-radius: 28px;
-  background: var(--md-sys-color-surface-container-low, #f7f2fa);
-  padding: 24px;
-}
-
-.example-content {
-  min-width: 0;
-}
-
-.example-panel,
-.info-card {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-mnw-code-block,
-md-expressive-tab-bar,
-mnw-app-showcase {
-  max-width: 100%;
-  min-width: 0;
-}
-
-.example-panel {
-  scroll-margin-top: 112px;
-}
-
-@media (max-width: 860px) {
-  .examples-view,
-  .content-grid {
-    grid-template-columns: 1fr;
+  :host {
+    display: block;
+    min-width: 0;
+    color: var(--md-sys-color-on-surface, #1d1b20);
+    container-type: inline-size;
+    font-family: 'Google Sans Flex', system-ui, sans-serif;
+    font-optical-sizing: auto;
+    font-variation-settings:
+      'slnt' 0,
+      'wdth' 100,
+      'GRAD' 0,
+      'ROND' 0;
   }
-  .example-nav,
-  .toc-nav {
-    position: static;
+
+  .app-shell {
+    min-width: 0;
+    min-height: var(--mnw-home-min-height, 100vh);
+    overflow: hidden;
+    background: transparent;
   }
-}
-@container (max-width: 640px) {
-  .examples-view,
-  .content-grid {
-    grid-template-columns: 1fr;
+
+  .docs-content {
+    padding: clamp(20px, 5vw, 64px);
   }
-  .example-nav,
-  .toc-nav {
-    position: static;
+
+  .docs-content:focus {
+    outline: none;
   }
+
+  .home-view,
+  .example-content {
+    display: grid;
+    gap: 24px;
+  }
+
+  .info-card,
+  .example-panel,
+  .example-nav {
+    border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+    border-radius: 28px;
+    background: var(--md-sys-color-surface, #fffbfe);
+    box-shadow: none;
+  }
+
+  .home-summary {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
+    max-width: 900px;
+    margin-inline: auto;
+    padding-block: clamp(24px, 5vw, 64px);
+    text-align: center;
+  }
+
+  .eyebrow,
+  .nav-heading {
+    margin: 0;
+    color: var(--md-sys-color-primary, #6750a4);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+
   h1 {
-    font-size: clamp(2rem, 13cqi, 3.5rem);
+    max-width: 900px;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height: 0.95;
   }
-}`;
+
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  p {
+    max-width: 760px;
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .tagline {
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 600;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: min(100%, 1120px);
+    margin-inline: auto;
+  }
+
+  .info-card,
+  .example-panel,
+  .example-nav {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .notice-card {
+    background: var(--md-sys-color-surface, #fffbfe);
+    color: var(--md-sys-color-on-surface, #1d1b20);
+  }
+
+  .examples-view {
+    display: grid;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) minmax(
+        180px,
+        240px
+      );
+    gap: 24px;
+    align-items: start;
+  }
+
+  .example-nav,
+  .toc-nav {
+    position: sticky;
+    top: 104px;
+    align-self: start;
+  }
+
+  .toc-nav {
+    border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+    border-radius: 28px;
+    background: var(--md-sys-color-surface-container-low, #f7f2fa);
+    padding: 24px;
+  }
+
+  .example-content {
+    min-width: 0;
+  }
+
+  .example-panel,
+  .info-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  mnw-code-block,
+  md-expressive-tab-bar,
+  mnw-app-showcase {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .example-panel {
+    scroll-margin-top: 112px;
+  }
+
+  @media (max-width: 860px) {
+    .examples-view,
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+    .example-nav,
+    .toc-nav {
+      position: static;
+    }
+  }
+  @container (max-width: 640px) {
+    .examples-view,
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+    .example-nav,
+    .toc-nav {
+      position: static;
+    }
+    h1 {
+      font-size: clamp(2rem, 13cqi, 3.5rem);
+    }
+  }
+`;

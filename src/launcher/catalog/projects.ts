@@ -17,6 +17,15 @@ const PLAY = 'https://play.google.com/store/apps/details?id=';
 
 export const PROJECT_LAUNCHER_ITEMS = [
   launcherItem({
+    kind: 'console',
+    key: 'tutorials-admin',
+    title: 'Android Insider Admin Console',
+    href: 'https://android-studio-tutorials-api.mihaicristiancondrea.workers.dev/admin/lessons',
+    icon: 'admin_panel_settings',
+    image: 'asset:launcher/android-insider.svg',
+    product: 'android-insider-admin',
+  }),
+  launcherItem({
     kind: 'shortcut',
     key: 'github',
     title: 'GitHub profile',
@@ -100,6 +109,7 @@ export const PROJECT_LAUNCHER_ITEMS = [
 export const PROJECT_LAUNCHER_CATALOG = createLauncherCatalog({
   items: PROJECT_LAUNCHER_ITEMS,
   defaultFavorites: [
+    'console:tutorials-admin',
     'shortcut:github',
     'android-app:android-insider',
     'web:material-next',

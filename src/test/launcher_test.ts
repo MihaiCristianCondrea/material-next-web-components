@@ -135,7 +135,7 @@ suite('launcher domain', () => {
       ],
     });
     assert.lengthOf(apps.items, 2);
-    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 9);
+    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 10);
   });
 
   test('the current product, exclusions and the page URL hide entries', () => {
@@ -245,19 +245,26 @@ suite('launcher domain', () => {
   test('the project catalog omits removed products and keeps admin redirects', () => {
     assert.includeMembers(
       [...PROJECT_LAUNCHER_CATALOG.defaultFavorites],
-      ['shortcut:github', 'android-app:android-insider', 'web:material-next']
+      [
+        'console:tutorials-admin',
+        'shortcut:github',
+        'android-app:android-insider',
+        'web:material-next',
+      ]
     );
-    for (const id of [
-      'console:tutorials-admin',
-      'shortcut:codex',
-      'android-app:smart-cleaner',
-    ]) {
+    for (const id of ['shortcut:codex', 'android-app:smart-cleaner']) {
       assert.notInclude(
         PROJECT_LAUNCHER_CATALOG.items.map((item) => item.id),
         id
       );
       assert.notInclude(PROJECT_LAUNCHER_CATALOG.defaultFavorites, id);
     }
+    assert.equal(
+      PROJECT_LAUNCHER_CATALOG.items.find(
+        (item) => item.id === 'console:tutorials-admin'
+      )?.title,
+      'Android Insider Admin Console'
+    );
     assert.deepEqual(
       [...PROJECT_LAUNCHER_CATALOG.redirects],
       [
@@ -354,11 +361,9 @@ suite('mnw-product-launcher', () => {
     assert.isTrue((await toggled).detail.open);
     await el.updateComplete;
     assert.deepEqual(titles(el), ['Profile', 'Repo']);
-    assert.include(
-      el
-        .shadowRoot!.querySelector('.summary')!
-        .textContent!.replace(/\s+/g, ' '),
-      '2 favorites · 1 redirect'
+    assert.notExists(el.shadowRoot!.querySelector('.summary'));
+    assert.isNull(
+      el.shadowRoot!.querySelector('.panel')!.getAttribute('aria-describedby')
     );
     const link = tiles(el)[0] as HTMLAnchorElement;
     assert.equal(link.target, '_blank');
@@ -440,6 +445,45 @@ suite('mnw-product-launcher', () => {
       'web:repo',
     ]);
     assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+  });
+
+  test('old stored favorites show the renamed admin and never retired products', async () => {
+    const storage = memoryStorage();
+    storage.data.set(
+      'legacy-projects',
+      JSON.stringify({
+        version: 1,
+        favoriteIds: [
+          'tutorials-admin',
+          'shortcut:codex',
+          'android-app:smart-cleaner',
+          'shortcut:github',
+        ],
+      })
+    );
+    const store = createLauncherPreferenceStore({
+      defaults: [],
+      storage,
+      key: 'legacy-projects',
+      migrate: migrateLegacyLauncherId,
+    });
+    const el = await fixture<MaterialNextProductLauncher>(
+      html`<mnw-product-launcher open .store=${store}></mnw-product-launcher>`
+    );
+    assert.deepEqual(titles(el), [
+      'Android Insider Admin Console',
+      'GitHub profile',
+    ]);
+    assert.notExists(el.shadowRoot!.querySelector('.summary'));
+    const edit = el.shadowRoot!.querySelector<
+      HTMLElement & {selected: boolean}
+    >('.edit')!;
+    edit.selected = true;
+    edit.dispatchEvent(new Event('change'));
+    await el.updateComplete;
+    const content = el.shadowRoot!.textContent!;
+    assert.notInclude(content, 'Codex');
+    assert.notInclude(content, 'Smart Cleaner');
   });
 
   test('a broken image falls back to the icon', async () => {

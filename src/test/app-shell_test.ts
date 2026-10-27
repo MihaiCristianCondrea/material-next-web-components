@@ -293,6 +293,40 @@ suite('mnw-app-shell', () => {
     assert.equal(document.activeElement, navigation[0]);
   });
 
+  test('switching a closed modal drawer to permanent moves menu focus to the current destination', async () => {
+    const {shell} = await mount(1000, 'navigation-mode="modal"');
+    const menu = leading(shell) as HTMLElement & {
+      updateComplete: Promise<unknown>;
+    };
+    await menu.updateComplete;
+    menu.focus();
+    assert.isTrue(shell.shadowRoot!.activeElement === menu);
+    shell.navigationMode = 'auto';
+    await shell.updateComplete;
+    assert.equal(shell.layout, 'permanent');
+    assert.isTrue(document.activeElement === items(shell)[1]);
+  });
+
+  test('focus restoration also works when the shell is inside a shadow root', async () => {
+    const {host, shell} = await mount(1000, 'navigation-mode="modal"');
+    const root = host.attachShadow({mode: 'open'});
+    root.append(shell);
+    await shell.updateComplete;
+    const menu = leading(shell) as HTMLElement & {
+      updateComplete: Promise<unknown>;
+    };
+    await menu.updateComplete;
+    menu.focus();
+    shell.navigationMode = 'auto';
+    await shell.updateComplete;
+    assert.isTrue(root.activeElement === items(shell)[1]);
+    shell.navigationMode = 'modal';
+    await shell.updateComplete;
+    await (leading(shell) as HTMLElement & {updateComplete: Promise<unknown>})
+      .updateComplete;
+    assert.isTrue(shell.shadowRoot!.activeElement === leading(shell));
+  });
+
   test('switching keeps screen content in place', async () => {
     const {shell} = await mount(1000);
     const screen = shell.querySelector('p')!;

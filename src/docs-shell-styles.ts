@@ -9,18 +9,19 @@
 import {css} from 'lit';
 
 export const styles = css`
-:host {
-  display: flex;
-  min-height: 100vh;
-  flex-direction: column;
-  background: var(--md-sys-color-surface, #fffbfe);
-  color: var(--md-sys-color-on-surface, #1d1b20);
-}
+  :host {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background: var(--md-sys-color-surface, #fffbfe);
+    color: var(--md-sys-color-on-surface, #1d1b20);
+  }
 
-.main {
-  flex: 1 0 auto;
-}
+  .main {
+    flex: 1 0 auto;
+  }
 
-.footer {
-  flex: 0 0 auto;
-}`;
+  .footer {
+    flex: 0 0 auto;
+  }
+`;
