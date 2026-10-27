@@ -248,11 +248,15 @@ suite('launcher domain', () => {
       [
         'console:tutorials-admin',
         'shortcut:github',
-        'android-app:android-insider',
+        'shortcut:google-play',
         'web:material-next',
       ]
     );
-    for (const id of ['shortcut:codex', 'android-app:smart-cleaner']) {
+    for (const id of [
+      'shortcut:codex',
+      'android-app:smart-cleaner',
+      'android-app:android-insider',
+    ]) {
       assert.notInclude(
         PROJECT_LAUNCHER_CATALOG.items.map((item) => item.id),
         id
@@ -265,6 +269,22 @@ suite('launcher domain', () => {
       )?.title,
       'Android Insider Admin Console'
     );
+    const insider = PROJECT_LAUNCHER_CATALOG.items.filter((item) =>
+      item.title.includes('Insider')
+    );
+    assert.lengthOf(insider, 1);
+    assert.equal(
+      insider[0].href,
+      'https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/'
+    );
+    const play = PROJECT_LAUNCHER_CATALOG.items.find(
+      (item) => item.id === 'shortcut:google-play'
+    )!;
+    assert.equal(
+      play.href,
+      'https://play.google.com/store/apps/dev?id=5390214922640123642'
+    );
+    assert.equal(play.image, 'asset:badges/google-play/en.svg');
     assert.deepEqual(
       [...PROJECT_LAUNCHER_CATALOG.redirects],
       [
@@ -306,7 +326,7 @@ suite('launcher storage', () => {
       migrate: migrateLegacyLauncherId,
     });
     storage.data.set('k', JSON.stringify({favoriteIds: ['codex', 'admob']}));
-    assert.deepEqual(store.load(), ['shortcut:codex', 'console:admob']);
+    assert.deepEqual(store.load(), ['console:admob']);
     storage.data.set('k', JSON.stringify(['web:z']));
     assert.deepEqual(store.load(), ['web:z']);
     storage.data.set('k', '{not json');
@@ -353,6 +373,26 @@ suite('mnw-product-launcher', () => {
   ) => [...el.shadowRoot!.querySelectorAll<HTMLElement>(selector)];
   const titles = (el: MaterialNextProductLauncher) =>
     tiles(el).map((t) => t.querySelector('.title')!.textContent!.trim());
+
+  test('Google colors are the default and following the host palette is opt-in', async () => {
+    const {el} = await mount();
+    el.style.setProperty('--md-sys-color-surface-container', '#123456');
+    el.style.setProperty('--md-sys-color-surface-container-lowest', '#abcdef');
+    el.show();
+    await el.updateComplete;
+    const panel = el.shadowRoot!.querySelector('.panel')!;
+    const card = el.shadowRoot!.querySelector('.card')!;
+    assert.isFalse(el.followColorPalette);
+    assert.equal(getComputedStyle(panel).backgroundColor, 'rgb(233, 238, 246)');
+    assert.equal(getComputedStyle(card).backgroundColor, 'rgb(248, 250, 253)');
+    el.followColorPalette = true;
+    await el.updateComplete;
+    assert.isTrue(el.hasAttribute('follow-color-palette'));
+    assert.equal(getComputedStyle(panel).backgroundColor, 'rgb(18, 52, 86)');
+    assert.equal(getComputedStyle(card).backgroundColor, 'rgb(171, 205, 239)');
+    el.close();
+    await el.updateComplete;
+  });
 
   test('opens, shows visible favorites and redirects, and closes on Escape', async () => {
     const {el} = await mount();
@@ -455,6 +495,8 @@ suite('mnw-product-launcher', () => {
         version: 1,
         favoriteIds: [
           'tutorials-admin',
+          'android-app:android-insider',
+          'shortcut:google-play',
           'shortcut:codex',
           'android-app:smart-cleaner',
           'shortcut:github',
@@ -472,6 +514,7 @@ suite('mnw-product-launcher', () => {
     );
     assert.deepEqual(titles(el), [
       'Android Insider Admin Console',
+      'Google Play',
       'GitHub profile',
     ]);
     assert.notExists(el.shadowRoot!.querySelector('.summary'));

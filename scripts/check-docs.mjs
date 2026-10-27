@@ -555,10 +555,71 @@ await check('the app bar launcher loads its icons', '', async (p) => {
       panel.getAnimations().map((animation) => animation.finished)
     );
   });
+  const badge = p.locator(
+    `${launcher} a[href="https://play.google.com/store/apps/dev?id=5390214922640123642"] img`
+  );
+  if (!(await badge.count()))
+    throw new Error('the Google Play SVG badge did not load');
+  const imageSizes = await p.locator(`${launcher} img`).evaluateAll((images) =>
+    images.map((img) => ({
+      width: img.getBoundingClientRect().width,
+      height: img.getBoundingClientRect().height,
+    }))
+  );
+  if (imageSizes.some((image) => image.height > 40.5 || image.width > 96.5))
+    throw new Error(
+      `launcher artwork overflows its icon slot: ${JSON.stringify(imageSizes)}`
+    );
   const icon = p.locator(`${launcher} .grid--favorites .icon`).first();
   const beforeHover = await icon.boundingBox();
   await p.locator(`${launcher} .grid--favorites .tile`).first().hover();
   const afterHover = await icon.boundingBox();
+  await p.waitForTimeout(200);
+  const appearance = await p
+    .locator(`${launcher} .grid--favorites .tile`)
+    .first()
+    .evaluate((tile) => {
+      const style = getComputedStyle(tile);
+      return {
+        background: style.backgroundColor,
+        shadow: style.boxShadow,
+        border: style.borderWidth,
+      };
+    });
+  if (appearance.shadow !== 'none' || appearance.border !== '0px')
+    throw new Error(
+      `launcher hover still has an outline: ${JSON.stringify(appearance)}`
+    );
+  if (appearance.background !== 'rgb(240, 244, 249)')
+    throw new Error(
+      `launcher hover does not use the Google fill: ${appearance.background}`
+    );
+  const destinations = await p
+    .locator(`${launcher} .grid--favorites a`)
+    .evaluateAll((links) =>
+      links.map((link) => ({title: link.title, href: link.href}))
+    );
+  if (
+    destinations.filter((link) => link.title.includes('Insider')).length !== 1
+  )
+    throw new Error('the launcher still has duplicate Insider destinations');
+  if (
+    !destinations.some(
+      (link) =>
+        link.href ===
+        'https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/'
+    )
+  )
+    throw new Error('the new admin URL is missing');
+  if (
+    !destinations.some(
+      (link) =>
+        link.href ===
+        'https://play.google.com/store/apps/dev?id=5390214922640123642'
+    )
+  )
+    throw new Error('the developer Play account is missing');
+
   if (
     Math.abs(beforeHover.width - afterHover.width) > 0.5 ||
     Math.abs(beforeHover.height - afterHover.height) > 0.5
@@ -568,6 +629,86 @@ await check('the app bar launcher loads its icons', '', async (p) => {
   const open = await p.locator(launcher).getAttribute('open');
   if (open !== null) throw new Error('a click outside did not close it');
 });
+await check(
+  'launcher palette toggle follows the host only when enabled',
+  'examples/product-launcher/',
+  async (p) => {
+    await p.locator('#projects-launcher .trigger').click();
+    const panel = p.locator('#projects-launcher .panel');
+    if (
+      (await panel.evaluate((el) => getComputedStyle(el).backgroundColor)) !==
+      'rgb(233, 238, 246)'
+    )
+      throw new Error('launcher no longer defaults to Google colors');
+    await p.keyboard.press('Escape');
+    await p.getByLabel('Follow color palette', {exact: true}).check();
+    await p.locator('#projects-launcher .trigger').click();
+    const colors = await panel.evaluate((el) => ({
+      actual: getComputedStyle(el).backgroundColor,
+      expected: getComputedStyle(document.documentElement)
+        .getPropertyValue('--md-sys-color-surface-container')
+        .trim(),
+    }));
+    const expected = await p.evaluate((color) => {
+      const node = document.createElement('span');
+      node.style.color = color;
+      document.body.append(node);
+      const rgb = getComputedStyle(node).color;
+      node.remove();
+      return rgb;
+    }, colors.expected);
+    if (colors.actual !== expected)
+      throw new Error('launcher did not follow the host palette');
+  }
+);
+await check(
+  'scrollbars follow local palettes and preserve forced colors',
+  'examples/code-block/',
+  async (p) => {
+    for (const color of ['rgb(12, 90, 130)', 'rgb(210, 180, 255)']) {
+      await p.evaluate(
+        (color) =>
+          document.documentElement.style.setProperty(
+            '--md-sys-color-primary',
+            color
+          ),
+        color
+      );
+      const colors = await p.evaluate(() => ({
+        page: getComputedStyle(document.documentElement).scrollbarColor,
+        code: getComputedStyle(
+          document
+            .querySelector('mnw-code-block')
+            .shadowRoot.querySelector('pre')
+        ).scrollbarColor,
+      }));
+      if (!colors.page.startsWith(color) || !colors.code.startsWith(color))
+        throw new Error(
+          `scrollbar ignored its palette: ${JSON.stringify(colors)}`
+        );
+    }
+    const local = await p
+      .locator('mnw-code-block')
+      .first()
+      .evaluate((el) => {
+        el.style.setProperty('--md-sys-color-primary', 'rgb(160, 80, 40)');
+        return getComputedStyle(el.shadowRoot.querySelector('pre'))
+          .scrollbarColor;
+      });
+    if (!local.startsWith('rgb(160, 80, 40)'))
+      throw new Error('nested scrollbar ignored the local palette');
+    await p.emulateMedia({forcedColors: 'active'});
+    const forced = await p.evaluate(
+      () => getComputedStyle(document.documentElement).scrollbarColor
+    );
+    if (forced.includes('210, 180, 255'))
+      throw new Error('scrollbar overrides system high-contrast colors');
+    await p.emulateMedia({forcedColors: 'none'});
+    await p.evaluate(() =>
+      document.documentElement.style.removeProperty('--md-sys-color-primary')
+    );
+  }
+);
 await check(
   'route the app shell demo and guard unsaved changes',
   'demos/app-shell/feed/',
@@ -909,7 +1050,7 @@ await check(
 );
 await check(
   'marketing composes the shared shell in both desktop modes',
-  'demos/marketing-hub/?drawer=modal',
+  'demos/marketing-hub/',
   async (p) => {
     const marketing = p.locator('mnw-marketing-shell');
     const shell = marketing.locator('mnw-app-shell');

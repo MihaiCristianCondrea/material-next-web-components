@@ -25,10 +25,14 @@ a:active {
   transform: scale(0.98);
 }
 
-// Google's badge has its clear space built in: it is scaled whole, never cropped or recoloured.
+// Keep the SVG untouched, with a quarter of its height as clear space.
+.play {
+  padding: max(7px, calc(var(--mnw-play-badge-height, 56px) / 6));
+}
+
 .play img {
   display: block;
-  height: var(--mnw-play-badge-height, 56px);
+  height: max(28px, calc(var(--mnw-play-badge-height, 56px) * 2 / 3));
   width: auto;
 }
 

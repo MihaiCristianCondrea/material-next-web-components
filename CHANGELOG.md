@@ -15,12 +15,14 @@ release has been published yet. Dated release sections begin when a release ship
 - Added marketing galleries, prototype inspection and comparison, live screen hosts, device frames, captures and video embed controls.
 - Added a product launcher with editable favorites, pointer and keyboard reordering, local persistence and separate console shortcuts.
 - Added a Changelog page generated directly from this file.
+- Added palette-aware scrollbars across the page and component scroll areas, with high-contrast system colors.
+- Added an opt-in `follow-color-palette` launcher attribute; the default uses Google’s pale blue panel and filled hover surfaces.
 
 ### Changed
 
-- Changed the marketing shell to compose the shared app shell. Applications can choose a permanent or closed drawer and supply their own navigation and policy links.
+- Changed the marketing shell to start with a closed drawer at every width and compose the shared app shell. Applications can choose a permanent or closed drawer and supply their own navigation and policy links.
 - Changed expressive tabs to inline icons and one animated, full-height rounded selection pill, matching the Material Design reference.
-- Renamed the existing launcher admin entry to Android Insider Admin Console while preserving its saved identity.
+- Updated Android Insider Admin Console to its new admin URL. The duplicate Android app shortcut is replaced by a Google Play SVG badge linking to the developer account, including migration of saved favorites.
 - Made unreleased packages build their JavaScript, declarations and element manifest when installed from Git or packed into a tarball.
 
 ### Improved
@@ -38,5 +40,6 @@ release has been published yet. Dated release sections begin when a release ship
 
 - Fixed focus falling to the page body when a focused menu button disappears beside a permanent drawer, including shells inside another shadow root.
 - Fixed stale documentation entry bundles being reused after deployment by versioning their URLs.
+- Fixed launcher hover tiles showing an inset outline instead of a filled surface.
 - Fixed tab-link cancellation so canceled navigation leaves the current page unchanged.
 - Fixed serif fallbacks in marketing selects and segmented controls, clipped phone navigation and misaligned catalog icons.

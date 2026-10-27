@@ -7,8 +7,10 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from './scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     display: block;
     color: var(--md-sys-color-on-surface, #1d1b20);

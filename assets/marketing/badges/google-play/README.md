@@ -1,5 +1,10 @@
 # Get it on Google Play badge
 
+`en.svg` is the English SVG badge downloaded from
+<https://github.com/pioug/google-play-badges/blob/main/svg/en.svg>, which archives
+Google Play badge artwork. It is used without altering its paths, colors or
+aspect ratio. The badge component supplies clear space around the artwork.
+
 `en_badge_web_generic.png` is Google's official English badge, downloaded unaltered from
 <https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png> (646 × 250 px,
 with its clear space built in).

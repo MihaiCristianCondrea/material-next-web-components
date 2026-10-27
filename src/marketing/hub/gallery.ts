@@ -36,7 +36,7 @@ export interface GalleryOptions {
   screens: readonly MarketingScreen[] | ScreenRegistry;
   /** The app's palette names (from App Toolkit). "captured" is implied. */
   palettes?: readonly string[];
-  /** Drawer presentation, automatic by default. `modal` starts closed at every width. */
+  /** Drawer presentation. Defaults to `modal`, closed at every width. */
   navigationMode?: 'auto' | 'modal' | 'permanent';
   /** Shell width from which an automatic drawer is permanent. */
   permanentFrom?: number;
@@ -79,7 +79,7 @@ export const mountMarketingGallery = ({
   root = document.body,
   store,
   extra,
-  navigationMode = 'auto',
+  navigationMode = 'modal',
   permanentFrom = 900,
   navigation,
 }: GalleryOptions): GalleryHandle => {

@@ -13,14 +13,15 @@ import {launcherItem} from '../domain/launcher-item.js';
  * android-apps-metadata-backend, and its stored ids migrate.
  */
 
-const PLAY = 'https://play.google.com/store/apps/details?id=';
+const DEVELOPER_PLAY =
+  'https://play.google.com/store/apps/dev?id=5390214922640123642';
 
 export const PROJECT_LAUNCHER_ITEMS = [
   launcherItem({
     kind: 'console',
     key: 'tutorials-admin',
     title: 'Android Insider Admin Console',
-    href: 'https://android-studio-tutorials-api.mihaicristiancondrea.workers.dev/admin/lessons',
+    href: 'https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/',
     icon: 'admin_panel_settings',
     image: 'asset:launcher/android-insider.svg',
     product: 'android-insider-admin',
@@ -35,14 +36,13 @@ export const PROJECT_LAUNCHER_ITEMS = [
     monochrome: true,
   }),
   launcherItem({
-    kind: 'android-app',
-    key: 'android-insider',
-    title: 'Android Insider',
-    subtitle: 'Android app',
-    href: `${PLAY}com.mihaicristiancondrea.android.apps.androidstudiotutorials`,
-    icon: 'android',
-    image: 'asset:launcher/android-insider.svg',
-    product: 'android-insider',
+    kind: 'shortcut',
+    key: 'google-play',
+    title: 'Google Play',
+    subtitle: 'Apps by Mihai-Cristian Condrea',
+    href: DEVELOPER_PLAY,
+    icon: 'shop',
+    image: 'asset:badges/google-play/en.svg',
   }),
   launcherItem({
     kind: 'web',
@@ -111,7 +111,7 @@ export const PROJECT_LAUNCHER_CATALOG = createLauncherCatalog({
   defaultFavorites: [
     'console:tutorials-admin',
     'shortcut:github',
-    'android-app:android-insider',
+    'shortcut:google-play',
     'web:material-next',
   ],
   redirects: [
@@ -125,7 +125,7 @@ export const PROJECT_LAUNCHER_CATALOG = createLauncherCatalog({
 const LEGACY_IDS: Record<string, string> = {
   'tutorials-admin': 'console:tutorials-admin',
   'github-profile': 'shortcut:github',
-  codex: 'shortcut:codex',
+  'android-app:android-insider': 'shortcut:google-play',
   'play-console': 'console:play-console',
   'firebase-console': 'console:firebase',
   admob: 'console:admob',

@@ -81,6 +81,18 @@ Material Web's own components read `--md-ref-typeface-brand` and `--md-ref-typef
 }
 ```
 
+## Scrollbars
+
+Importing a Material Next component enables palette-aware scrollbars on the
+page and inside components. On fine-pointer devices they use a thin thumb in
+`--md-sys-color-primary` over a transparent track, following local palettes and
+light/dark themes. Touch devices keep their native scrollbars; high-contrast
+mode uses system colors.
+
+Set `--mnw-scrollbar-thumb` on a page or component to override the thumb color.
+The product launcher uses Google's gray thumb by default and the host palette
+when `follow-color-palette` is enabled.
+
 ## Browser support
 
 The elements use standard custom elements, shadow DOM and modern CSS (`color-mix()`, `:has()`, container queries in `<mnw-home>`). They work in current Chrome, Edge, Firefox and Safari. The test suite runs in Chromium, Firefox and WebKit.

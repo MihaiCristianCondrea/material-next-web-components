@@ -20,8 +20,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy({
     'assets/marketing/device-frames': 'material-next/device-frames',
     'assets/marketing/launcher': 'material-next/launcher',
-    'assets/marketing/badges/google-play/en_badge_web_generic.png':
-      'material-next/badges/google-play/en_badge_web_generic.png',
+    'assets/marketing/badges': 'material-next/badges',
   });
   eleventyConfig.addPassthroughCopy(
     'node_modules/@webcomponents/webcomponentsjs'

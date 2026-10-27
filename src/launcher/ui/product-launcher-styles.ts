@@ -7,24 +7,29 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from '../../scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     --_ease: cubic-bezier(0.2, 0, 0, 1);
     --_spring: cubic-bezier(0.34, 1.36, 0.64, 1);
-    --_panel: var(--md-sys-color-surface-container, #f0f2f7);
-    --_card: var(--md-sys-color-surface-container-lowest, #ffffff);
-    --_well: var(--md-sys-color-surface-container, #f0f2f7);
-    --_text: var(--md-sys-color-on-surface, #1b1c1e);
-    --_muted: var(--md-sys-color-on-surface-variant, #44474c);
-    --_primary: var(--md-sys-color-primary, #0b57d0);
-    --_on-primary: var(--md-sys-color-on-primary, #ffffff);
-    --_primary-container: var(--md-sys-color-primary-container, #d3e3fd);
-    --_on-primary-container: var(--md-sys-color-on-primary-container, #041e49);
-    --_error: var(--md-sys-color-error, #b3261e);
-    --_on-error: var(--md-sys-color-on-error, #ffffff);
-    --_outline: var(--md-sys-color-outline-variant, #c4c7cd);
+    --_panel: #e9eef6;
+    --_card: #f8fafd;
+    --_well: #e9eef6;
+    --_text: #1f1f1f;
+    --_muted: #444746;
+    --_primary: #0b57d0;
+    --_on-primary: #ffffff;
+    --_primary-container: #d4e2fc;
+    --_on-primary-container: #041e49;
+    --_error: #b3261e;
+    --_on-error: #ffffff;
+    --_outline: #c4c7c5;
+    --_hover: #f0f4f9;
+    --_redirect-hover: #dde3ea;
     --_mono: var(--mnw-launcher-monochrome-filter, none);
+    --mnw-scrollbar-thumb: #c4c7c5;
     font-family: var(
       --md-ref-typeface-plain,
       'Google Sans Flex',
@@ -36,8 +41,26 @@ export const styles = css`
     vertical-align: middle;
   }
 
+  :host([follow-color-palette]) {
+    --_panel: var(--md-sys-color-surface-container, #e9eef6);
+    --_card: var(--md-sys-color-surface-container-lowest, #f8fafd);
+    --_well: var(--md-sys-color-surface-container, #e9eef6);
+    --_text: var(--md-sys-color-on-surface, #1f1f1f);
+    --_muted: var(--md-sys-color-on-surface-variant, #444746);
+    --_primary: var(--md-sys-color-primary, #0b57d0);
+    --_on-primary: var(--md-sys-color-on-primary, #ffffff);
+    --_primary-container: var(--md-sys-color-primary-container, #d4e2fc);
+    --_on-primary-container: var(--md-sys-color-on-primary-container, #041e49);
+    --_error: var(--md-sys-color-error, #b3261e);
+    --_on-error: var(--md-sys-color-on-error, #ffffff);
+    --_outline: var(--md-sys-color-outline-variant, #c4c7c5);
+    --_hover: color-mix(in srgb, var(--_text) 5%, var(--_card));
+    --_redirect-hover: color-mix(in srgb, var(--_text) 8%, var(--_panel));
+    --mnw-scrollbar-thumb: var(--md-sys-color-primary, #0b57d0);
+  }
+
   @media (prefers-color-scheme: dark) {
-    :host {
+    :host([follow-color-palette]) {
       --_mono: var(--mnw-launcher-monochrome-filter, invert(1));
     }
   }
@@ -59,6 +82,7 @@ export const styles = css`
     border: 0;
     background: transparent;
     color: var(--_text);
+    color-scheme: light;
     overflow: visible;
     z-index: 60;
   }
@@ -78,7 +102,7 @@ export const styles = css`
     overflow: auto;
     overscroll-behavior: contain;
     padding: 8px;
-    border: 1px solid color-mix(in srgb, var(--_outline) 60%, transparent);
+    border: 0;
     border-radius: 28px;
     background: var(--_panel);
     box-shadow:
@@ -195,7 +219,8 @@ export const styles = css`
     display: grid;
     place-items: center;
     flex: none;
-    width: 40px;
+    width: 100%;
+    max-width: 96px;
     height: 40px;
     border-radius: 14px;
     background: transparent;
@@ -206,10 +231,11 @@ export const styles = css`
   .icon img {
     display: block;
     width: 100%;
-    height: 100%;
+    height: 40px;
+    min-width: 0;
     object-fit: contain;
     box-sizing: border-box;
-    padding: 1px;
+    padding: 0;
   }
 
   .icon--monochrome img {
@@ -220,9 +246,16 @@ export const styles = css`
 
   .tile:hover,
   .tile:focus-visible {
-    background: color-mix(in srgb, var(--_card) 70%, transparent);
-    box-shadow: inset 0 0 0 1px
-      color-mix(in srgb, var(--_outline) 25%, transparent);
+    background: var(--_hover);
+  }
+
+  .grid--redirects .tile:hover,
+  .grid--redirects .tile:focus-visible {
+    background: var(--_redirect-hover);
+  }
+
+  :host([follow-color-palette]) .popover {
+    color-scheme: inherit;
   }
 
   .title {

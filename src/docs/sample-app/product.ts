@@ -7,7 +7,7 @@ import type {MarketingProduct} from '../../marketing/index.js';
 
 /**
  * Pocket Notes is the documentation's sample app, not a real product: its
- * store link goes to Google Play's home page and its source link to this
+ * store link goes to the developer account and its source link to this
  * library.
  */
 export const PRODUCT: MarketingProduct = {
@@ -15,7 +15,7 @@ export const PRODUCT: MarketingProduct = {
   name: 'Pocket Notes',
   // The bundles sit at the site root, next to demos/.
   icon: new URL('./demos/assets/pocket-notes-icon.svg', import.meta.url).href,
-  storeUrl: 'https://play.google.com/store',
+  storeUrl: 'https://play.google.com/store/apps/dev?id=5390214922640123642',
   repositoryUrl:
     'https://github.com/MihaiCristianCondrea/material-next-web-components',
   privacyUrl: 'https://mihaicristiancondrea.github.io/profile/#privacy-policy',

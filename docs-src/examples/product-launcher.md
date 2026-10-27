@@ -19,11 +19,27 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher lists Android Insider Admin Console, GitHub, Android Insider, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
+Without a `catalog`, the launcher lists Android Insider Admin Console, GitHub, the developer’s Google Play account, Material Next, App Toolkit and the apps metadata console, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
 
 ## Live demo
 
 {% demo "product-launcher" "The first launcher uses the default catalog and hides Material Next, the current product. The second gets a custom catalog; its Pocket Notes entries are hidden on Pocket Notes' page. Both save to demo-only storage keys." "column" %}
+
+### Colors
+
+The default is the Google launcher palette: a pale blue `#E9EEF6` panel, a
+`#F8FAFD` favorites card, and filled hover surfaces without tile outlines.
+Artwork keeps its original colors. Turn on **Follow color palette** in the demo,
+or add the boolean `follow-color-palette` attribute, to use the host’s Material
+color roles instead. It is off by default.
+
+```html
+<mnw-product-launcher follow-color-palette></mnw-product-launcher>
+```
+
+There is one Android Insider destination, the [admin console](https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/).
+The Google Play badge opens [the developer account](https://play.google.com/store/apps/dev?id=5390214922640123642), rather than an individual app listing.
+Existing favorites pointing at the old Android Insider app entry migrate to this developer link.
 
 ## Usage
 

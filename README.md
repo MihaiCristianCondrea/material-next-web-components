@@ -80,7 +80,7 @@ The library supplies the rest:
 
 Screens render in light DOM, so the app's own CSS and palettes reach them; the hub chrome has its own neutral tokens (`--mnw-hub-*`) and one accent, so the screens carry the colour.
 
-The marketing shell composes `mnw-app-shell`. Use `navigationMode: 'auto'` for a permanent drawer from 900px, or `'modal'` for a drawer that starts closed on desktop as well as phones. Both use the shared theme and policy footer.
+The marketing shell composes `mnw-app-shell` and defaults to `navigationMode: 'modal'`, with the drawer closed on desktop as well as phones. Use `'auto'` to opt into a permanent drawer from 900px. Both use the shared theme and policy footer.
 
 A gallery page:
 
@@ -138,6 +138,15 @@ Run the export smoke test:
 ```bash
 npm run smoke:exports
 ```
+
+## Scrollbars
+
+Material Next themes page and component scrollbars with the current
+`--md-sys-color-primary` by default, with a thin thumb and transparent track on
+fine-pointer devices. Palettes and light/dark themes update the thumb without
+extra setup. `--mnw-scrollbar-thumb` overrides its color; forced-color mode uses
+system colors. The launcher uses Google’s neutral blue palette by default;
+`follow-color-palette` opts into the host palette.
 
 ## Releasing
 

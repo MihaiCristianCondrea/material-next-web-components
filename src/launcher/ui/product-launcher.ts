@@ -110,6 +110,10 @@ export class MaterialNextProductLauncher extends LitElement {
   @property({type: Boolean, reflect: true})
   open = false;
 
+  /** Use the host's Material color roles instead of the Google launcher palette. */
+  @property({type: Boolean, attribute: 'follow-color-palette', reflect: true})
+  followColorPalette = false;
+
   /** Accessible name of the apps button. */
   @property()
   label = 'Products and shortcuts';

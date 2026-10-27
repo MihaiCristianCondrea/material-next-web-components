@@ -12,24 +12,26 @@ order: 100
 
 ## Overview
 
-`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a connected or closed drawer, preview settings, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
+`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
 
 Most apps never use it directly: [`mountMarketingGallery()`](../../guides/marketing-hub/#the-gallery) renders it, fills it with live cards and wires every event. Use the element yourself only to build a different gallery (other card content, another data source) with the same page.
 
 ## Live demo
 
-### Connected drawer
+### Closed desktop drawer (default)
 
-The sample app's gallery, as `mountMarketingGallery()` renders it. Change the theme, palette or device frame, filter by category, and open a card.
+The sample gallery uses the default `navigation-mode="modal"`. The menu opens
+the drawer at every width, including desktop; the content fills the available
+width while it is closed.
 
-{% preview "marketing-gallery-frame" "Pocket Notes is a sample product. Settings are saved in this browser per product." "demo__stage--flush" %}
+{% preview "marketing-gallery-modal" "The default gallery, with a closed desktop drawer. Change the theme, palette or device frame, filter by category, and open a card." "demo__stage--flush" %}
 
-### Closed desktop drawer
+### Connected drawer (optional)
 
-The same marketing shell, with `navigation-mode="modal"`. The menu opens the drawer
-on desktop as well as on phones; content has the full width while it is closed.
+Set `navigation-mode="auto"` to keep the drawer visible from 900px. Below that
+width the same navigation becomes a modal drawer.
 
-{% preview "marketing-gallery-modal" "The same gallery using a closed desktop drawer." "demo__stage--flush" %}
+{% preview "marketing-gallery-frame" "The same gallery opting into the connected drawer." "demo__stage--flush" %}
 
 ## Usage
 
@@ -45,7 +47,8 @@ import {
 installHubStyles(); // the hub's page tokens and body styles
 
 const shell = document.createElement('mnw-marketing-shell');
-shell.navigationMode = 'auto'; // or 'modal' for a closed drawer at every width
+// Closed at every width by default. Use 'auto' to opt into a connected drawer.
+shell.navigationMode = 'modal';
 shell.product = {
   id: 'pocket-notes',
   name: 'Pocket Notes',
@@ -69,7 +72,7 @@ shell.addEventListener('category-change', (event) => {
 document.body.append(shell);
 ```
 
-`navigation-mode` accepts `auto` (permanent from `permanent-from`, default 900px), `modal` (closed at every width) or `permanent`. Switching keeps the same shell, navigation and screen nodes. The `navigation` slot accepts app-specific destinations, with Screens as the default.
+`navigation-mode` defaults to `modal` (closed at every width). It also accepts `auto` (permanent from `permanent-from`, default 900px) or `permanent`. Switching keeps the same shell, navigation and screen nodes. The `navigation` slot accepts app-specific destinations, with Screens as the default.
 
 `product`, `settings`, `defaults`, `palettes` and `categories` are objects or arrays, so they are JavaScript properties only. `category`, `count` and `catalog-title` also have attributes.
 

@@ -12,27 +12,35 @@ order: 150
 
 ## Overview
 
-- `<mnw-play-badge>` shows Google's official English "Get it on Google Play" badge, linking to your listing.
+- `<mnw-play-badge>` shows the English "Get it on Google Play" SVG badge, linking to your listing or developer account.
 - `<mnw-github-badge>` is a link to the source repository with GitHub's mark, as a labelled pill or a compact icon button.
 
-The marketing shell uses both in its hero and top app bar; use them on any page that promotes the app.
+Use these standalone links in product content or a footer. The marketing top app bar contains identity only.
 
 ## Live demo
 
 {% preview "badges" "" "hub-tokens demo__stage--center" %}
 
 ```html
-<mnw-play-badge href="https://play.google.com/store/apps/details?id=com.example.notes"></mnw-play-badge>
+<mnw-play-badge
+  href="https://play.google.com/store/apps/details?id=com.example.notes"
+></mnw-play-badge>
 <mnw-play-badge href="…" style="--mnw-play-badge-height: 40px"></mnw-play-badge>
-<mnw-github-badge href="https://github.com/example/pocket-notes"></mnw-github-badge>
-<mnw-github-badge href="https://github.com/example/pocket-notes" label="Source on GitHub" compact></mnw-github-badge>
+<mnw-github-badge
+  href="https://github.com/example/pocket-notes"
+></mnw-github-badge>
+<mnw-github-badge
+  href="https://github.com/example/pocket-notes"
+  label="Source on GitHub"
+  compact
+></mnw-github-badge>
 ```
 
 ## Google Play badge rules
 
-The badge is Google's artwork with its clear space built in (646 × 250px). [Google's badge guidelines](https://partnermarketinghub.withgoogle.com/brands/google-play/visual-identity/badge-guidelines/) allow scaling it whole, so set `--mnw-play-badge-height`; do not redraw, recolour, crop or animate it. Where space allows, show the line "Google Play and the Google Play logo are trademarks of Google LLC." The marketing shell's footer does, and exports it as `PLAY_TRADEMARK`.
+The badge is Google Play’s artwork in SVG format. The component adds clear space around it, with a minimum artwork height of 28px. [Google's badge guidelines](https://partnermarketinghub.withgoogle.com/brands/google-play/visual-identity/badge-guidelines/) allow scaling it whole, so set `--mnw-play-badge-height`; do not redraw, recolour, crop or animate it. Where space allows, show the line "Google Play and the Google Play logo are trademarks of Google LLC." The marketing shell's footer does, and exports it as `PLAY_TRADEMARK`.
 
-The image loads from `badges/google-play/en_badge_web_generic.png` under the marketing asset base; see [Assets](../../guides/marketing-hub/#assets).
+The image loads from `badges/google-play/en.svg` under the marketing asset base; see [Assets](../../guides/marketing-hub/#assets).
 
 ## API
 

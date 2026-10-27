@@ -32,10 +32,10 @@ export class MaterialNextPlayBadge extends LitElement {
       rel="noopener"
     >
       <img
-        src=${marketingAsset('badges/google-play/en_badge_web_generic.png')}
+        src=${marketingAsset('badges/google-play/en.svg')}
         alt="Get it on Google Play"
-        width="646"
-        height="250"
+        width="239"
+        height="71"
       />
     </a>`;
   }

@@ -65,6 +65,15 @@ export default (root: HTMLElement) => {
   const custom =
     root.querySelector<MaterialNextProductLauncher>('#custom-launcher')!;
   const log = root.querySelector('.demo-log')!;
+  const palette = root.querySelector<HTMLInputElement>('#launcher-palette')!;
+  const onPalette = () => {
+    for (const launcher of root.querySelectorAll<MaterialNextProductLauncher>(
+      'mnw-product-launcher'
+    )) {
+      launcher.followColorPalette = palette.checked;
+    }
+  };
+  palette.addEventListener('change', onPalette);
   custom.catalog = catalog;
   const onChange = (event: Event) => {
     const {favoriteIds} = (event as CustomEvent<{favoriteIds: string[]}>)
@@ -79,6 +88,7 @@ export default (root: HTMLElement) => {
   root.addEventListener('launcher-toggle', onToggle);
   log.textContent = 'Open a launcher: the apps button on the right.';
   return () => {
+    palette.removeEventListener('change', onPalette);
     root.removeEventListener('launcher-change', onChange);
     root.removeEventListener('launcher-toggle', onToggle);
     root.querySelectorAll('mnw-product-launcher').forEach((l) => l.close());

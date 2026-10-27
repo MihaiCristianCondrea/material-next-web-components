@@ -7,8 +7,10 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from '../../scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     display: block;
     padding: 16px 8px 4px;

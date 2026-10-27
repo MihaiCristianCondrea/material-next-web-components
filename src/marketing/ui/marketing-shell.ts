@@ -78,7 +78,7 @@ export class MaterialNextMarketingShell extends LitElement {
 
   /** Drawer policy: automatic modal/permanent, always closed until opened, or permanent. */
   @property({attribute: 'navigation-mode'})
-  navigationMode: 'auto' | AppShellNavigationMode = 'auto';
+  navigationMode: 'auto' | AppShellNavigationMode = 'modal';
 
   /** Shell width from which the automatic drawer is permanent. */
   @property({type: Number, attribute: 'permanent-from'}) permanentFrom = 900;

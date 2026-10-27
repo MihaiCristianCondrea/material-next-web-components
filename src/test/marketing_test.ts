@@ -262,6 +262,20 @@ suite('marketing elements', () => {
     assert.exists(root.querySelector('.empty'));
   });
 
+  test('marketing drawer starts closed even at desktop width', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell
+        style="width: 1280px"
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
+      ></mnw-marketing-shell>`
+    );
+    const shell = el.shadowRoot!.querySelector('mnw-app-shell')!;
+    await shell.updateComplete;
+    assert.equal(el.navigationMode, 'modal');
+    assert.equal(shell.layout, 'modal');
+    assert.isFalse(shell.drawerOpen);
+  });
+
   test('marketing shell switches drawer presentation without replacing cards', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell

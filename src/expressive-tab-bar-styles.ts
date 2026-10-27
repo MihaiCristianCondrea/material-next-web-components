@@ -7,8 +7,10 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from './scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     --_container: var(
       --mnw-expressive-tab-bar-container-color,

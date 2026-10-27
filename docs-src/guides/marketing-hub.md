@@ -107,7 +107,8 @@ App Toolkit apps generate these from the app's Kotlin palettes. Load the app's f
 
 ## The gallery
 
-The gallery now uses `mnw-app-shell`. Set `navigationMode: 'auto'` for the
+The gallery uses `mnw-app-shell`, with a closed desktop drawer by default
+(`navigationMode: 'modal'`). Set `navigationMode: 'auto'` for the
 connected drawer (permanent from `permanentFrom`, 900px by default), or
 `navigationMode: 'modal'` for a closed drawer at every width. `navigation` can
 render additional destinations into the drawer. Privacy and conduct URLs are

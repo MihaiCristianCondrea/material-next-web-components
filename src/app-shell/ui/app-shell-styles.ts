@@ -7,8 +7,10 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from '../../scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     --_drawer-width: var(--mnw-app-shell-drawer-width, 264px);
     --_bar-height: var(--mnw-app-shell-top-app-bar-height, 72px);

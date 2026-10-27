@@ -7,8 +7,10 @@
  */
 
 import {css} from 'lit';
+import {scrollbarStyles} from '../../scrollbar-styles.js';
 
 export const styles = css`
+  ${scrollbarStyles}
   :host {
     --_hub-font: var(
       --mnw-hub-font,
@@ -43,9 +45,13 @@ export const styles = css`
     transform: scale(0.98);
   }
 
+  .play {
+    padding: max(7px, var(--mnw-play-badge-height, 56px) / 6);
+  }
+
   .play img {
     display: block;
-    height: var(--mnw-play-badge-height, 56px);
+    height: max(28px, var(--mnw-play-badge-height, 56px) * 2 / 3);
     width: auto;
   }
 
