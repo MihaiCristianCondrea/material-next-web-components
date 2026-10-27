@@ -497,20 +497,23 @@ await check(
     await p.locator(`${launcher} .edit`).click();
     const editing = p.locator(`${launcher} .tile--editing`).first();
     await p.locator(`${launcher} .grid--favorites .cell`).first().hover();
-    const wobble = await editing.evaluate((tile) => {
-      const style = getComputedStyle(tile);
-      return [style.animationIterationCount, style.animationPlayState];
-    });
-    if (wobble[0] !== 'infinite' || wobble[1] !== 'running')
-      throw new Error(`edit motion stops: ${wobble}`);
+    if (
+      await editing.evaluate(
+        (tile) => getComputedStyle(tile).animationIterationCount === 'infinite'
+      )
+    )
+      throw new Error('edit tiles should stay still');
     await p.locator(`${launcher} .tile--editing`).nth(1).focus();
     await p.keyboard.press('Alt+ArrowLeft');
+
+    await p.locator(`${launcher} .tile--add`).first().click();
+    if (await p.evaluate(() => localStorage.getItem('mnw-docs-demo:launcher')))
+      throw new Error('a draft was persisted before Done');
+    await p.locator(`${launcher} .done`).click();
     await expectText(
       logOf(p),
-      /launcher-change .*"shortcut:github".*"console:tutorials-admin"/
+      /launcher-change .*"shortcut:github".*"console:tutorials-admin".*console:play-console"\]/
     );
-    await p.locator(`${launcher} .tile--add`).first().click();
-    await expectText(logOf(p), /console:play-console"\]/);
     await p.reload({waitUntil: 'networkidle'});
     await settle(p);
     await p.locator(`${launcher} .trigger`).click();
@@ -541,10 +544,15 @@ await check(
     const dragged = await launcherTitles(p, launcher);
     if (dragged[0] !== 'Play Console')
       throw new Error(`dragging did not reorder: ${dragged.join(', ')}`);
+    await p.locator(`${launcher} .cancel`).click();
+    if ((await launcherTitles(p, launcher)).join() !== after.join())
+      throw new Error('Cancel did not discard the reordered draft');
+    await p.locator(`${launcher} .edit`).click();
     await p.locator(`${launcher} .reset`).click();
     const reset = await launcherTitles(p, launcher);
     if (reset.join() !== before.join())
       throw new Error(`reset gave ${reset.join(', ')}`);
+    await p.locator(`${launcher} .done`).click();
   }
 );
 await check('the app bar launcher loads its icons', '', async (p) => {

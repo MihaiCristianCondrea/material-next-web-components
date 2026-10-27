@@ -4,7 +4,16 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.2 (Unreleased)
+# 0.0.3 (Unreleased)
+
+### Changed
+
+- Redesigned the product launcher with Google light and dark surfaces, single-line app labels and an uncluttered edit grid. Select apps or drag them between Favorites and More apps; Alt+arrow and Delete remain available on the keyboard.
+- Launcher edits stay temporary until Done. Cancel, Escape and closing the panel discard the draft, and `launcher-change` reports only saved changes.
+
+---
+
+# 0.0.2 (October 27, 2026)
 
 ### Added
 

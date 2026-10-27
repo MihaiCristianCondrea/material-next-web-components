@@ -29,7 +29,7 @@ Without a `catalog`, the launcher lists Android Insider Admin Console, GitHub, t
 
 The default is the Google launcher palette: a pale blue `#E9EEF6` panel, a
 `#F8FAFD` favorites card, and filled hover surfaces without tile outlines.
-Artwork keeps its original colors. Turn on **Follow color palette** in the demo,
+The host’s `color-scheme` selects Google light or dark surfaces. Artwork keeps its original colors. Turn on **Follow color palette** in the demo,
 or add the boolean `follow-color-palette` attribute, to use the host’s Material
 color roles instead. It is off by default.
 
@@ -126,24 +126,21 @@ An entry is hidden when any of these match it:
 
 ### Editing
 
-The pencil button turns on edit mode. Then:
-
-- each favorite has a remove badge; Delete or Backspace removes the focused one;
-- drag a favorite with a mouse, pen or finger to reorder, or focus it and press Alt with the arrow keys (left and right by one, up and down by a row);
-- redirects and the remaining entries (under **More**) become add buttons;
-- **Reset** restores the catalog's default favorites and forgets the stored list.
-
-Every change saves at once, fires `launcher-change` with the full list, and is announced to screen readers.
+Choose Edit to start a temporary draft. **Done** saves the draft and fires `launcher-change` once.
+**Cancel**, Escape, clicking outside or closing the panel discard it. Other tabs continue to see
+saved favorites until Done. Select an app to add or remove it; drag within Favorites to reorder,
+or between Favorites and More apps to add or remove. Alt+arrow keys reorder, and Delete removes.
+Reset to defaults also stays temporary until Done.
 
 ### Storage
 
-`createLauncherPreferenceStore()` keeps `{"version": 1, "favoriteIds": [...]}` under `storage-key` (default `mnw-launcher:favorites`). It also reads a bare list and the older `{favoriteIds}` shape, turns the backend launcher's ids (`github-profile`) into this catalog's (`shortcut:github`), and keeps working in memory when storage is full, blocked or corrupt. Another tab's change updates the open launcher. To keep favorites somewhere else, for example in an account, pass your own `store` with the same four methods.
+`createLauncherPreferenceStore()` keeps `{"version": 1, "favoriteIds": [...]}` under `storage-key` (default `mnw-launcher:favorites`). It also reads a bare list and the older `{favoriteIds}` shape, turns the backend launcher's ids (`github-profile`) into this catalog's (`shortcut:github`), and keeps working in memory when storage is full, blocked or corrupt. Another tab's change updates the open launcher outside edit mode. Cancel reloads the latest saved list; Done saves the current draft. To keep favorites somewhere else, for example in an account, pass your own `store` with the same four methods.
 
 ## API
 
 {% api "mnw-product-launcher" %}
 
-Methods: `show()`, `close()`, `toggle()` and `reset()`; `favoriteIds` returns the list, hidden entries included.
+Methods: `show()`, `close()`, `toggle()` and `reset()`; `favoriteIds` returns the current list (the draft while editing), hidden entries included. Calling `reset()` directly commits the defaults immediately and forgets storage.
 
 ## Module exports
 
@@ -160,7 +157,7 @@ Everything below comes from `material-next-web-components/launcher.js`; `launche
 
 The domain functions are pure, so a server-rendered page or a test can work out what a launcher shows without a browser.
 
-The former Tutorials admin entry is named **Android Insider Admin Console**, preserving its saved ID. The built-in catalog does not offer Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Favorites wobble for the duration of edit mode; reduced motion disables this animation.
+The former Tutorials admin entry is named **Android Insider Admin Console**, preserving its saved ID. The built-in catalog does not offer Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Edit mode uses a still grid with Cancel and Done above the apps.
 
 The panel follows the Google apps launcher: a single rounded favorites surface, a plain shortcuts grid underneath, and no favorites/redirects counts. `redirects-heading` is empty by default; set it to show an optional section label.
 
@@ -170,7 +167,7 @@ The panel follows the Google apps launcher: a single rounded favorites surface, 
 - The edit button is a toggle (`aria-pressed`). In edit mode each favorite is a focusable group named with its position ("GitHub profile, 1 of 2"), described by the reordering instructions.
 - Moves, additions, removals and resets are announced in a polite live region; focus stays on the moved tile or goes to its neighbour after a removal.
 - Links that open a new tab say so to screen readers. Tiles are at least 96px tall; the remove badge's hit area is 40px.
-- On phones (below 600px) the panel is a bottom sheet with a close button. With reduced motion, the open, wobble and reorder animations are off.
+- On phones (below 600px) the panel is a bottom sheet with a close button. With reduced motion, the open and reorder animations are off.
 
 ## Limitations
 

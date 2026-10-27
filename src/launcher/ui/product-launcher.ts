@@ -11,6 +11,7 @@ import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {repeat} from 'lit/directives/repeat.js';
+import {styleMap} from 'lit/directives/style-map.js';
 import {prefersReducedMotion} from '../../internal/environment.js';
 import {marketingAsset} from '../../marketing/ui/assets.js';
 import {
@@ -50,8 +51,6 @@ const KIND_ICONS: Record<LauncherItemKind, string> = {
 const COLUMNS = 3;
 const DRAG_THRESHOLD = 6;
 
-const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? '' : 's'}`;
-
 const listAttribute = {
   fromAttribute: (value: string | null) =>
     (value ?? '').split(/[\s,]+/).filter(Boolean),
@@ -61,18 +60,18 @@ const listAttribute = {
 /**
  * An apps button that opens the visitor's favorite products, consoles and
  * shortcuts, with a separate list of admin redirects. Visitors edit their
- * favorites in place (add, remove, drag or Alt+arrow keys to reorder, reset),
- * and the list persists in localStorage, shared by every page on the origin.
+ * favorites in a draft (select to add or remove, drag or Alt+arrow to reorder).
+ * Done saves; Cancel, Escape and closing discard the draft. The list persists in localStorage, shared by every page on the origin.
  *
  * The current product is never offered: entries matching `current-product`,
  * `exclude` or this page's URL are hidden, and a hidden favorite keeps its
  * place for the pages where it shows. Without a `catalog` the launcher lists
  * Mihai-Cristian Condrea's projects (PROJECT_LAUNCHER_CATALOG).
  *
- * @fires launcher-change - `{favoriteIds}`: the visitor changed favorites (hidden ones included).
+ * @fires launcher-change - `{favoriteIds}`: Done or reset committed favorites (hidden ones included).
  * @fires launcher-toggle - `{open}`: the panel opened or closed.
  * @cssprop --mnw-launcher-width - Panel width from 600px up. Default `360px`.
- * @cssprop --mnw-launcher-monochrome-filter - Filter for `monochrome` icons. Default `none`, `invert(1)` in dark color schemes.
+ * @cssprop --mnw-launcher-monochrome-filter - Filter for `monochrome` icons. Default `none`; monochrome artwork follows the panel text color.
  * @csspart trigger - The apps button.
  * @csspart panel - The panel surface.
  */
@@ -141,10 +140,12 @@ export class MaterialNextProductLauncher extends LitElement {
     y: number;
     pointerId: number;
     moved: boolean;
+    before: LauncherItemId[];
   };
   private positions?: Map<string, DOMRect>;
   private refocus?: string;
   private restoreFocus?: boolean;
+  private ignoreClick = false;
 
   /** The visitor's favorites, hidden ones included. */
   get favoriteIds(): LauncherItemId[] {
@@ -182,7 +183,7 @@ export class MaterialNextProductLauncher extends LitElement {
       });
     this.ids = this.activeStore.load();
     this.unsubscribe = this.activeStore.subscribe((ids) => {
-      this.ids = ids;
+      if (!this.editing) this.ids = ids;
     });
   }
 
@@ -202,6 +203,8 @@ export class MaterialNextProductLauncher extends LitElement {
 
   /** Restores the catalog's default favorites and forgets the stored list. */
   reset() {
+    this.editing = false;
+    this.endDrag();
     this.activeStore?.reset();
     // Forgotten, not saved: later default changes reach this visitor.
     this.commit(
@@ -225,7 +228,7 @@ export class MaterialNextProductLauncher extends LitElement {
       // Before render makes the panel inert, which drops focus to the body.
       const active = (this.renderRoot as ShadowRoot).activeElement;
       this.restoreFocus ??= !!active && !!this.surface?.contains(active);
-      this.editing = false;
+      if (this.editing) this.finishEditing(false);
       this.endDrag();
     }
   }
@@ -240,7 +243,13 @@ export class MaterialNextProductLauncher extends LitElement {
         `[data-focus="${CSS.escape(this.refocus)}"]`
       );
       this.refocus = undefined;
-      target?.focus();
+      void (async () => {
+        // A newly rendered Material icon button must finish its inner button first.
+        await (
+          target as (HTMLElement & {updateComplete?: Promise<unknown>}) | null
+        )?.updateComplete;
+        if (this.open && target?.isConnected) target.focus();
+      })();
     }
   }
 
@@ -346,6 +355,23 @@ export class MaterialNextProductLauncher extends LitElement {
 
   // Editing ------------------------------------------------------------------
 
+  private startEditing() {
+    this.editing = true;
+    this.announcement = 'Editing favorites. Changes are saved with Done.';
+    this.refocus = 'cancel';
+  }
+
+  private finishEditing(save: boolean) {
+    this.endDrag();
+    this.editing = false;
+    if (save) this.commit([...this.ids], 'Favorites saved', 'edit');
+    else {
+      this.ids = this.activeStore?.load() ?? [...this.catalog.defaultFavorites];
+      this.announcement = 'Changes canceled';
+      this.refocus = 'edit';
+    }
+  }
+
   private commit(
     next: LauncherItemId[],
     message: string,
@@ -354,9 +380,10 @@ export class MaterialNextProductLauncher extends LitElement {
   ) {
     this.capturePositions();
     this.ids = next;
-    if (persist) this.activeStore?.save(next);
     this.announcement = message;
     this.refocus = focus;
+    if (this.editing) return;
+    if (persist) this.activeStore?.save(next);
     this.dispatchEvent(
       new CustomEvent('launcher-change', {
         detail: {favoriteIds: [...next]},
@@ -405,7 +432,7 @@ export class MaterialNextProductLauncher extends LitElement {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
       const neighbour = visible[index + 1] ?? visible[index - 1];
-      this.removeItem(item, neighbour ? `fav:${neighbour}` : 'edit');
+      this.removeItem(item, neighbour ? `fav:${neighbour}` : 'done');
       return;
     }
     if (!e.altKey) return;
@@ -422,21 +449,21 @@ export class MaterialNextProductLauncher extends LitElement {
   }
 
   // Pointer drag, for mouse, pen and touch alike: the list reorders under the
-  // pointer and saves when it is released.
+  // pointer. Cross-list drops change the draft; only Done persists it.
 
   private onPointerDown(e: PointerEvent, item: LauncherItem) {
     if (!this.editing || e.button !== 0) return;
-    if ((e.target as Element).closest('.remove')) return;
     this.drag = {
       id: item.id,
       x: e.clientX,
       y: e.clientY,
       pointerId: e.pointerId,
       moved: false,
+      before: [...this.ids],
     };
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
-    window.addEventListener('pointercancel', this.onPointerUp);
+    window.addEventListener('pointercancel', this.onPointerCancel);
   }
 
   private readonly onPointerMove = (e: PointerEvent) => {
@@ -466,7 +493,8 @@ export class MaterialNextProductLauncher extends LitElement {
       );
     });
     const visible = this.view.favorites.map((item) => item.id);
-    if (to < 0 || visible[to] === drag.id) return;
+    if (to < 0 || visible[to] === drag.id || !this.ids.includes(drag.id))
+      return;
     this.capturePositions();
     this.ids = moveFavorite(this.ids, drag.id, to, visible);
   };
@@ -476,14 +504,42 @@ export class MaterialNextProductLauncher extends LitElement {
     if (!drag || e.pointerId !== drag.pointerId) return;
     this.endDrag();
     if (!drag.moved) return;
-    const view = this.view;
-    const item = view.favorites.find((f) => f.id === drag.id);
+    this.ignoreClick = true;
+    setTimeout(() => {
+      this.ignoreClick = false;
+    }, 0);
+    const inside = (selector: string) => {
+      const box = this.renderRoot
+        .querySelector(selector)
+        ?.getBoundingClientRect();
+      return (
+        !!box &&
+        e.clientX >= box.left &&
+        e.clientX <= box.right &&
+        e.clientY >= box.top &&
+        e.clientY <= box.bottom
+      );
+    };
+    const item = this.catalog.items.find((f) => f.id === drag.id);
     if (!item) return;
-    const position = view.favorites.indexOf(item) + 1;
-    this.commit(
-      [...this.ids],
-      `${item.title} moved to position ${position} of ${view.favorites.length}`
-    );
+    if (inside('.available') && this.ids.includes(item.id)) {
+      this.removeItem(item, `more:${item.id}`);
+    } else if (inside('.card') && !this.ids.includes(item.id)) {
+      this.addItem(item);
+    } else if (this.ids.includes(item.id)) {
+      const visible = this.view.favorites;
+      this.commit(
+        [...this.ids],
+        `${item.title} moved to position ${visible.findIndex((f) => f.id === item.id) + 1} of ${visible.length}`,
+        `fav:${item.id}`
+      );
+    }
+  };
+
+  private readonly onPointerCancel = (e: PointerEvent) => {
+    if (!this.drag || e.pointerId !== this.drag.pointerId) return;
+    this.ids = this.drag.before;
+    this.endDrag();
   };
 
   private endDrag() {
@@ -491,7 +547,7 @@ export class MaterialNextProductLauncher extends LitElement {
     this.dragging = undefined;
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
-    window.removeEventListener('pointercancel', this.onPointerUp);
+    window.removeEventListener('pointercancel', this.onPointerCancel);
   }
 
   // Tiles slide to their new places instead of jumping (FLIP).
@@ -539,6 +595,7 @@ export class MaterialNextProductLauncher extends LitElement {
     return html`<span
       class="icon ${item.monochrome && src ? 'icon--monochrome' : ''}"
       aria-hidden="true"
+      style=${styleMap({'--_logo': item.monochrome && src ? `url(${JSON.stringify(src)})` : undefined})}
       >${
         src
           ? html`<img
@@ -603,14 +660,13 @@ export class MaterialNextProductLauncher extends LitElement {
       return html`<li class="cell">${this.link(item, 'fav', index === 0)}</li>`;
     }
     return html`<li class="cell">
-      <div
+      <button
+        type="button"
         class="tile tile--editing ${
           this.dragging === item.id ? 'tile--dragging' : ''
         }"
         tabindex="0"
-        role="group"
-        aria-roledescription="favorite"
-        aria-label=${`${item.title}, ${index + 1} of ${visible.length}`}
+        aria-label=${`Remove ${item.title} from favorites, ${index + 1} of ${visible.length}`}
         aria-describedby="reorder-hint"
         data-favorite=${item.id}
         data-focus=${`fav:${item.id}`}
@@ -619,19 +675,14 @@ export class MaterialNextProductLauncher extends LitElement {
           this.onTileKeyDown(e, item, index, visible)}
         @pointerdown=${(e: PointerEvent) => this.onPointerDown(e, item)}
         @dragstart=${(e: DragEvent) => e.preventDefault()}
+        @click=${() => {
+          if (this.ignoreClick) return;
+          const neighbour = visible[index + 1] ?? visible[index - 1];
+          this.removeItem(item, neighbour ? `fav:${neighbour}` : 'done');
+        }}
       >
         ${this.tileContent(item)}
-        <button
-          class="remove"
-          aria-label=${`Remove ${item.title} from favorites`}
-          @click=${() => {
-            const neighbour = visible[index + 1] ?? visible[index - 1];
-            this.removeItem(item, neighbour ? `fav:${neighbour}` : 'edit');
-          }}
-        >
-          <md-icon aria-hidden="true">remove</md-icon>
-        </button>
-      </div>
+      </button>
     </li>`;
   }
 
@@ -648,12 +699,13 @@ export class MaterialNextProductLauncher extends LitElement {
         }
         aria-disabled=${added ? 'true' : 'false'}
         data-focus=${`${list}:${item.id}`}
-        @click=${() => this.addItem(item)}
+        @click=${() => {
+          if (!this.ignoreClick) this.addItem(item);
+        }}
+        @pointerdown=${(e: PointerEvent) => this.onPointerDown(e, item)}
+        @dragstart=${(e: DragEvent) => e.preventDefault()}
       >
         ${this.tileContent(item)}
-        <span class="badge" aria-hidden="true"
-          ><md-icon>${added ? 'check' : 'add'}</md-icon></span
-        >
       </button>
     </li>`;
   }
@@ -662,6 +714,10 @@ export class MaterialNextProductLauncher extends LitElement {
     const view = this.view;
     const visible = view.favorites.map((item) => item.id);
     const hidden = view.hiddenFavoriteIds.length;
+    const available = [
+      ...view.redirects.filter((item) => !this.ids.includes(item.id)),
+      ...view.available,
+    ];
     return html`
       <md-icon-button
         class="trigger"
@@ -689,46 +745,52 @@ export class MaterialNextProductLauncher extends LitElement {
           .inert=${!this.open}
         >
           <div class="card ${this.editing ? 'card--editing' : ''}">
-            <header class="header">
-              <div class="heading">
-                <h2 id="heading">${this.heading}</h2>
-              </div>
-              ${
-                this.editing
-                  ? html`<md-text-button
-                      class="reset"
-                      @click=${() => this.reset()}
-                      >Reset</md-text-button
-                    >`
-                  : nothing
-              }
-              <md-icon-button
-                class="edit"
-                toggle
-                data-focus="edit"
-                .selected=${this.editing}
-                aria-label="Edit favorites"
-                title=${this.editing ? 'Done' : 'Edit favorites'}
-                @change=${(e: Event) => {
-                  this.editing = (
-                    e.currentTarget as HTMLElement & {selected: boolean}
-                  ).selected;
-                  this.announcement = this.editing
-                    ? 'Editing favorites'
-                    : 'Favorites saved';
-                }}
-              >
-                <md-icon>edit</md-icon>
-                <md-icon slot="selected">check</md-icon>
-              </md-icon-button>
-              <md-icon-button
-                class="close"
-                aria-label="Close"
-                @click=${() => this.requestClose(true)}
-              >
-                <md-icon>close</md-icon>
-              </md-icon-button>
-            </header>
+            ${
+              this.editing
+                ? html`
+                    <header class="edit-header">
+                      <button
+                        class="text-action cancel"
+                        data-focus="cancel"
+                        @click=${() => this.finishEditing(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        class="text-action done"
+                        data-focus="done"
+                        @click=${() => this.finishEditing(true)}
+                      >
+                        Done
+                      </button>
+                    </header>
+                    <h2 id="heading" class="edit-heading">
+                      Drag and drop apps
+                    </h2>
+                  `
+                : html`
+                    <header class="header">
+                      <div class="heading">
+                        <h2 id="heading">${this.heading}</h2>
+                      </div>
+                      <md-icon-button
+                        class="edit"
+                        data-focus="edit"
+                        aria-label="Edit favorites"
+                        title="Edit favorites"
+                        @click=${() => this.startEditing()}
+                      >
+                        <md-icon>edit</md-icon>
+                      </md-icon-button>
+                      <md-icon-button
+                        class="close"
+                        aria-label="Close"
+                        @click=${() => this.requestClose(true)}
+                        ><md-icon>close</md-icon></md-icon-button
+                      >
+                    </header>
+                  `
+            }
             ${
               view.favorites.length
                 ? html`<ul class="grid grid--favorites" aria-label="Favorites">
@@ -746,20 +808,16 @@ export class MaterialNextProductLauncher extends LitElement {
                     }
                   </p>`
             }
-            <p id="reorder-hint" class="hint" ?hidden=${!this.editing}>
-              Drag to reorder, or use Alt with the arrow keys. Delete removes.
-              ${
-                hidden
-                  ? `${plural(hidden, 'favorite')} hidden on this page ${
-                      hidden === 1 ? 'keeps its' : 'keep their'
-                    } place.`
-                  : ''
-              }
-              Saved on this device.
+            <p id="reorder-hint" class="visually-hidden">
+              Select an app to add or remove it. Drag favorites to reorder or
+              move apps between lists. Use Alt with arrow keys to reorder;
+              Delete removes.
+              ${hidden ? `${hidden} hidden favorites keep their place.` : ''}
+              Done saves changes on this device. Cancel discards them.
             </p>
           </div>
           ${
-            view.redirects.length
+            !this.editing && view.redirects.length
               ? html`${
                     this.redirectsHeading
                       ? html`<h3 class="section-title">
@@ -782,15 +840,27 @@ export class MaterialNextProductLauncher extends LitElement {
               : nothing
           }
           ${
-            this.editing && view.available.length
-              ? html`<h3 class="section-title" id="more-title">More</h3>
-                  <ul class="grid" aria-labelledby="more-title">
-                    ${repeat(
-                      view.available,
-                      (item) => item.id,
-                      (item) => this.addTile(item, 'more')
-                    )}
-                  </ul>`
+            this.editing
+              ? html`
+                  <section class="available" aria-label="More apps">
+                    <h3 class="section-title" id="more-title">More apps</h3>
+                    <ul class="grid" aria-labelledby="more-title">
+                      ${repeat(
+                        available,
+                        (item) => item.id,
+                        (item) => this.addTile(item, 'more')
+                      )}
+                    </ul>
+                    ${available.length ? nothing : html`<p class="hint">All apps are in your favorites.</p>`}
+                    <p class="hint">Select an app to add or remove it.</p>
+                    <button
+                      class="text-action reset"
+                      @click=${() => this.commit([...this.catalog.defaultFavorites], 'Default favorites restored', 'done')}
+                    >
+                      Reset to defaults
+                    </button>
+                  </section>
+                `
               : nothing
           }
         </section>

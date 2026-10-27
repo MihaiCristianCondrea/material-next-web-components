@@ -376,6 +376,7 @@ suite('mnw-product-launcher', () => {
 
   test('Google colors are the default and following the host palette is opt-in', async () => {
     const {el} = await mount();
+    el.style.colorScheme = 'light';
     el.style.setProperty('--md-sys-color-surface-container', '#123456');
     el.style.setProperty('--md-sys-color-surface-container-lowest', '#abcdef');
     el.show();
@@ -419,36 +420,21 @@ suite('mnw-product-launcher', () => {
     assert.isFalse(el.open);
   });
 
-  test('edits: remove, add, keyboard reorder and reset, keeping hidden favorites', async () => {
+  test('edits are a draft until Done, keeping hidden favorites and emitting once', async () => {
     const {el, storage} = await mount();
+    const changes: LauncherItemId[][] = [];
+    el.addEventListener('launcher-change', (e) =>
+      changes.push(e.detail.favoriteIds)
+    );
     el.show();
     await el.updateComplete;
-    const edit = el.shadowRoot!.querySelector<
-      HTMLElement & {selected: boolean}
-    >('.edit')!;
-    edit.selected = true;
-    edit.dispatchEvent(new Event('change'));
+    el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
     await el.updateComplete;
-
-    let change = oneEvent(el, 'launcher-change');
-    tiles(el)[0].querySelector<HTMLButtonElement>('.remove')!.click();
-    assert.deepEqual((await change).detail.favoriteIds, [
-      'android-app:notes',
-      'web:repo',
-    ]);
+    tiles(el)[0].click();
     await el.updateComplete;
-
-    change = oneEvent(el, 'launcher-change');
-    el.shadowRoot!.querySelector<HTMLButtonElement>('.tile--add')!.click();
-    assert.deepEqual((await change).detail.favoriteIds, [
-      'android-app:notes',
-      'web:repo',
-      'console:play',
-    ]);
+    el.shadowRoot!.querySelector<HTMLElement>('.tile--add')!.click();
     await el.updateComplete;
     assert.deepEqual(titles(el), ['Repo', 'Play']);
-
-    change = oneEvent(el, 'launcher-change');
     tiles(el)[1].dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'ArrowLeft',
@@ -456,35 +442,155 @@ suite('mnw-product-launcher', () => {
         bubbles: true,
       })
     );
-    // The hidden Notes app keeps its first slot.
-    assert.deepEqual((await change).detail.favoriteIds, [
+    await el.updateComplete;
+    assert.deepEqual(titles(el), ['Play', 'Repo']);
+    assert.deepEqual(el.favoriteIds, [
       'android-app:notes',
       'console:play',
       'web:repo',
     ]);
+    assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+    assert.deepEqual(changes, []);
+    el.shadowRoot!.querySelector<HTMLElement>('.done')!.click();
     await el.updateComplete;
-    assert.deepEqual(titles(el), ['Play', 'Repo']);
-    assert.include(
-      el.shadowRoot!.querySelector('[role="status"]')!.textContent!,
-      'Play moved to position 1 of 2'
-    );
+    assert.deepEqual(changes, [
+      ['android-app:notes', 'console:play', 'web:repo'],
+    ]);
     assert.deepEqual(
       JSON.parse(storage.data.get('mnw-launcher:favorites')!).favoriteIds,
-      ['android-app:notes', 'console:play', 'web:repo']
+      changes[0]
     );
-    assert.include(
-      el.shadowRoot!.querySelector('#reorder-hint')!.textContent!,
-      '1 favorite hidden on this page'
-    );
-
+    assert.notExists(el.shadowRoot!.querySelector('.done'));
+    await new Promise(requestAnimationFrame);
+    assert.equal(el.shadowRoot!.activeElement?.className, 'edit');
     el.reset();
     await el.updateComplete;
-    assert.deepEqual(el.favoriteIds, [
-      'android-app:notes',
-      'shortcut:profile',
-      'web:repo',
-    ]);
+    assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
     assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+  });
+
+  test('Cancel and closing discard drafts, including a draft reset', async () => {
+    const {el, storage} = await mount();
+    const changes: LauncherItemId[][] = [];
+    el.addEventListener('launcher-change', (e) =>
+      changes.push(e.detail.favoriteIds)
+    );
+    el.show();
+    await el.updateComplete;
+    for (const action of ['cancel', 'escape', 'close']) {
+      el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
+      await el.updateComplete;
+      tiles(el)[0].dispatchEvent(
+        new KeyboardEvent('keydown', {key: 'Delete', bubbles: true})
+      );
+      await el.updateComplete;
+      assert.deepEqual(titles(el), ['Repo']);
+      if (action === 'cancel')
+        el.shadowRoot!.querySelector<HTMLElement>('.cancel')!.click();
+      else if (action === 'close') el.close();
+      else
+        el.dispatchEvent(
+          new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})
+        );
+      await el.updateComplete;
+      assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
+      el.show();
+      await el.updateComplete;
+    }
+    assert.deepEqual(changes, []);
+    assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+    // A saved custom list is not forgotten by resetting the draft then canceling.
+    storage.data.set(
+      'mnw-launcher:favorites',
+      JSON.stringify({version: 1, favoriteIds: ['web:repo']})
+    );
+    el.close();
+    await el.updateComplete;
+    el.show();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.reset')!.click();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.cancel')!.click();
+    await el.updateComplete;
+    assert.deepEqual(el.favoriteIds, ['web:repo']);
+    assert.deepEqual(
+      JSON.parse(storage.data.get('mnw-launcher:favorites')!).favoriteIds,
+      ['web:repo']
+    );
+  });
+
+  test('pointer drops move apps between lists without saving, and pointer cancellation restores order', async () => {
+    const {el, storage} = await mount();
+    el.show();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
+    await el.updateComplete;
+    const pointer = (type: string, target: EventTarget, x: number, y: number) =>
+      target.dispatchEvent(
+        new PointerEvent(type, {
+          pointerId: 42,
+          button: 0,
+          clientX: x,
+          clientY: y,
+          bubbles: true,
+        })
+      );
+    const center = (selector: string) => {
+      const box = el
+        .shadowRoot!.querySelector(selector)!
+        .getBoundingClientRect();
+      return [box.left + box.width / 2, box.top + box.height / 2] as const;
+    };
+    const add = el.shadowRoot!.querySelector<HTMLElement>('.tile--add')!;
+    pointer('pointerdown', add, ...center('.tile--add'));
+    pointer('pointermove', window, ...center('.card'));
+    pointer('pointerup', window, ...center('.card'));
+    await el.updateComplete;
+    assert.include(el.favoriteIds, 'console:play');
+    const favorite = tiles(el).at(-1)!;
+    pointer(
+      'pointerdown',
+      favorite,
+      ...center('.grid--favorites .cell:last-child')
+    );
+    pointer('pointermove', window, ...center('.available'));
+    pointer('pointerup', window, ...center('.available'));
+    await el.updateComplete;
+    assert.notInclude(el.favoriteIds, 'console:play');
+    const before = [...el.favoriteIds];
+    pointer(
+      'pointerdown',
+      tiles(el)[1],
+      ...center('.grid--favorites .cell:last-child')
+    );
+    pointer(
+      'pointermove',
+      window,
+      ...center('.grid--favorites .cell:first-child')
+    );
+    await el.updateComplete;
+    assert.notDeepEqual(el.favoriteIds, before);
+    pointer('pointercancel', window, 0, 0);
+    await el.updateComplete;
+    assert.deepEqual(el.favoriteIds, before);
+    assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+  });
+
+  test('Google dark surfaces follow the host color scheme without adopting its palette', async () => {
+    const {el} = await mount();
+    el.style.colorScheme = 'dark';
+    el.show();
+    await el.updateComplete;
+    assert.equal(
+      getComputedStyle(el.shadowRoot!.querySelector('.panel')!).backgroundColor,
+      'rgb(45, 46, 48)'
+    );
+    assert.equal(
+      getComputedStyle(el.shadowRoot!.querySelector('.card')!).backgroundColor,
+      'rgb(27, 27, 27)'
+    );
   });
 
   test('old stored favorites show the renamed admin and never retired products', async () => {
@@ -521,8 +627,7 @@ suite('mnw-product-launcher', () => {
     const edit = el.shadowRoot!.querySelector<
       HTMLElement & {selected: boolean}
     >('.edit')!;
-    edit.selected = true;
-    edit.dispatchEvent(new Event('change'));
+    edit.click();
     await el.updateComplete;
     const content = el.shadowRoot!.textContent!;
     assert.notInclude(content, 'Codex');
