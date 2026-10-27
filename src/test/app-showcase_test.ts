@@ -39,6 +39,48 @@ suite('mnw-app-showcase', () => {
     assert.lengthOf(el.shadowRoot!.querySelectorAll('md-outlined-card'), 1);
   });
 
+  test('uses the metadata API and maps its public snake_case summary', async () => {
+    const calls: string[] = [];
+    window.fetch = async (input: RequestInfo | URL) => {
+      calls.push(String(input));
+      return new Response(
+        JSON.stringify({
+          data: {
+            apps: [
+              {
+                name: 'Android Insider',
+                package_name: 'com.d4rk.androidtutorials',
+                icon_logo: 'https://example.com/insider.svg',
+                short_description: 'Android development guides.',
+                category: {label: 'Education', category_id: 'education'},
+              },
+            ],
+          },
+        }),
+        {status: 200}
+      );
+    };
+    const el = await fixture(html`<mnw-app-showcase></mnw-app-showcase>`);
+    await waitUntil(
+      () => el.shadowRoot!.querySelectorAll('md-outlined-card').length === 1
+    );
+    const root = el.shadowRoot!;
+    assert.deepEqual(calls, [
+      'https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/api/v1/apps',
+    ]);
+    assert.equal(root.querySelector('h3')!.textContent, 'Android Insider');
+    assert.equal(root.querySelector('.app-category')!.textContent, 'Education');
+    assert.include(root.textContent!, 'Android development guides.');
+    assert.equal(
+      root.querySelector('img')!.getAttribute('src'),
+      'https://example.com/insider.svg'
+    );
+    assert.equal(
+      root.querySelector('.play-link')!.getAttribute('href'),
+      'https://play.google.com/store/apps/details?id=com.d4rk.androidtutorials'
+    );
+  });
+
   test('uses endpoint-specific cache entries', async () => {
     const calls: string[] = [];
     window.fetch = async (input: RequestInfo | URL) => {

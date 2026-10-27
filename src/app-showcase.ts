@@ -29,15 +29,18 @@ interface AndroidAppApiDto {
   appName?: string;
   name?: string;
   title?: string;
+  package_name?: string;
   packageName?: string;
   package?: string;
   category?: string | AndroidAppCategoryDto;
   appCategory?: string | AndroidAppCategoryDto;
+  short_description?: string;
   shortDescription?: string;
   description?: string;
   summary?: string;
   icon?: string;
   iconUrl?: string;
+  icon_logo?: string;
   iconLogo?: string;
   image?: string;
   storeUrl?: string;
@@ -55,7 +58,7 @@ type AndroidAppsApiDto =
     };
 
 const defaultAppsEndpoint =
-  'https://mihaicristiancondrea.github.io/com.d4rk.apis/api/app_toolkit/v2/release/en/home/api_android_apps.json';
+  'https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/api/v1/apps';
 const defaultStoreUrl =
   'https://play.google.com/store/apps/dev?id=5390214922640123642';
 
@@ -277,7 +280,7 @@ function extractApps(response: AndroidAppsApiDto): AndroidAppApiDto[] {
 }
 
 function mapAndroidApp(app: AndroidAppApiDto, index: number): AppItem | null {
-  const packageName = app.packageName ?? app.package;
+  const packageName = app.package_name ?? app.packageName ?? app.package;
   const name = app.appName ?? app.name ?? app.title;
   if (!name || !packageName) {
     return null;
@@ -288,9 +291,18 @@ function mapAndroidApp(app: AndroidAppApiDto, index: number): AppItem | null {
     name,
     category: mapCategory(app.category ?? app.appCategory),
     description: shortDescription(
-      app.shortDescription ?? app.description ?? app.summary
+      app.short_description ??
+        app.shortDescription ??
+        app.description ??
+        app.summary
     ),
-    iconUrl: app.iconUrl ?? app.iconLogo ?? app.icon ?? app.image ?? '',
+    iconUrl:
+      app.icon_logo ??
+      app.iconUrl ??
+      app.iconLogo ??
+      app.icon ??
+      app.image ??
+      '',
     storeUrl:
       app.storeUrl ??
       app.googlePlayUrl ??

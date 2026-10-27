@@ -18,39 +18,40 @@ It is not a store listing or a review widget: it shows what the endpoint returns
 
 ## Live demo
 
-The demo reads a local fixture, `demos/assets/apps.json`, so it does not depend on a production API.
+The demo loads the public [apps API](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/api/v1/apps). Names, icons, descriptions and categories come from the backend.
 
-{% demo "app-showcase" "Two apps from a local JSON file. The buttons change limit without fetching again." "demo__stage--column" %}
+{% demo "app-showcase" "Apps from the metadata backend. The buttons change limit without fetching again." "demo__stage--column" %}
 
 ## Data
 
 `apps-endpoint` must return JSON as an array of apps, or an object with the apps in `data`, `apps`, `data.apps`, `promotedApps` or `androidApps` (checked in that order). For each app the element reads the first field present:
 
-| Shown as    | Fields read, in order                                                  | When missing                |
-| ----------- | ---------------------------------------------------------------------- | --------------------------- |
-| Name        | `appName`, `name`, `title`                                             | The app is skipped          |
-| Package     | `packageName`, `package`                                               | The app is skipped          |
-| Category    | `category`, `appCategory`: a string, or `{label}`                      | "Android app"               |
-| Description | `shortDescription`, `description`, `summary`: the first non-empty line | A generic sentence          |
-| Icon        | `iconUrl`, `iconLogo`, `icon`, `image`                                 | A placeholder icon          |
-| Play link   | `storeUrl`, `googlePlayUrl`, `url`                                     | Built from the package name |
+| Shown as    | Fields read, in order                                                                       | When missing                |
+| ----------- | ------------------------------------------------------------------------------------------- | --------------------------- |
+| Name        | `appName`, `name`, `title`                                                                  | The app is skipped          |
+| Package     | `package_name`, `packageName`, `package`                                                    | The app is skipped          |
+| Category    | `category`, `appCategory`: a string, or `{label}`                                           | "Android app"               |
+| Description | `short_description`, `shortDescription`, `description`, `summary`: the first non-empty line | A generic sentence          |
+| Icon        | `icon_logo`, `iconUrl`, `iconLogo`, `icon`, `image`                                         | A placeholder icon          |
+| Play link   | `storeUrl`, `googlePlayUrl`, `url`                                                          | Built from the package name |
 
 ```json
 {
-  "apps": [
-    {
-      "appName": "Smart Cleaner",
-      "packageName": "com.d4rk.cleaner",
-      "category": "Tools",
-      "shortDescription": "See what fills your phone's storage and clear what you don't need.",
-      "icon": "https://example.com/icons/app.png",
-      "storeUrl": "https://play.google.com/store/apps/details?id=com.d4rk.cleaner"
-    }
-  ]
+  "data": {
+    "apps": [
+      {
+        "name": "Smart Cleaner",
+        "package_name": "com.d4rk.cleaner",
+        "category": {"label": "Tools", "category_id": "tools"},
+        "short_description": "See what fills your phone's storage and clear what you don't need.",
+        "icon_logo": "https://example.com/icons/app.png"
+      }
+    ]
+  }
 }
 ```
 
-Without `apps-endpoint`, the element loads the author's public list from `mihaicristiancondrea.github.io`, and the default `headline` names the author. Set both for anything else.
+Without `apps-endpoint`, the element loads the public apps list from `android-apps-metadata-backend.mihaicristiancondrea.workers.dev/api/v1/apps`, and the default `headline` names the author. Set both for anything else.
 
 ## API
 

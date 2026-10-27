@@ -20,9 +20,12 @@ release has been published yet. Dated release sections begin when a release ship
 
 ### Changed
 
+- Changed the launcher Google Play artwork to the supplied multicolor icon while keeping the developer account destination.
+- Changed App showcase and its demo to use the public apps metadata API, including its snake_case package, icon and description fields.
+
 - Changed the marketing shell to start with a closed drawer at every width and compose the shared app shell. Applications can choose a permanent or closed drawer and supply their own navigation and policy links.
 - Changed expressive tabs to inline icons and one animated, full-height rounded selection pill, matching the Material Design reference.
-- Updated Android Insider Admin Console to its new admin URL. The duplicate Android app shortcut is replaced by a Google Play SVG badge linking to the developer account, including migration of saved favorites.
+- Updated Android Insider Admin Console to its new admin URL. The duplicate Android app shortcut is replaced by a Google Play shortcut linking to the developer account, including migration of saved favorites.
 - Made unreleased packages build their JavaScript, declarations and element manifest when installed from Git or packed into a tarball.
 
 ### Improved

@@ -284,7 +284,7 @@ suite('launcher domain', () => {
       play.href,
       'https://play.google.com/store/apps/dev?id=5390214922640123642'
     );
-    assert.equal(play.image, 'asset:badges/google-play/en.svg');
+    assert.equal(play.image, 'asset:launcher/google-play.svg');
     assert.deepEqual(
       [...PROJECT_LAUNCHER_CATALOG.redirects],
       [

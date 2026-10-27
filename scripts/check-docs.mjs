@@ -349,10 +349,18 @@ await check(
   }
 );
 await check('limit the app showcase', 'examples/app-showcase/', async (p) => {
+  const endpoint = await p
+    .locator('mnw-app-showcase')
+    .evaluate((el) => el.appsEndpoint);
+  if (
+    endpoint !==
+    'https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/api/v1/apps'
+  )
+    throw new Error('the showcase is not connected to the apps metadata API');
   const cards = p.locator('mnw-app-showcase md-outlined-card');
   await cards.first().waitFor();
   if ((await cards.count()) !== 2)
-    throw new Error(`${await cards.count()} cards from the fixture`);
+    throw new Error(`${await cards.count()} cards from the API`);
   await p.locator('[data-limit="1"]').click();
   await p.waitForFunction(
     () =>
@@ -559,7 +567,7 @@ await check('the app bar launcher loads its icons', '', async (p) => {
     `${launcher} a[href="https://play.google.com/store/apps/dev?id=5390214922640123642"] img`
   );
   if (!(await badge.count()))
-    throw new Error('the Google Play SVG badge did not load');
+    throw new Error('the Google Play SVG icon did not load');
   const imageSizes = await p.locator(`${launcher} img`).evaluateAll((images) =>
     images.map((img) => ({
       width: img.getBoundingClientRect().width,

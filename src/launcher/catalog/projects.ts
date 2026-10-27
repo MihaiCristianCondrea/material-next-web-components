@@ -42,7 +42,7 @@ export const PROJECT_LAUNCHER_ITEMS = [
     subtitle: 'Apps by Mihai-Cristian Condrea',
     href: DEVELOPER_PLAY,
     icon: 'shop',
-    image: 'asset:badges/google-play/en.svg',
+    image: 'asset:launcher/google-play.svg',
   }),
   launcherItem({
     kind: 'web',

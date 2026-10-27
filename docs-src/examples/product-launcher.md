@@ -38,7 +38,7 @@ color roles instead. It is off by default.
 ```
 
 There is one Android Insider destination, the [admin console](https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/).
-The Google Play badge opens [the developer account](https://play.google.com/store/apps/dev?id=5390214922640123642), rather than an individual app listing.
+The Google Play icon opens [the developer account](https://play.google.com/store/apps/dev?id=5390214922640123642), rather than an individual app listing.
 Existing favorites pointing at the old Android Insider app entry migrate to this developer link.
 
 ## Usage
