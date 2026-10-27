@@ -4,7 +4,7 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.4 (Unreleased)
+# 0.0.4 (October 27, 2026)
 
 ### Added
 
