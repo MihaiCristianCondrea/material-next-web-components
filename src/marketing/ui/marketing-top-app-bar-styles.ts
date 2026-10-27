@@ -72,14 +72,6 @@ export const styles = css`
     flex-shrink: 0;
   }
 
-  .actions {
-    display: flex;
-    flex: none;
-    align-items: center;
-    gap: 8px;
-    margin-inline-start: auto;
-  }
-
   .name {
     font: 500 18px/24px var(--_hub-font);
     letter-spacing: 0;

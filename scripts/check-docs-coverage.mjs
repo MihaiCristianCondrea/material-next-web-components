@@ -42,6 +42,16 @@ for (const name of Object.keys(appShell)) {
   }
 }
 
+const theme = await import(pathToFileURL('dist/theme/index.js').href);
+const themePage = read('docs-src/examples/theme-controls.md');
+for (const name of Object.keys(theme)) {
+  if (!new RegExp(`\`${name}\\b`).test(themePage)) {
+    problems.push(
+      `theme.js exports ${name}, missing from docs-src/examples/theme-controls.md`
+    );
+  }
+}
+
 const pages = [
   ...readdirSync('docs-src/examples').map((f) => join('docs-src/examples', f)),
   ...readdirSync('docs-src/guides').map((f) => join('docs-src/guides', f)),
@@ -52,7 +62,11 @@ for (const module of manifest.modules) {
   for (const d of module.declarations ?? []) {
     // Shared base classes extend LitElement but register no tag.
     if (!d.customElement || !d.tagName) continue;
-    if (!new RegExp(`tagName:.*\\b${d.tagName}\\b`).test(frontMatter)) {
+    if (
+      !new RegExp(`tagName:(?:.|\\n[ \\t])*\\b${d.tagName}\\b`).test(
+        frontMatter
+      )
+    ) {
       problems.push(
         `<${d.tagName}> has no reference page (tagName in docs-src/examples/*.md)`
       );
@@ -107,5 +121,5 @@ if (problems.length) {
   process.exit(1);
 }
 console.log(
-  `Documentation coverage: ${Object.keys(marketing).length} marketing, ${Object.keys(launcher).length} launcher and ${Object.keys(appShell).length} app shell exports, every element and package export documented, ${used.size} demos wired.`
+  `Documentation coverage: ${Object.keys(marketing).length} marketing, ${Object.keys(launcher).length} launcher, ${Object.keys(appShell).length} app shell and ${Object.keys(theme).length} theme exports, every element and package export documented, ${used.size} demos wired.`
 );

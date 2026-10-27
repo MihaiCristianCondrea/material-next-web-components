@@ -141,6 +141,14 @@
       "types": "./dist/launcher/*.d.ts",
       "default": "./dist/launcher/*.js"
     },
+    "./theme.js": {
+      "types": "./dist/theme/index.d.ts",
+      "default": "./dist/theme/index.js"
+    },
+    "./theme/*.js": {
+      "types": "./dist/theme/*.d.ts",
+      "default": "./dist/theme/*.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -175,5 +183,8 @@
   "peerDependencies": {
     "@material/web": "^2.4.1",
     "lit": "^3.3.3"
+  },
+  "dependencies": {
+    "@material/material-color-utilities": "^0.3.0"
   }
 }

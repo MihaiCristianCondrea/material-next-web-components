@@ -80,8 +80,8 @@ const element = (tagName) => {
   return found;
 };
 
-const cell = (value) => (value === undefined || value === '' ? '—' : value);
-const code = (value) => (value ? `<code>${escapeHtml(value)}</code>` : '—');
+const cell = (value) => (value === undefined ? '' : value);
+const code = (value) => (value ? `<code>${escapeHtml(value)}</code>` : '');
 
 const table = (caption, head, rows) =>
   rows.length

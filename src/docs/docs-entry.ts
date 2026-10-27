@@ -6,7 +6,6 @@
 // The documentation site's script: registers every public element, wires the
 // live demos and enhances plain links with client-side navigation. Pages work
 // without it; links are ordinary links.
-import '@material/web/button/filled-tonal-button.js';
 import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/icon-button.js';
 import '../app-showcase.js';
@@ -20,6 +19,7 @@ import '../expressive-tab-bar.js';
 import '../material-next-home.js';
 import '../marketing/index.js';
 import '../launcher/index.js';
+import '../theme/index.js';
 import {configureMarketingAssets} from '../marketing/index.js';
 import {runDemos} from './demos/index.js';
 

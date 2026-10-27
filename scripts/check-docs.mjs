@@ -1024,7 +1024,7 @@ await check(
     const footer = p.locator('mnw-app-shell-footer');
     await footer.getByRole('button', {name: 'Dark theme', exact: true}).click();
     if (
-      (await p.evaluate(() => document.documentElement.dataset.docsTheme)) !==
+      (await p.evaluate(() => document.documentElement.dataset.colorMode)) !==
       'dark'
     )
       throw new Error('Dark theme did not apply');
@@ -1094,35 +1094,66 @@ await check(
   }
 );
 await check(
-  'marketing top bar puts its actions at the trailing end',
+  'marketing top bar presents identity without context or actions',
   'examples/marketing-top-app-bar/',
   async (p) => {
     const bar = p.locator('[data-demo] mnw-marketing-top-app-bar');
-    if (await bar.locator('.context, mnw-github-badge').count())
-      throw new Error('the marketing bar shows a context label or badge');
-    const geometry = await bar.evaluate((el) => {
-      const root = el.shadowRoot;
-      const box = (node) => node.getBoundingClientRect();
-      const bar = box(root.querySelector('.bar'));
-      const actions = [...el.querySelectorAll('[slot="actions"]')].map(box);
-      return {
-        brand: box(root.querySelector('.brand')).right,
-        end:
-          bar.right -
-          parseFloat(getComputedStyle(root.querySelector('.bar')).paddingRight),
-        first: actions[0]?.left ?? 0,
-        last: actions.at(-1)?.right ?? 0,
-        count: actions.length,
-      };
-    });
-    if (
-      geometry.count !== 2 ||
-      geometry.first <= geometry.brand ||
-      Math.abs(geometry.last - geometry.end) > 1
-    )
-      throw new Error(
-        `marketing bar actions misplaced: ${JSON.stringify(geometry)}`
+    const content = await bar.textContent();
+    if (/GitHub|UI kit/.test(content))
+      throw new Error('promotional content remains in the marketing bar');
+    if (await bar.locator('slot, .context, mnw-github-badge').count())
+      throw new Error('marketing bar still exposes context or action slots');
+  }
+);
+await check(
+  'the palette button themes the site and remembers the choice',
+  'install/',
+  async (p) => {
+    const footer = await p.locator('.site-footer__links').textContent();
+    if (/GitHub|Changelog/.test(footer))
+      throw new Error('the footer repeats links from the top app bar');
+    const primary = () =>
+      p.evaluate(() =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue('--md-sys-color-primary')
+          .trim()
       );
+    const before = await primary();
+    try {
+      await p.locator('.site-actions mnw-theme-button .trigger').click();
+      await p
+        .locator('.site-actions mnw-theme-button .panel')
+        .waitFor({state: 'visible'});
+      await p.evaluate(() => {
+        const input = document
+          .querySelector('.site-actions mnw-theme-button')
+          .controls.shadowRoot.querySelector('mnw-color-picker')
+          .shadowRoot.querySelector('input[type="color"]');
+        input.value = '#006a6a';
+        input.dispatchEvent(new Event('input', {bubbles: true}));
+      });
+      await p
+        .getByRole('button', {name: 'Dark color mode', exact: true})
+        .click();
+      const themed = await primary();
+      if (themed === before) throw new Error('the source color did not apply');
+      await p.reload();
+      await p.waitForFunction(
+        (expected) =>
+          getComputedStyle(document.documentElement)
+            .getPropertyValue('--md-sys-color-primary')
+            .trim() === expected,
+        themed
+      );
+      if (
+        (await p.evaluate(() => document.documentElement.dataset.colorMode)) !==
+        'dark'
+      )
+        throw new Error('the dark mode was not remembered');
+    } finally {
+      // Later checks expect the site's own colors.
+      await p.evaluate(() => localStorage.removeItem('mnw-docs:theme'));
+    }
   }
 );
 await check(

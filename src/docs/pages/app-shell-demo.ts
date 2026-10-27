@@ -31,7 +31,7 @@ try {
 }
 const applyTheme = () => {
   themeFooter.theme = theme;
-  document.documentElement.dataset.docsTheme =
+  document.documentElement.dataset.colorMode =
     theme === 'system' ? (themeMedia.matches ? 'dark' : 'light') : theme;
 };
 themeFooter.addEventListener('theme-change', (event) => {

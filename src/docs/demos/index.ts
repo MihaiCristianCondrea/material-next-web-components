@@ -22,6 +22,7 @@ import productLauncher from './product-launcher.js';
 import screenCard from './screen-card.js';
 import screenHost from './screen-host.js';
 import screenInspector from './screen-inspector.js';
+import themeControls from './theme-controls.js';
 
 type Demo = (root: HTMLElement) => void | (() => void);
 
@@ -41,6 +42,7 @@ const demos: Record<string, Demo> = {
   'screen-card': screenCard,
   'screen-host': screenHost,
   'screen-inspector': screenInspector,
+  'theme-controls': themeControls,
 };
 
 export const DEMO_IDS = Object.keys(demos);

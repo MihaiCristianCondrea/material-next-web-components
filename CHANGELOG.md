@@ -4,11 +4,13 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.2 — Unreleased
+# 0.0.2 (Unreleased)
 
 ### Added
 
-- Added an `actions` slot to `<mnw-marketing-top-app-bar>` and `<mnw-marketing-shell>` for trailing top app bar actions: icon buttons, buttons, links or any custom element, such as `<mnw-product-launcher>`. `mountMarketingGallery()` takes them as `actions: () => unknown`.
+- Added `material-next-web-components/theme.js`: Material 3 color roles generated from one source color with Material Color Utilities, saved per origin. `<mnw-theme-button>` is a top app bar palette button that opens `<mnw-theme-controls>` (source color, dark, system or light, and a reset). `<mnw-color-picker>` is the reusable HCT color picker inside them, built from `<mnw-hct-slider>`. `colorScheme()`, `colorThemeCss()` and `applyColorTheme()` work without the elements.
+- Added the palette button to the documentation site's top app bar; the chosen theme is remembered.
+- Added an `actions` slot to `<mnw-marketing-shell>` for trailing top app bar actions: icon buttons, buttons, links or any custom element, such as `<mnw-product-launcher>`. `mountMarketingGallery()` takes them as `actions: () => unknown`. The standalone `<mnw-marketing-top-app-bar>` stays identity-only.
 - Added launcher icon guidelines: SVG first, then PNG or WebP, transparent, with no border or tile of its own, cropped close to the artwork.
 
 ### Changed
@@ -16,6 +18,9 @@ Last updated: October 27, 2026.
 - Changed launcher icons to fit one 40px square, so a wide logo such as Cloudflare's is no larger than a square one.
 - Changed mocks to draw no scrollbars, as Compose draws none: screen hosts, screen cards and the prototype stage still scroll by wheel, touch and keys.
 - Changed the docs top app bar to leave less room after its trailing actions.
+- Changed the documentation footer: GitHub and Changelog are in the top app bar, so the footer no longer repeats them.
+- Changed the package to depend on `@material/material-color-utilities` (Apache-2.0), for `theme.js`.
+- Changed the documentation's dark tokens to follow `data-color-mode` on the root element, which the theme controls set.
 
 ### Fixed
 
@@ -28,7 +33,7 @@ Last updated: October 27, 2026.
 
 - Code scanning now skips `references/`, the read-only upstream snapshots, and build output. Their alerts were in code Material Next does not ship or run.
 
-# 0.0.1 — October 27, 2026
+# 0.0.1 (October 27, 2026)
 
 The first release of Material Next: Material 3 Expressive web components built on Lit and Material Web.
 

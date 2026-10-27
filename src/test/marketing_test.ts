@@ -316,34 +316,14 @@ suite('marketing elements', () => {
     assert.equal((await changed).detail.theme, 'dark');
   });
 
-  test('standalone marketing bar puts slotted actions after the brand', async () => {
+  test('standalone marketing bar contains identity only', async () => {
     const el = await fixture<MaterialNextMarketingTopAppBar>(
-      html`<mnw-marketing-top-app-bar name="Demo"
-        ><button slot="actions">Get</button
-        ><a slot="actions" href="#">Source</a></mnw-marketing-top-app-bar
-      >`
+      html`<mnw-marketing-top-app-bar name="Demo"></mnw-marketing-top-app-bar>`
     );
-    const root = el.shadowRoot!;
-    assert.notExists(root.querySelector('.context, mnw-github-badge'));
-    const slot = root.querySelector<HTMLSlotElement>(
-      '.actions slot[name="actions"]'
-    )!;
-    assert.deepEqual(
-      slot.assignedElements().map((e) => e.localName),
-      ['button', 'a']
+    assert.notExists(
+      el.shadowRoot!.querySelector('slot, .context, mnw-github-badge')
     );
-    const brand = root.querySelector('.brand')!.getBoundingClientRect();
-    const actions = root.querySelector('.actions')!.getBoundingClientRect();
-    const gutter = parseFloat(
-      getComputedStyle(root.querySelector('.bar')!).paddingInlineEnd
-    );
-    assert.isAbove(actions.left, brand.right);
-    assert.closeTo(
-      actions.right,
-      el.getBoundingClientRect().right - gutter,
-      1,
-      'actions end at the trailing gutter'
-    );
+    assert.notInclude(el.shadowRoot!.textContent!, 'UI kit');
   });
 
   test('shell forwards actions to the app shell top app bar', async () => {

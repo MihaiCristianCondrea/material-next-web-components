@@ -11,6 +11,7 @@ const entries = [
   'marketing/index.js',
   'launcher/index.js',
   'app-shell/index.js',
+  'theme/index.js',
 ];
 
 for (const entry of entries) {

@@ -1,0 +1,32 @@
+// A label, the Material slider, and the channel's gradient under it.
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  // The gradient lines up with the track, inside the handle's half-width.
+  --_inset: calc(var(--md-slider-handle-width, 20px) / 2);
+}
+
+.label {
+  margin-inline: var(--_inset);
+  font: 400 1rem/1.5rem var(--md-ref-typeface-plain, system-ui, sans-serif);
+}
+
+md-slider {
+  width: 100%;
+}
+
+.gradient {
+  box-sizing: border-box;
+  height: 24px;
+  margin-inline: var(--_inset);
+  border: 1px solid currentColor;
+  border-radius: 12px;
+}
+
+@media (forced-colors: active) {
+  .gradient {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+  }
+}

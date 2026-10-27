@@ -13,7 +13,7 @@ Material-inspired Lit custom elements for product views, documentation pages, na
 
 ## Install
 
-After the first release, install it with its peer dependencies, Lit and Material Web:
+Install it with its peer dependencies, Lit and Material Web:
 
 ```bash
 npm install material-next-web-components lit @material/web

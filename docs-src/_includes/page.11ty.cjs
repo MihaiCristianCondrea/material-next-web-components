@@ -45,6 +45,13 @@ module.exports = function (data) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0..1,0" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght,MONO@0,300..800,1;1,300..800,1&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap" rel="stylesheet">
+    <script>
+      // The saved color mode before first paint; <mnw-theme-button> applies the colors.
+      try {
+        const mode = JSON.parse(localStorage.getItem('mnw-docs:theme') ?? '{}').mode;
+        if (mode === 'light' || mode === 'dark') document.documentElement.dataset.colorMode = mode;
+      } catch {}
+    </script>
     <script src="${to('/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js')}"></script>
     <script src="${to('/node_modules/lit/polyfill-support.js')}"></script>
     <script type="module" src="${to('/material-next-docs.bundled.js')}"></script>
@@ -70,6 +77,7 @@ module.exports = function (data) {
         </div>
         <div slot="trailing" class="site-actions">
           <a class="icon-link" href="${site.repository}" aria-label="Source on GitHub" title="Source on GitHub">${githubMark}</a>
+          <mnw-theme-button storage-key="mnw-docs:theme"></mnw-theme-button>
           <mnw-product-launcher current-product="web:material-next"></mnw-product-launcher>
         </div>
       </mnw-docs-top-app-bar>
@@ -85,9 +93,7 @@ module.exports = function (data) {
             <p>Material Design web components for Lit, by Mihai-Cristian Condrea. BSD-3-Clause.</p>
           </div>
           <nav class="site-footer__links" aria-label="Project">
-            <a href="${site.repository}">GitHub</a>
             <a href="${site.repository}/issues">Issues</a>
-            <a href="${to('/changelog/')}">Changelog</a>
             <a href="${to('/release/')}">Release checklist</a>
             <a href="https://lit.dev/">Built with Lit</a>
             <a href="https://material-web.dev/">Material Web</a>

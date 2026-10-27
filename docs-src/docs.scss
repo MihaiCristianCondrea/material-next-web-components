@@ -77,12 +77,13 @@
   --docs-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
 }
 
+// data-color-mode is set by applyColorTheme() (the theme button).
 @media (prefers-color-scheme: dark) {
-  :root:not([data-docs-theme='light']) {
+  :root:not([data-color-mode='light']) {
     @include docs-dark;
   }
 }
-:root[data-docs-theme='dark'] {
+:root[data-color-mode='dark'] {
   @include docs-dark;
 }
 
@@ -828,6 +829,48 @@ td:first-child {
   font-size: 14px;
 }
 
+// Theme controls beside the roles they generate; a color picker on its own.
+.demo-theme {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 24px;
+  width: 100%;
+  align-items: start;
+}
+
+.demo-theme > mnw-theme-controls,
+.demo-theme__picker {
+  padding: 16px;
+  border-radius: 28px;
+  background: var(--md-sys-color-surface-container);
+}
+
+.demo-theme__picker {
+  width: min(100%, 320px);
+  box-sizing: border-box;
+}
+
+.demo-theme__swatches {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.demo-theme__swatch {
+  display: flex;
+  align-items: flex-end;
+  min-height: 64px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  font: 500 13px/1.4 var(--docs-code-font);
+}
+
+@media (max-width: 720px) {
+  .demo-theme {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 // Readouts that show what a demo's events reported.
 .demo-log {
   flex-basis: 100%;
@@ -878,9 +921,12 @@ td:first-child {
 }
 
 @media (prefers-color-scheme: dark) {
-  .hub-tokens {
+  :root:not([data-color-mode='light']) .hub-tokens {
     @include hub-tokens.dark;
   }
+}
+:root[data-color-mode='dark'] .hub-tokens {
+  @include hub-tokens.dark;
 }
 
 .demo__stage.hub-tokens {
