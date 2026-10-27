@@ -87,6 +87,7 @@ module.exports = function (data) {
           <nav class="site-footer__links" aria-label="Project">
             <a href="${site.repository}">GitHub</a>
             <a href="${site.repository}/issues">Issues</a>
+            <a href="${to('/changelog/')}">Changelog</a>
             <a href="${to('/release/')}">Release checklist</a>
             <a href="https://lit.dev/">Built with Lit</a>
             <a href="https://material-web.dev/">Material Web</a>

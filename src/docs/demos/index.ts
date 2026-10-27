@@ -8,6 +8,9 @@
 // code sample shown under it. A module may return a cleanup function, called
 // before the next page replaces the demo.
 import appShellFrame from './app-shell-frame.js';
+import appShellModal from './app-shell-modal.js';
+import marketingGalleryFrame from './marketing-gallery-frame.js';
+import marketingGalleryModal from './marketing-gallery-modal.js';
 import appShowcase from './app-showcase.js';
 import codeBlock from './code-block.js';
 import deviceFrame from './device-frame.js';
@@ -24,7 +27,10 @@ type Demo = (root: HTMLElement) => void | (() => void);
 
 const demos: Record<string, Demo> = {
   'app-shell-frame': appShellFrame,
+  'app-shell-modal': appShellModal,
   'app-showcase': appShowcase,
+  'marketing-gallery-frame': marketingGalleryFrame,
+  'marketing-gallery-modal': marketingGalleryModal,
   'code-block': codeBlock,
   'device-frame': deviceFrame,
   'docs-navigation': docsNavigation,

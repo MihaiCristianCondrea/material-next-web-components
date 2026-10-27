@@ -7,8 +7,9 @@ import '../../expressive-tab-bar.js';
 import type {MaterialNextExpressiveTabBar} from '../../expressive-tab-bar.js';
 
 const tabs = [
-  {label: 'Overview', icon: 'article', href: '#overview'},
-  {label: 'Usage', icon: 'code', href: '#usage'},
+  {label: 'Overview', icon: 'info', href: '#overview'},
+  {label: 'Specs', icon: 'style', href: '#specs'},
+  {label: 'Guidelines', icon: 'design_services', href: '#guidelines'},
   {label: 'Accessibility', icon: 'accessibility_new', href: '#accessibility'},
 ];
 

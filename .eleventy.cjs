@@ -1,11 +1,16 @@
 const lib = require('./docs-src/_includes/lib.cjs');
 const {createHash} = require('node:crypto');
 const {existsSync, readFileSync} = require('node:fs');
-const {resolve, sep} = require('node:path');
+const {copyFile} = require('node:fs/promises');
+const {relative, resolve, sep} = require('node:path');
 const {fileURLToPath, pathToFileURL} = require('node:url');
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPassthroughCopy('docs-src/docs.css');
+  // Copy the generated stylesheet after rendering, so transforms and readers
+  // cannot encounter a half-written destination during passthrough copying.
+  eleventyConfig.on('eleventy.after', () =>
+    copyFile('docs-src/docs.css', 'docs/docs.css')
+  );
   eleventyConfig.addPassthroughCopy('docs-src/.nojekyll');
   eleventyConfig.addPassthroughCopy({public: '.'});
   // The sample product's own theme and data, used by the live demos.
@@ -23,6 +28,7 @@ module.exports = function (eleventyConfig) {
   );
   eleventyConfig.addPassthroughCopy('node_modules/lit/polyfill-support.js');
   eleventyConfig.addWatchTarget('custom-elements.json');
+  eleventyConfig.addWatchTarget('CHANGELOG.md');
   eleventyConfig.on('eleventy.before', lib.resetManifest);
 
   // Fenced code renders as <mnw-code-block> with a plain <pre> fallback.
@@ -53,9 +59,19 @@ module.exports = function (eleventyConfig) {
       (tag, attribute, href) => {
         if (/^(?:[a-z]+:|\/\/|\/)/i.test(href)) return tag;
         const file = fileURLToPath(new URL(href, documentBase));
-        if (!file.startsWith(outputRoot) || !existsSync(file)) return tag;
+        if (!file.startsWith(outputRoot)) return tag;
+        const asset = relative(resolve('docs'), file).replaceAll('\\', '/');
+        const source =
+          asset === 'docs.css'
+            ? resolve('docs-src/docs.css')
+            : asset.startsWith('demos/assets/')
+              ? resolve('docs-src', asset)
+              : asset.startsWith('node_modules/')
+                ? resolve(asset)
+                : file;
+        if (!existsSync(source)) return tag;
         const version = createHash('sha256')
-          .update(readFileSync(file))
+          .update(readFileSync(source))
           .digest('hex')
           .slice(0, 12);
         return `${attribute}="${href}?v=${version}"`;

@@ -18,6 +18,9 @@ export const PRODUCT: MarketingProduct = {
   storeUrl: 'https://play.google.com/store',
   repositoryUrl:
     'https://github.com/MihaiCristianCondrea/material-next-web-components',
+  privacyUrl: 'https://mihaicristiancondrea.github.io/profile/#privacy-policy',
+  codeOfConductUrl:
+    'https://mihaicristiancondrea.github.io/profile/#code-of-conduct',
   credit: 'Sample app of the Material Next documentation',
 };
 

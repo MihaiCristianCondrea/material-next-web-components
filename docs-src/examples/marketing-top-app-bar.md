@@ -1,7 +1,7 @@
 ---
 tags: reference
 name: Marketing top app bar
-description: The hub's Material 3 small top app bar, with the app's icon and name and trailing actions.
+description: An identity-only app bar with the product icon and name.
 category: marketing
 icon: web_asset
 status: experimental
@@ -12,29 +12,26 @@ order: 130
 
 ## Overview
 
-`<mnw-marketing-top-app-bar>` is a 64dp Material 3 small top app bar: the app's icon and name linking home, an optional muted context label ("UI kit"), and a `trailing` slot for actions. It is sticky, and takes the raised surface tone once the window scrolls. The marketing shell includes one.
+`<mnw-marketing-top-app-bar>` is a 64dp identity bar with the app icon and name
+linking home. It contains no GitHub action, context label or trailing actions.
+The full marketing shell uses the shared app shell instead, with a connected or
+closed navigation drawer and the same clean product heading.
 
 ## Live demo
 
-{% preview "marketing-top-app-bar" "This page is scrolled, so the bar shows its scrolled tone." "hub-tokens demo__stage--column" %}
+{% preview "marketing-top-app-bar" "Only the product icon and name." "hub-tokens demo__stage--column" %}
 
 ```html
-<mnw-marketing-top-app-bar name="Pocket Notes" icon="/logos/icon.svg" context="UI kit" href="./">
-  <mnw-github-badge slot="trailing" compact href="https://github.com/example/pocket-notes"></mnw-github-badge>
-</mnw-marketing-top-app-bar>
+<mnw-marketing-top-app-bar
+  name="Pocket Notes"
+  icon="/logos/icon.svg"
+  href="./"
+></mnw-marketing-top-app-bar>
 ```
 
 ## API
 
 {% api "mnw-marketing-top-app-bar" %}
 
-`scrolled` is set by the element from `window.scrollY` (more than 4px) on every scroll. Setting it yourself lasts until the next scroll event.
-
-## Accessibility
-
-- The bar is a `<header>`. The brand link's text is the app's name; the icon is decorative.
-- The context label is hidden below 600px.
-
-## Limitations
-
-- It watches the window's scroll, not a scrolling container's.
+`scrolled` follows the window's scroll position. The bar uses a raised surface
+once content scrolls beneath it. The brand is an accessible link; its icon is decorative.

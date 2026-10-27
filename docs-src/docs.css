@@ -47,7 +47,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-docs-theme='light']) {
     color-scheme: dark;
     --md-sys-color-primary: #d0bcff;
     --md-sys-color-on-primary: #381e72;
@@ -76,6 +76,35 @@
     --docs-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
   }
 }
+:root[data-docs-theme='dark'] {
+  color-scheme: dark;
+  --md-sys-color-primary: #d0bcff;
+  --md-sys-color-on-primary: #381e72;
+  --md-sys-color-primary-container: #4f378b;
+  --md-sys-color-on-primary-container: #eaddff;
+  --md-sys-color-secondary-container: #4a4458;
+  --md-sys-color-on-secondary-container: #e8def8;
+  --md-sys-color-tertiary-container: #633b48;
+  --md-sys-color-on-tertiary-container: #ffd8e4;
+  --md-sys-color-surface: #141218;
+  --md-sys-color-on-surface: #e6e0e9;
+  --md-sys-color-on-surface-variant: #cac4d0;
+  --md-sys-color-surface-container-lowest: #0f0d13;
+  --md-sys-color-surface-container-low: #1d1b20;
+  --md-sys-color-surface-container: #211f26;
+  --md-sys-color-surface-container-high: #2b2930;
+  --md-sys-color-surface-container-highest: #36343b;
+  --md-sys-color-outline: #938f99;
+  --md-sys-color-outline-variant: #49454f;
+  --md-sys-color-code-background: #0f0d13;
+  --md-sys-color-code-on-background: #f7f2fa;
+  --docs-success: #8ed99f;
+  --docs-success-container: #0f5223;
+  --docs-warning-container: #653e00;
+  --docs-on-warning-container: #ffdcbe;
+  --docs-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 4px 16px rgb(0 0 0 / 0.25);
+}
+
 html {
   scroll-padding-top: calc(var(--docs-header-height) + 16px);
   -webkit-text-size-adjust: 100%;
@@ -1263,12 +1292,6 @@ td:first-child {
 
 .console-brand__role {
   color: var(--md-sys-color-on-surface-variant);
-  font-size: 12px;
-}
-
-.console-footer {
-  padding: 16px 16px 4px;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
   font-size: 12px;
 }
 

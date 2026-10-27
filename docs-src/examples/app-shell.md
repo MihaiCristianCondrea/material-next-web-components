@@ -30,6 +30,13 @@ A small admin console: Feed, an article (with Back), Studio Bot, Lessons and Set
 
 {% preview "app-shell-frame" "" "demo__stage--flush" %}
 
+### Desktop with a closed drawer
+
+This separate example starts at a real desktop width with `navigation-mode="modal"`.
+The menu opens an overlay; the content remains full width, as in GitHub Dev Tools.
+
+{% preview "app-shell-modal" "Desktop, closed drawer. Open the menu to see the theme controls and policy links." "demo__stage--flush" %}
+
 The console's markup:
 
 {% source "docs-src/_includes/app-shell-demo.html" "html" %}
@@ -152,11 +159,11 @@ Methods: `openDrawer()`, `closeDrawer()`, `toggleDrawer()` and `focusHeading()`.
 
 Everything below comes from `material-next-web-components/app-shell.js`; `app-shell/<path>.js` imports one layer.
 
-| Layer                | Exports                                                                                                                                                                                                                                              |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Domain: layout       | `createLayoutPolicy`, `appShellLayoutPolicy`, `resolveNavigationMode`, `DEFAULT_APP_SHELL_POLICY`, `DEFAULT_PERMANENT_DRAWER_FROM` (900), `APP_SHELL_NAVIGATION_MODES`, types `AppShellLayoutPolicy`, `AppShellLayoutRule`, `AppShellNavigationMode` |
-| Domain: destinations | `findActiveDestination`, `destinationPath`, types `Destination`, `DestinationMatch`                                                                                                                                                                  |
-| UI                   | `MaterialNextAppShell` (`<mnw-app-shell>`), `MaterialNextNavigationItem` (`<mnw-navigation-item>`), types `AppShellLeading`, `NavigationRequestDetail`, `NavigationRequestEvent`, `DrawerToggleEvent`, `NavigationModeChangeEvent`                   |
+| Layer                | Exports                                                                                                                                                                                                                                                                                                                                  |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Domain: layout       | `createLayoutPolicy`, `appShellLayoutPolicy`, `resolveNavigationMode`, `DEFAULT_APP_SHELL_POLICY`, `DEFAULT_PERMANENT_DRAWER_FROM` (900), `APP_SHELL_NAVIGATION_MODES`, types `AppShellLayoutPolicy`, `AppShellLayoutRule`, `AppShellNavigationMode`                                                                                     |
+| Domain: destinations | `findActiveDestination`, `destinationPath`, types `Destination`, `DestinationMatch`                                                                                                                                                                                                                                                      |
+| UI                   | `MaterialNextAppShell` (`<mnw-app-shell>`), `MaterialNextNavigationItem` (`<mnw-navigation-item>`), `MaterialNextAppShellFooter` (`<mnw-app-shell-footer>`), types `AppShellLeading`, `NavigationRequestDetail`, `NavigationRequestEvent`, `DrawerToggleEvent`, `NavigationModeChangeEvent`, `AppShellTheme`, `AppShellThemeChangeEvent` |
 
 ## Accessibility
 

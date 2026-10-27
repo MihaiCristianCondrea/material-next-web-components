@@ -2,22 +2,29 @@
 module.exports = {
   name: 'Material Next',
   packageName: 'material-next-web-components',
-  repository: 'https://github.com/MihaiCristianCondrea/material-next-web-components',
+  repository:
+    'https://github.com/MihaiCristianCondrea/material-next-web-components',
   npm: 'https://www.npmjs.com/package/material-next-web-components',
   topLevel: [
     {href: '/', label: 'Home'},
     {href: '/install/', label: 'Install'},
     {href: '/examples/', label: 'Components'},
-    {href: '/guides/marketing-hub/', label: 'Marketing hub', prefix: '/guides/'},
+    {
+      href: '/guides/marketing-hub/',
+      label: 'Marketing hub',
+      prefix: '/guides/',
+    },
     {href: '/api/', label: 'API'},
     {href: '/roadmap/', label: 'Roadmap'},
+    {href: '/changelog/', label: 'Changelog'},
   ],
   // Catalog groups, in sidebar and catalog order.
   categories: [
     {
       id: 'components',
       label: 'Components',
-      description: 'Standalone elements for product pages, navigation and code.',
+      description:
+        'Standalone elements for product pages, navigation and code.',
     },
     {
       id: 'marketing',

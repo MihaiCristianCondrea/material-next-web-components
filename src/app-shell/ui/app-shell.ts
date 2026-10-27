@@ -250,11 +250,19 @@ export class MaterialNextAppShell extends LitElement {
     let child: Element | null = active;
     while (child && child.parentElement !== this) child = child.parentElement;
     const slot = child?.getAttribute('slot');
-    return slot === 'brand' ||
-      slot === 'navigation' ||
-      slot === 'navigation-footer'
-      ? {element: active, area: 'drawer'}
-      : undefined;
+    if (
+      slot !== 'brand' &&
+      slot !== 'navigation' &&
+      slot !== 'navigation-footer'
+    )
+      return;
+    // Preserve the actual control inside a slotted component such as the
+    // theme footer. Its host may not itself be focusable.
+    let element = active;
+    while (element.shadowRoot?.activeElement instanceof HTMLElement) {
+      element = element.shadowRoot.activeElement;
+    }
+    return {element, area: 'drawer'};
   }
 
   /**

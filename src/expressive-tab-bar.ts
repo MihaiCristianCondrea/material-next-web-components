@@ -6,7 +6,7 @@
 import '@material/web/icon/icon.js';
 import '@material/web/tabs/primary-tab.js';
 import '@material/web/tabs/tabs.js';
-import {LitElement, html, nothing} from 'lit';
+import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {repeat} from 'lit/directives/repeat.js';
@@ -35,7 +35,7 @@ const defaultTabs: ExpressiveTabItem[] = exampleNavigationItems;
  * @cssprop --mnw-expressive-tab-bar-active-container - Active tab background.
  * @cssprop --mnw-expressive-tab-bar-on-active-container - Active label and icon colour.
  * @cssprop --mnw-expressive-tab-bar-shape - Corner radius. Default `999px`.
- * @cssprop --mnw-expressive-tab-bar-height - Tab height. Default `79px`.
+ * @cssprop --mnw-expressive-tab-bar-height - Tab height. Default `80px`.
  * @cssprop --mnw-expressive-tab-min-width - Minimum tab width.
  * @cssprop --mnw-expressive-tab-padding-inline - Tab inline padding.
  * @csspart tabs - The underlying Material Web tabs element.
@@ -55,7 +55,7 @@ export class MdExpressiveTabBar extends LitElement {
 
   /** Places tab icons before, after, above, or below tab labels. */
   @property({attribute: 'icon-position', reflect: true})
-  iconPosition: ExpressiveTabIconPosition = 'top';
+  iconPosition: ExpressiveTabIconPosition = 'start';
 
   /**
    * The tabs, as `{label, href, icon?}` objects. JavaScript property only. The
@@ -65,6 +65,80 @@ export class MdExpressiveTabBar extends LitElement {
   tabs: ExpressiveTabItem[] = defaultTabs;
 
   private skipNextMaterialTabsNavigation = false;
+  private resizeObserver?: ResizeObserver;
+  private scrollingRoot?: ShadowRoot;
+  private indicatorAnimation?: Animation;
+  private indicatorReady = false;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.resizeObserver = new ResizeObserver(
+      () => void this.positionIndicator(false)
+    );
+    this.resizeObserver.observe(this);
+    void document.fonts?.ready.then(() => this.positionIndicator(false));
+  }
+
+  override disconnectedCallback() {
+    this.resizeObserver?.disconnect();
+    this.scrollingRoot?.removeEventListener('scroll', this.onScroll, true);
+    this.scrollingRoot = undefined;
+    this.indicatorAnimation?.cancel();
+    super.disconnectedCallback();
+  }
+
+  protected override updated(changed: PropertyValues<this>) {
+    void this.positionIndicator(changed.has('activeIndex'));
+  }
+
+  private readonly onScroll = () => void this.positionIndicator(false);
+
+  private async positionIndicator(animate: boolean) {
+    const tabs = this.renderRoot.querySelector<
+      HTMLElement & {updateComplete: Promise<unknown>}
+    >('md-tabs');
+    if (!tabs) return;
+    await tabs.updateComplete;
+    const items = [
+      ...tabs.querySelectorAll<
+        HTMLElement & {updateComplete: Promise<unknown>}
+      >('md-primary-tab'),
+    ];
+    await Promise.all(items.map((item) => item.updateComplete));
+    if (!this.isConnected) return;
+    if (tabs.shadowRoot && this.scrollingRoot !== tabs.shadowRoot) {
+      this.scrollingRoot?.removeEventListener('scroll', this.onScroll, true);
+      this.scrollingRoot = tabs.shadowRoot;
+      this.scrollingRoot.addEventListener('scroll', this.onScroll, true);
+    }
+    const indicator = this.renderRoot.querySelector<HTMLElement>('.selection');
+    const track = this.renderRoot.querySelector<HTMLElement>('nav');
+    const selected = items[this.clampedActiveIndex];
+    if (!indicator || !track) return;
+    indicator.hidden = !selected;
+    if (!selected) return;
+    const before = indicator.getBoundingClientRect();
+    const parent = track.getBoundingClientRect();
+    const target = selected.getBoundingClientRect();
+    this.indicatorAnimation?.cancel();
+    const left = target.left - parent.left;
+    indicator.style.left = `${left}px`;
+    indicator.style.width = `${target.width}px`;
+    if (
+      animate &&
+      this.indicatorReady &&
+      !matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      this.indicatorAnimation = indicator.animate(
+        [
+          {left: `${before.left - parent.left}px`, width: `${before.width}px`},
+          {left: `${left}px`, width: `${target.width}px`},
+        ],
+        {duration: 350, easing: 'cubic-bezier(0.2, 0, 0, 1)'}
+      );
+    }
+    this.indicatorReady = true;
+  }
 
   override render() {
     const activeIndex = this.clampedActiveIndex;
@@ -72,6 +146,7 @@ export class MdExpressiveTabBar extends LitElement {
 
     return html`
       <nav aria-label=${this.ariaLabel}>
+        <span class="selection" aria-hidden="true"></span>
         <md-tabs
           part="tabs"
           .activeTabIndex=${activeIndex}
@@ -104,7 +179,11 @@ export class MdExpressiveTabBar extends LitElement {
                   }
                   ${
                     tab.href
-                      ? html`<a class="tab-link" href=${tab.href}
+                      ? html`<a
+                          class="tab-link"
+                          href=${tab.href}
+                          tabindex="-1"
+                          @click=${(event: MouseEvent) => this.handleLinkClick(event, index)}
                           >${tab.label}</a
                         >`
                       : html`<span class="tab-label">${tab.label}</span>`
@@ -131,7 +210,7 @@ export class MdExpressiveTabBar extends LitElement {
       return this.iconPosition;
     }
 
-    return 'top';
+    return this.iconPosition === 'top' ? 'top' : 'start';
   }
 
   private handleMaterialTabsChange(event: Event) {
@@ -141,7 +220,19 @@ export class MdExpressiveTabBar extends LitElement {
       return;
     }
 
-    this.activateAndNavigate(tabs.activeTabIndex);
+    if (tabs.activeTabIndex === this.clampedActiveIndex) return;
+    if (this.activateAndNavigate(tabs.activeTabIndex, event)) {
+      window.location.assign(this.tabs[tabs.activeTabIndex].href);
+    }
+  }
+
+  private handleLinkClick(event: MouseEvent, index: number) {
+    // Keep the original anchor event: canceling a synthetic host click cannot
+    // cancel an anchor's separate default navigation.
+    event.stopPropagation();
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+      return;
+    this.activateAndNavigate(index, event);
   }
 
   private handleTabClick(event: MouseEvent, index: number) {
@@ -149,20 +240,17 @@ export class MdExpressiveTabBar extends LitElement {
     queueMicrotask(() => {
       this.skipNextMaterialTabsNavigation = false;
     });
-    this.activateAndNavigate(index, event);
+    if (this.activateAndNavigate(index, event)) {
+      window.location.assign(this.tabs[index].href);
+    }
   }
 
-  private activateAndNavigate(index: number, event?: Event) {
+  private activateAndNavigate(index: number, event?: Event): boolean {
     const item = this.tabs[index];
-    if (!item) {
-      return;
-    }
-
+    if (!item) return false;
     this.activateTab(index);
 
-    if (!item.href) {
-      return;
-    }
+    if (!item.href) return false;
 
     const navigateEvent = new CustomEvent('navigate', {
       bubbles: true,
@@ -171,9 +259,9 @@ export class MdExpressiveTabBar extends LitElement {
       detail: {index, item},
     });
 
-    if (!this.dispatchEvent(navigateEvent)) {
-      event?.preventDefault();
-    }
+    const accepted = this.dispatchEvent(navigateEvent);
+    if (!accepted) event?.preventDefault();
+    return accepted;
   }
 
   private activateTab(index: number) {

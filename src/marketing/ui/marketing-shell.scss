@@ -10,32 +10,12 @@
   background: var(--mnw-hub-bg);
   color: var(--mnw-hub-text);
 }
-
-.skip {
-  position: fixed;
-  top: 8px;
-  left: 16px;
-  z-index: 40;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: var(--mnw-hub-surface);
-  color: var(--mnw-hub-text);
-  box-shadow: var(--mnw-hub-shadow-raised);
-  font: 500 14px/20px var(--_hub-font);
-  transform: translateY(-160%);
-}
-
-.skip:focus {
-  transform: none;
-  outline: 2px solid var(--mnw-hub-accent);
-}
-
 // Controls stay in reach while the catalog scrolls under them.
 .controls {
   position: sticky;
-  top: 64px;
+  top: var(--mnw-app-shell-top-app-bar-height, 72px);
   z-index: 15;
-  padding: 12px var(--mnw-hub-gutter);
+  padding: 12px clamp(16px, 3vw, 32px);
   background: var(--mnw-hub-scrolled);
   backdrop-filter: saturate(1.2) blur(16px);
   -webkit-backdrop-filter: saturate(1.2) blur(16px);
@@ -44,9 +24,9 @@
     inset 0 -1px 0 var(--mnw-hub-border-subtle);
 }
 
-main {
+#catalog {
   flex: 1;
-  padding: 28px var(--mnw-hub-gutter) 48px;
+  padding: 28px clamp(16px, 3vw, 32px) 48px;
   outline: none;
 }
 
@@ -59,7 +39,7 @@ main {
   margin-bottom: 20px;
 }
 
-h1 {
+h2 {
   margin: 0;
   font: 400 24px/32px var(--_hub-font);
   color: var(--mnw-hub-text);
@@ -97,7 +77,7 @@ footer {
   align-items: center;
   justify-content: space-between;
   gap: 16px 32px;
-  padding: 28px var(--mnw-hub-gutter) 36px;
+  padding: 28px clamp(16px, 3vw, 32px) 36px;
   border-top: 1px solid var(--mnw-hub-border-subtle);
   background: var(--mnw-hub-surface-low);
   color: var(--mnw-hub-text-variant);
@@ -151,12 +131,33 @@ footer a:focus-visible {
     position: static;
   }
 
-  main {
+  #catalog {
     padding-top: 20px;
   }
 }
 
 ::slotted([slot='extra']) {
   display: block;
-  padding: 0 var(--mnw-hub-gutter) 48px;
+  padding: 0 clamp(16px, 3vw, 32px) 48px;
+}
+
+.drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  color: inherit;
+  font-size: 18px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.drawer-brand img {
+  border-radius: 8px;
+  flex: none;
+}
+#catalog {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1312px;
+  margin-inline: auto;
 }

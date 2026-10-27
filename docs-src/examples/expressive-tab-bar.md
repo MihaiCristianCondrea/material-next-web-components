@@ -12,7 +12,7 @@ order: 20
 
 ## Overview
 
-`<mnw-expressive-tab-bar>` is a pill-shaped bar of Material Web primary tabs, with icons above, below, before or after the labels. Use it for a few peer sections of one page or article: Overview, Usage, Accessibility. It renders a `<nav>` landmark, and each tab with an `href` holds a real link.
+`<mnw-expressive-tab-bar>` is a pill-shaped bar of Material Web primary tabs, with inline icons by default and one full-height selection pill that slides between tabs, matching the Material Design reference. Use it for a few peer sections of one page or article: Overview, Specs, Guidelines, Accessibility. It renders a `<nav>` landmark, and each tab with an `href` holds a real link.
 
 Use plain Material Web `md-tabs` for panels that switch content in place without a URL, and a navigation bar or rail for an app's top-level destinations.
 
@@ -20,7 +20,7 @@ Use plain Material Web `md-tabs` for panels that switch content in place without
 
 ## Live demo
 
-{% demo "expressive-tab-bar" "Both bars cancel navigate, so the links do not move the page." "demo__stage--column" %}
+{% demo "expressive-tab-bar" "The bar cancels navigate, so the links do not move the page." "demo__stage--column" %}
 
 ## Usage
 
@@ -43,11 +43,25 @@ bar.addEventListener('navigate', (event) => {
 });
 ```
 
+## Specs
+
+The track and moving selection are fully rounded. The default height is 80px,
+icons are 24px, and icons and labels sit in a single row. The indicator fills the
+track's height. Narrow containers scroll horizontally instead of clipping a label.
+`icon-position="top"`, `bottom` and `end` remain available when a product needs them.
+
 ## API
 
 {% api "mnw-expressive-tab-bar" %}
 
-`icon-position` accepts `top`, `bottom`, `start` and `end`; any other value is treated as `top`. `active-index` is clamped to the tabs that exist. `change` only fires when the index actually changes.
+`icon-position` accepts `top`, `bottom`, `start` and `end`; the default and any other value are treated as `start`. `active-index` is clamped to the tabs that exist. `change` only fires when the index actually changes.
+
+## Guidelines
+
+Use the bar for peer sections such as Overview, Specs, Guidelines and Accessibility.
+Use the app shell for application destinations. Selecting a tab moves one shared
+pill; it does not draw a separate background on every tab. Reduced motion removes
+the pill's travel.
 
 ## Accessibility
 

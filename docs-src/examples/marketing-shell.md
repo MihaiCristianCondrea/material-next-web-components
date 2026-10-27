@@ -12,15 +12,24 @@ order: 100
 
 ## Overview
 
-`<mnw-marketing-shell>` is the page of a marketing hub: a clean top app bar with the app's icon and name, sticky preview settings, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
+`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a connected or closed drawer, preview settings, the screen catalog with category chips, and a footer with the credits and Google Play's trademark line. The cards go in its default slot.
 
 Most apps never use it directly: [`mountMarketingGallery()`](../../guides/marketing-hub/#the-gallery) renders it, fills it with live cards and wires every event. Use the element yourself only to build a different gallery (other card content, another data source) with the same page.
 
 ## Live demo
 
+### Connected drawer
+
 The sample app's gallery, as `mountMarketingGallery()` renders it. Change the theme, palette or device frame, filter by category, and open a card.
 
 {% preview "marketing-gallery-frame" "Pocket Notes is a sample product. Settings are saved in this browser per product." "demo__stage--flush" %}
+
+### Closed desktop drawer
+
+The same marketing shell, with `navigation-mode="modal"`. The menu opens the drawer
+on desktop as well as on phones; content has the full width while it is closed.
+
+{% preview "marketing-gallery-modal" "The same gallery using a closed desktop drawer." "demo__stage--flush" %}
 
 ## Usage
 
@@ -36,6 +45,7 @@ import {
 installHubStyles(); // the hub's page tokens and body styles
 
 const shell = document.createElement('mnw-marketing-shell');
+shell.navigationMode = 'auto'; // or 'modal' for a closed drawer at every width
 shell.product = {
   id: 'pocket-notes',
   name: 'Pocket Notes',
@@ -59,22 +69,26 @@ shell.addEventListener('category-change', (event) => {
 document.body.append(shell);
 ```
 
+`navigation-mode` accepts `auto` (permanent from `permanent-from`, default 900px), `modal` (closed at every width) or `permanent`. Switching keeps the same shell, navigation and screen nodes. The `navigation` slot accepts app-specific destinations, with Screens as the default.
+
 `product`, `settings`, `defaults`, `palettes` and `categories` are objects or arrays, so they are JavaScript properties only. `category`, `count` and `catalog-title` also have attributes.
 
 ## Product
 
 `product` is a `MarketingProduct`:
 
-| Field           | Type                     |                                                                   |
-| --------------- | ------------------------ | ----------------------------------------------------------------- |
-| `id`            | `string`                 | Required. Namespaces the saved preview settings.                  |
-| `name`          | `string`                 | Required. Top app bar, footer.                                    |
-| `icon`          | `string`                 | Required. URL of a square icon.                                   |
-| `storeUrl`      | `string`                 | Optional. Shows a Google Play footer link and the trademark line. |
-| `repositoryUrl` | `string`                 | Optional. Shows a Source footer link.                             |
-| `links`         | `{label, href, icon?}[]` | Optional. More footer links.                                      |
-| `version`       | `string`                 | Optional. Footer only.                                            |
-| `credit`        | `string`                 | Optional. Footer line, such as the developer's name.              |
+| Field              | Type                     |                                                                   |
+| ------------------ | ------------------------ | ----------------------------------------------------------------- |
+| `id`               | `string`                 | Required. Namespaces the saved preview settings.                  |
+| `name`             | `string`                 | Required. Top app bar, footer.                                    |
+| `icon`             | `string`                 | Required. URL of a square icon.                                   |
+| `storeUrl`         | `string`                 | Optional. Shows a Google Play footer link and the trademark line. |
+| `repositoryUrl`    | `string`                 | Optional. Shows a Source footer link.                             |
+| `privacyUrl`       | `string`                 | Optional. Privacy Policy link in the drawer footer.               |
+| `codeOfConductUrl` | `string`                 | Optional. Code of Conduct link in the drawer footer.              |
+| `links`            | `{label, href, icon?}[]` | Optional. More footer links.                                      |
+| `version`          | `string`                 | Optional. Footer only.                                            |
+| `credit`           | `string`                 | Optional. Footer line, such as the developer's name.              |
 
 ## API
 
@@ -84,7 +98,7 @@ The category chips appear when there are two or more categories. With `count` at
 
 ## Accessibility
 
-- A "Skip to screens" link comes first. The catalog is the page's `<h1>`, with its count.
+- A "Skip to screens" link comes first. The shared app bar names the page; the screen catalog has an `<h2>` with its count.
 - Preview settings are a toolbar of labelled Material Web segmented buttons, a select and a switch; every control has a visible label.
 - With `prefers-reduced-motion`, the top app bar's tone transition and the cards' entrance animation and shadow transition are off.
 

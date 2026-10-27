@@ -1,64 +1,42 @@
 # Changelog
 
-Material Next Web Components has not been released yet. Version `0.0.1` is the
-first planned release. The Lit starter's upstream history is not this library's
-release history; attribution remains in `LICENSE` and the source headers.
+Last updated: October 27, 2026. The first planned release is `0.0.1`; no library
+release has been published yet. Dated release sections begin when a release ships.
 
-## 0.0.1 (unreleased)
+---
 
-- Launcher: Google-style single favorites surface without counts or a default
-  redirects heading. Restore the admin entry as **Android Insider Admin Console**
-  with its existing saved ID; Codex and Smart Cleaner remain absent, including
-  with older saved favorites. Versioned docs entry URLs prevent stale modules
-  being reused after a deployment.
-- Shell: when the focused modal menu disappears into the permanent layout,
-  focus moves to the current destination. Focus restoration also works when
-  the shell is hosted in another shadow root.
-- Packaging: `prepare` builds JavaScript, declarations and the element manifest
-  for Git dependencies and tarballs. Generated styles now use the repository's
-  Prettier configuration.
+# Unreleased
 
-### Components
+### Added
 
-- Product home, app showcase, code block and expressive tab bar, built with Lit
-  and Material Web. App showcase cards pair a proportionate icon with compact
-  text and a trailing Google Play action. Expressive tabs use fully rounded
-  container and selected-tab shapes.
-- Documentation shell, top app bar, vertical navigation and table of contents.
-  The site's six primary links share an animated selection pill that follows
-  navigation, browser history and resizing, with reduced-motion support.
-- Product launcher with editable favorites, pointer and keyboard reorder, reset,
-  local persistence and separate admin redirects. The built-in catalog excludes
-  Codex and Smart Cleaner; the old Tutorials, Codex and Cleaner SVGs are removed.
-  Hover highlights the tile without changing the artwork's shape; favorites
-  wobble throughout edit mode unless reduced motion is enabled.
-- Experimental application shell and navigation items, with a single navigation
-  tree, modal and permanent layouts, a connected app bar and a host-owned router.
-  The live console demo covers deep links, browser history and unsaved changes,
-  and switches in place between the connected presentation (Android Insider)
-  and a modal drawer at every width (GitHub Dev Tools) without losing the route,
-  screen state or navigation nodes. A layout switch keeps focus on a visible
-  destination, or moves it to the menu button when the drawer is put away.
+- Added product home, app showcase, code blocks and expressive section navigation, with individual imports and TypeScript declarations.
+- Added an application shell with connected permanent drawers or closed modal drawers, a single navigation tree, routing events that support host-owned navigation and unsaved-change guards.
+- Added a reusable drawer footer with Light, Dark and System theme choices, Privacy Policy and Code of Conduct links.
+- Added marketing galleries, prototype inspection and comparison, live screen hosts, device frames, captures and video embed controls.
+- Added a product launcher with editable favorites, pointer and keyboard reordering, local persistence and separate console shortcuts.
+- Added a Changelog page generated directly from this file.
 
-### Marketing hubs
+### Changed
 
-- Live galleries, prototype inspection and comparison, `ScreenHost`, embed and
-  capture APIs, device frames, badges and shared window rules. Assets are copied
-  by `mnw-marketing-assets`.
-- A clean marketing shell: app identity, preview controls, screen catalog and
-  footer. The hero and its `MarketingProduct.headline` and `description` fields
-  have been removed. Store/source links remain in the footer; no promotional
-  buttons are injected into the top app bar.
-- Shared sans-serif typography and Material Web typeface tokens for standalone
-  controls as well as complete hubs, including inspector selects and segments.
+- Changed the marketing shell to compose the shared app shell. Applications can choose a permanent or closed drawer and supply their own navigation and policy links.
+- Changed expressive tabs to inline icons and one animated, full-height rounded selection pill, matching the Material Design reference.
+- Renamed the existing launcher admin entry to Android Insider Admin Console while preserving its saved identity.
+- Made unreleased packages build their JavaScript, declarations and element manifest when installed from Git or packed into a tarball.
 
-### Tooling and distribution
+### Improved
 
-- `lit` and `@material/web` are peer dependencies. Package exports, generated
-  element API documentation, browser tests and a documentation-site checker
-  cover the public entry points and demos.
-- GitHub release publishing is configured with npm provenance. No release or npm
-  publication has been made by this change.
-- Updated development tooling; removed the obsolete gray-matter patch and
-  js-yaml override. TypeScript stays at 6.0.3 because typescript-eslint 8.72.1
-  supports TypeScript versions below 6.1, not 7.0.2.
+- Improved phone layouts, drawer keyboard focus and reduced-motion behavior. Switching drawer presentation preserves the current route, screen state and navigation nodes.
+- Improved app showcase card spacing and consistent typography in standalone marketing controls.
+
+### Removed
+
+- Removed the marketing hero and its headline and description fields. The standalone marketing bar no longer exposes a context label or trailing promotional actions.
+- Removed Codex and Smart Cleaner from the built-in launcher, the old launcher artwork, the favorites/redirects counts and the extra shaded favorites container.
+- Removed the inherited Lit starter release history; it was not Material Next release history.
+
+### Fixed
+
+- Fixed focus falling to the page body when a focused menu button disappears beside a permanent drawer, including shells inside another shadow root.
+- Fixed stale documentation entry bundles being reused after deployment by versioning their URLs.
+- Fixed tab-link cancellation so canceled navigation leaves the current page unchanged.
+- Fixed serif fallbacks in marketing selects and segmented controls, clipped phone navigation and misaligned catalog icons.

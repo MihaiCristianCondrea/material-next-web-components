@@ -18,6 +18,34 @@ configureMarketingAssets({
   base: new URL('material-next/', new URL('./', import.meta.url)).href,
 });
 
+// The app applies and persists the footer's requested theme.
+const themeFooter = document.querySelector('mnw-app-shell-footer')!;
+const themeMedia = matchMedia('(prefers-color-scheme: dark)');
+let theme: 'light' | 'dark' | 'system' = 'system';
+try {
+  const stored = localStorage.getItem('mnw-console-demo:theme');
+  if (stored === 'light' || stored === 'dark' || stored === 'system')
+    theme = stored;
+} catch {
+  /* Storage is optional. */
+}
+const applyTheme = () => {
+  themeFooter.theme = theme;
+  document.documentElement.dataset.docsTheme =
+    theme === 'system' ? (themeMedia.matches ? 'dark' : 'light') : theme;
+};
+themeFooter.addEventListener('theme-change', (event) => {
+  theme = event.detail.theme;
+  try {
+    localStorage.setItem('mnw-console-demo:theme', theme);
+  } catch {
+    /* Storage is optional. */
+  }
+  applyTheme();
+});
+themeMedia.addEventListener('change', applyTheme);
+applyTheme();
+
 // example
 interface Screen {
   heading: string;
@@ -84,6 +112,8 @@ const outlet = document.querySelector<HTMLElement>('#screen')!;
 const dialog = document.querySelector<HTMLDialogElement>('#leave-dialog')!;
 // <base href> is the app's root: every route is relative to it.
 const appRoot = new URL(document.baseURI);
+const fixedModal =
+  new URL(location.href).searchParams.get('drawer') === 'modal';
 let unsaved = false;
 /** The URL of the screen on show. */
 let shown = location.href;
@@ -126,6 +156,7 @@ const mayLeave = () =>
 
 const go = async (url: URL) => {
   if (url.href === shown || !(await mayLeave())) return;
+  if (fixedModal) url.searchParams.set('drawer', 'modal');
   history.pushState(null, '', url);
   show(url);
 };
@@ -167,6 +198,8 @@ window.addEventListener('popstate', async () => {
   else history.pushState(null, '', shown);
 });
 
+if (new URL(location.href).searchParams.get('drawer') === 'modal')
+  shell.navigationMode = 'modal';
 show(new URL(location.href));
 // /example
 

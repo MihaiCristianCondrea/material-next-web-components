@@ -8,11 +8,9 @@ import {customElement, property} from 'lit/decorators.js';
 import {styles} from './marketing-top-app-bar-styles.js';
 
 /**
- * The hub's top app bar: the app icon and name, an optional context label
- * ("UI kit"), and trailing actions. It reflects `scrolled` while the page is
+ * The hub's identity-only top app bar: the app icon and name. It reflects `scrolled` while the page is
  * scrolled, which gives it the raised container tone.
  *
- * @slot trailing - Actions, for example a GitHub badge.
  */
 @customElement('mnw-marketing-top-app-bar')
 export class MaterialNextMarketingTopAppBar extends LitElement {
@@ -29,10 +27,6 @@ export class MaterialNextMarketingTopAppBar extends LitElement {
   /** Where the brand links to. */
   @property()
   href = './';
-
-  /** Muted label beside the name. */
-  @property()
-  context = '';
 
   /** Raised tone; set by the element while the window is scrolled. */
   @property({type: Boolean, reflect: true})
@@ -60,8 +54,6 @@ export class MaterialNextMarketingTopAppBar extends LitElement {
         ${this.icon ? html`<img src=${this.icon} alt="" />` : nothing}
         <span class="name">${this.name}</span>
       </a>
-      ${this.context ? html`<span class="context">${this.context}</span>` : nothing}
-      <div class="trailing"><slot name="trailing"></slot></div>
     </header>`;
   }
 }

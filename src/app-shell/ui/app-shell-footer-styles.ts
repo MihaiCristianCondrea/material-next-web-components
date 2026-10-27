@@ -1,0 +1,88 @@
+/**
+ * @license
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Generated from app-shell-footer.scss.
+ * Do not edit directly; run npm run build:scss.
+ */
+
+import {css} from 'lit';
+
+export const styles = css`
+  :host {
+    display: block;
+    padding: 16px 8px 4px;
+    border-top: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+    color: var(--md-sys-color-on-surface-variant, #49454f);
+    font-family: var(
+      --md-ref-typeface-plain,
+      'Google Sans Flex',
+      system-ui,
+      sans-serif
+    );
+  }
+
+  .label {
+    margin: 0 8px 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .themes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  md-icon-button {
+    --md-icon-button-icon-color: var(--md-sys-color-on-surface, #1d1b20);
+    border-radius: 999px;
+  }
+
+  md-icon-button[data-active] {
+    background: var(--md-sys-color-secondary-container, #e8def8);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 12px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    color: inherit;
+    font-weight: 500;
+    line-height: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  a:hover {
+    background: color-mix(
+      in srgb,
+      var(--md-sys-color-on-surface, #1d1b20) 8%,
+      transparent
+    );
+    color: var(--md-sys-color-on-surface, #1d1b20);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary, #6750a4);
+    outline-offset: 1px;
+  }
+
+  .links span {
+    color: var(--md-sys-color-outline, #79747e);
+    font-size: 10px;
+  }
+`;

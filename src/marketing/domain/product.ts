@@ -19,6 +19,10 @@ export interface MarketingProduct {
   storeUrl?: string;
   /** Source repository. Shown as a footer link. */
   repositoryUrl?: string;
+  /** Privacy policy URL shown in the drawer footer. */
+  privacyUrl?: string;
+  /** Code of conduct URL shown in the drawer footer. */
+  codeOfConductUrl?: string;
   /** Extra links for the footer, in order. */
   links?: ProductLink[];
   /** App version shown in the footer. */
@@ -39,6 +43,8 @@ export const normalizeProduct = (
   product: MarketingProduct
 ): Required<Omit<MarketingProduct, 'storeUrl' | 'repositoryUrl'>> &
   Pick<MarketingProduct, 'storeUrl' | 'repositoryUrl'> => ({
+  privacyUrl: '',
+  codeOfConductUrl: '',
   links: [],
   version: '',
   credit: '',

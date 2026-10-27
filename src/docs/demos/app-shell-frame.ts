@@ -13,10 +13,10 @@ export default (root: HTMLElement) => {
   const frame = root.querySelector<HTMLIFrameElement>('iframe')!;
   const stage = root.querySelector<HTMLElement>('.app-shell-stage')!;
   let width = 1280;
-  let presentation = 'auto';
+  let presentation = stage.dataset.initialPresentation ?? 'auto';
 
   const fit = () => {
-    const scale = Math.min(1, stage.clientWidth / width);
+    const scale = Math.max(0.01, Math.min(1, stage.clientWidth / width));
     frame.style.width = `${width}px`;
     frame.style.height = `${HEIGHT / scale}px`;
     // zoom, not transform: the console lays out at `width` and pointer
@@ -55,5 +55,9 @@ export default (root: HTMLElement) => {
     presentation = mode;
     tell();
   });
-  return () => observer.disconnect();
+  tell();
+  return () => {
+    observer.disconnect();
+    frame.removeEventListener('load', tell);
+  };
 };

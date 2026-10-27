@@ -36,6 +36,12 @@ export interface GalleryOptions {
   screens: readonly MarketingScreen[] | ScreenRegistry;
   /** The app's palette names (from App Toolkit). "captured" is implied. */
   palettes?: readonly string[];
+  /** Drawer presentation, automatic by default. `modal` starts closed at every width. */
+  navigationMode?: 'auto' | 'modal' | 'permanent';
+  /** Shell width from which an automatic drawer is permanent. */
+  permanentFrom?: number;
+  /** Optional navigation elements for the shell's navigation slot. */
+  navigation?: () => unknown;
   /** Overrides of the hub defaults, for example `{palette: 'android'}`. */
   defaults?: Partial<PreviewSettings>;
   /** The prototype page, relative to the gallery. */
@@ -73,6 +79,9 @@ export const mountMarketingGallery = ({
   root = document.body,
   store,
   extra,
+  navigationMode = 'auto',
+  permanentFrom = 900,
+  navigation,
 }: GalleryOptions): GalleryHandle => {
   installHubStyles();
   const registry = asRegistry(screens);
@@ -147,12 +156,14 @@ export const mountMarketingGallery = ({
         .categories=${registry.categories()}
         .category=${category}
         .count=${visible.length}
+        .navigationMode=${navigationMode}
+        .permanentFrom=${permanentFrom}
         @settings-change=${(e: CustomEvent<PreviewSettings>) => update(e.detail)}
         @category-change=${(e: CustomEvent<{category: string}>) => {
           category = e.detail.category;
           draw();
         }}
-        >${repeat(visible, (s) => s.id, card)}${
+        >${navigation ? html`<div slot="navigation">${navigation()}</div>` : nothing}${repeat(visible, (s) => s.id, card)}${
           extra ? html`<div slot="extra">${extra()}</div>` : nothing
         }</mnw-marketing-shell
       >`,

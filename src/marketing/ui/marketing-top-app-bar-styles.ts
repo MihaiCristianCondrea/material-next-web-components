@@ -78,24 +78,6 @@ export const styles = css`
     text-overflow: ellipsis;
   }
 
-  .context {
-    font: 400 14px/20px var(--_hub-font);
-    color: var(--mnw-hub-text-subtle);
-    white-space: nowrap;
-  }
-
-  .trailing {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-left: auto;
-  }
-
-  @media (max-width: 600px) {
-    .context {
-      display: none;
-    }
-  }
   @media (prefers-reduced-motion: reduce) {
     :host {
       transition: none;

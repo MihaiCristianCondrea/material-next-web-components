@@ -19,6 +19,10 @@ configureMarketingAssets({
 
 mountMarketingGallery({
   product: PRODUCT,
+  navigationMode:
+    new URL(location.href).searchParams.get('drawer') === 'modal'
+      ? 'modal'
+      : 'auto',
   screens: SCREENS,
   palettes: PALETTES,
   prototypeUrl: 'screen.html',

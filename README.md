@@ -72,13 +72,15 @@ The library supplies the rest:
 | `mountScreenPrototype()`                                                                                                         | The prototype page: inspect or compare (theme, navigation, palette, frame), the screen's own controls and presets, phone, fold and desktop windows, capture mode (`panel=none`) |
 | `createMarketingEmbed()`                                                                                                         | `setup()`, `mount()` and `mountPart()` for Remotion and other headless tools, resolving once every element has rendered                                                         |
 | `ScreenHost`                                                                                                                     | Hosts one live screen: state, `set()` and `go()`, palette and theme, device frame, an optional per-frame clock (`tick()`) that runs only while needed                           |
-| `<mnw-marketing-shell>`                                                                                                          | Top app bar, hero with the Google Play badge and source link, sticky preview settings, catalog, footer with credits and Google Play's trademark line                            |
+| `<mnw-marketing-shell>`                                                                                                          | Shared app shell with a permanent or closed drawer, preview settings, catalog and footer                                                                                        |
 | `<mnw-screen-card>`, `<mnw-preview-controls>`, `<mnw-marketing-top-app-bar>`, `<mnw-prototype-layout>`, `<mnw-screen-inspector>` | The shell's parts, usable on their own                                                                                                                                          |
 | `<mnw-device-frame>`                                                                                                             | Google's device art around a slotted screen: Pixel 9 Pro XL, Pixel 9 Pro Fold (open), Pixelbook Go                                                                              |
 | `<mnw-play-badge>`, `<mnw-github-badge>`                                                                                         | Google's official Play badge, unaltered, and a source link with GitHub's mark                                                                                                   |
 | `WINDOWS`, `shellLayout()`                                                                                                       | App Toolkit's window sizes and adaptive shell rules (bottom bar, rail, expanded rail, permanent drawer)                                                                         |
 
 Screens render in light DOM, so the app's own CSS and palettes reach them; the hub chrome has its own neutral tokens (`--mnw-hub-*`) and one accent, so the screens carry the colour.
+
+The marketing shell composes `mnw-app-shell`. Use `navigationMode: 'auto'` for a permanent drawer from 900px, or `'modal'` for a drawer that starts closed on desktop as well as phones. Both use the shared theme and policy footer.
 
 A gallery page:
 

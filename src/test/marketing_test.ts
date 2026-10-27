@@ -21,6 +21,7 @@ import {
   type MarketingScreen,
   type MaterialNextMarketingShell,
   type MaterialNextScreenCard,
+  type MaterialNextMarketingTopAppBar,
 } from '../marketing/index.js';
 
 // The test server serves the repository root, where the shipped assets live.
@@ -259,6 +260,56 @@ suite('marketing elements', () => {
       'trademarks'
     );
     assert.exists(root.querySelector('.empty'));
+  });
+
+  test('marketing shell switches drawer presentation without replacing cards', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
+        .count=${1}
+        navigation-mode="permanent"
+      >
+        <div id="kept">Screen state</div></mnw-marketing-shell
+      >`
+    );
+    const shell = el.shadowRoot!.querySelector('mnw-app-shell')!;
+    await shell.updateComplete;
+    assert.equal(shell.layout, 'permanent');
+    const card = el.querySelector('#kept');
+    el.navigationMode = 'modal';
+    await el.updateComplete;
+    await shell.updateComplete;
+    assert.equal(shell.layout, 'modal');
+    assert.isTrue(el.shadowRoot!.querySelector('mnw-app-shell') === shell);
+    assert.isTrue(el.querySelector('#kept') === card);
+    assert.isTrue(card!.isConnected);
+  });
+
+  test('marketing theme footer reports settings changes', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
+      ></mnw-marketing-shell>`
+    );
+    const changed = oneEvent(el, 'settings-change');
+    el.shadowRoot!.querySelector('mnw-app-shell-footer')!.dispatchEvent(
+      new CustomEvent('theme-change', {
+        detail: {theme: 'dark'},
+        bubbles: true,
+        composed: true,
+      })
+    );
+    assert.equal((await changed).detail.theme, 'dark');
+  });
+
+  test('standalone marketing bar contains identity only', async () => {
+    const el = await fixture<MaterialNextMarketingTopAppBar>(
+      html`<mnw-marketing-top-app-bar name="Demo"></mnw-marketing-top-app-bar>`
+    );
+    assert.notExists(
+      el.shadowRoot!.querySelector('slot, .context, mnw-github-badge')
+    );
+    assert.notInclude(el.shadowRoot!.textContent!, 'UI kit');
   });
 
   test('screen card reports its per-card toggles', async () => {

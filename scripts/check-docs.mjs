@@ -338,11 +338,11 @@ await check(
       .locator('[data-demo] mnw-expressive-tab-bar')
       .first()
       .locator('md-primary-tab')
-      .nth(2)
+      .nth(3)
       .click();
     await expectText(
       logOf(p),
-      /change: activeIndex 2[\s\S]*navigate: #accessibility \(canceled\)/
+      /change: activeIndex 3[\s\S]*navigate: #accessibility \(canceled\)/
     );
     if (p.url() !== before)
       throw new Error(`the canceled link changed the URL to ${p.url()}`);
@@ -608,10 +608,12 @@ await check(
   'switch the app shell presentation without losing state',
   'examples/app-shell/',
   async (p) => {
-    const frame = p.frame({url: /demos\/app-shell\//});
+    const preview = p.locator('[data-demo="app-shell-frame"]');
+    const element = await preview.locator('iframe').elementHandle();
+    const frame = await element.contentFrame();
     if (!frame) throw new Error('no console frame');
     await frame.waitForSelector('mnw-app-shell[layout]');
-    await p.locator('.app-shell-stage').scrollIntoViewIfNeeded();
+    await preview.locator('.app-shell-stage').scrollIntoViewIfNeeded();
     const shell = frame.locator('mnw-app-shell');
     const layout = () => shell.getAttribute('layout');
     const until = async (want) => {
@@ -624,7 +626,7 @@ await check(
     // The frame is scaled with CSS zoom, which Playwright's own clicks inside
     // it do not follow: click where the element is on screen, as a user does.
     const tap = async (selector, offset = {x: 0.5, y: 0.5}) => {
-      const outer = await p.locator('.app-shell-frame').evaluate((f) => ({
+      const outer = await preview.locator('.app-shell-frame').evaluate((f) => ({
         ...f.getBoundingClientRect().toJSON(),
         zoom: Number(f.style.zoom) || 1,
       }));
@@ -750,9 +752,9 @@ await check(
     await until('permanent');
 
     // Resizing across the breakpoint, in the connected presentation.
-    await p.locator('[data-width="390"]').click();
+    await preview.locator('[data-width="390"]').click();
     await until('modal');
-    await p.locator('[data-width="1280"]').click();
+    await preview.locator('[data-width="1280"]').click();
     await until('permanent');
     await kept('resizing');
   }
@@ -837,7 +839,7 @@ await check(
     const shell = p.locator('mnw-marketing-shell');
     if (await shell.locator('.hero, mnw-play-badge, mnw-github-badge').count())
       throw new Error('promotional hero or badge still rendered');
-    if (!(await shell.locator('#catalog h1').count()))
+    if (!(await shell.locator('#catalog h2').count()))
       throw new Error('missing catalog page heading');
   }
 );
@@ -859,6 +861,147 @@ await check(
       throw new Error(`tab shapes: ${shapes}`);
   }
 );
+
+await check(
+  'closed desktop drawer has working theme and quiet policy links',
+  'demos/app-shell/feed/?drawer=modal',
+  async (p) => {
+    const shell = p.locator('mnw-app-shell');
+    if ((await shell.getAttribute('layout')) !== 'modal')
+      throw new Error('desktop drawer is not modal');
+    if ((await shell.getAttribute('drawer-open')) !== null)
+      throw new Error('desktop drawer starts open');
+    await shell.locator('.leading').click();
+    const footer = p.locator('mnw-app-shell-footer');
+    await footer.getByRole('button', {name: 'Dark theme', exact: true}).click();
+    if (
+      (await p.evaluate(() => document.documentElement.dataset.docsTheme)) !==
+      'dark'
+    )
+      throw new Error('Dark theme did not apply');
+    const policy = footer.getByRole('link', {
+      name: 'Privacy Policy',
+      exact: true,
+    });
+    if (
+      (await policy.evaluate(
+        (link) => getComputedStyle(link).textDecorationLine
+      )) !== 'none'
+    )
+      throw new Error('policy still looks like a default prose link');
+    if (
+      (await footer
+        .getByRole('link', {name: 'Code of Conduct', exact: true})
+        .count()) !== 1
+    )
+      throw new Error('missing conduct link');
+    await footer
+      .getByRole('button', {name: 'System theme', exact: true})
+      .click();
+    await p.locator('mnw-navigation-item[href="studio-bot/"]').click();
+    await p.waitForFunction(
+      () => document.querySelector('mnw-app-shell').heading === 'Studio Bot'
+    );
+    await p.reload({waitUntil: 'networkidle'});
+    if ((await shell.getAttribute('layout')) !== 'modal')
+      throw new Error('closed drawer mode was lost on reload');
+  }
+);
+await check(
+  'marketing composes the shared shell in both desktop modes',
+  'demos/marketing-hub/?drawer=modal',
+  async (p) => {
+    const marketing = p.locator('mnw-marketing-shell');
+    const shell = marketing.locator('mnw-app-shell');
+    if ((await shell.getAttribute('layout')) !== 'modal')
+      throw new Error('closed marketing drawer is not shown');
+    await p.evaluate(() => {
+      window.__marketingCard = document.querySelector('mnw-screen-card');
+    });
+    await shell
+      .getByRole('button', {name: 'Open navigation', exact: true})
+      .click();
+    const footer = marketing.locator('mnw-app-shell-footer');
+    await footer.getByRole('button', {name: 'Dark theme', exact: true}).click();
+    await p.waitForFunction(
+      () => document.documentElement.dataset.mnwHubTheme === 'dark'
+    );
+    await p.keyboard.press('Escape');
+    await marketing.evaluate((element) => {
+      element.navigationMode = 'auto';
+    });
+    await p.waitForFunction(
+      () =>
+        document
+          .querySelector('mnw-marketing-shell')
+          .shadowRoot.querySelector('mnw-app-shell').layout === 'permanent'
+    );
+    const same = await p.evaluate(
+      () => window.__marketingCard === document.querySelector('mnw-screen-card')
+    );
+    if (!same)
+      throw new Error('switching the marketing drawer replaced the screen');
+    await marketing.locator('#catalog').waitFor({state: 'visible'});
+  }
+);
+await check(
+  'marketing top bar presents identity without context or actions',
+  'examples/marketing-top-app-bar/',
+  async (p) => {
+    const bar = p.locator('[data-demo] mnw-marketing-top-app-bar');
+    const content = await bar.textContent();
+    if (/GitHub|UI kit/.test(content))
+      throw new Error('promotional content remains in the marketing bar');
+    if (await bar.locator('slot, .context, mnw-github-badge').count())
+      throw new Error('marketing bar still exposes context or action slots');
+  }
+);
+await check(
+  'expressive tabs have inline icons and one moving full-height pill',
+  'examples/expressive-tab-bar/',
+  async (p) => {
+    const bar = p.locator('[data-demo] mnw-expressive-tab-bar');
+    await bar.locator('md-primary-tab').nth(2).click();
+    await p.waitForTimeout(400);
+    const geometry = await bar.evaluate((element) => {
+      const root = element.shadowRoot;
+      const selected = root
+        .querySelectorAll('md-primary-tab')[2]
+        .getBoundingClientRect();
+      const pill = root.querySelector('.selection').getBoundingClientRect();
+      return {
+        inline: element.iconPosition,
+        height: pill.height,
+        left: Math.abs(pill.left - selected.left),
+        width: Math.abs(pill.width - selected.width),
+      };
+    });
+    if (
+      geometry.inline !== 'start' ||
+      geometry.height !== 80 ||
+      geometry.left > 1 ||
+      geometry.width > 1
+    )
+      throw new Error(
+        `incorrect reference tab geometry: ${JSON.stringify(geometry)}`
+      );
+  }
+);
+await check(
+  'the changelog is generated from the project changelog',
+  'changelog/',
+  async (p) => {
+    const text = await p.locator('.docs-route-content').textContent();
+    if (
+      !text.includes('Unreleased') ||
+      !text.includes('October 27, 2026') ||
+      !text.includes('Added') ||
+      !text.includes('Removed')
+    )
+      throw new Error('missing changelog sections or update date');
+  }
+);
+
 const reduced = await browser.newPage({reducedMotion: 'reduce'});
 await check(
   'reduced motion disables launcher wobble and nav motion',
