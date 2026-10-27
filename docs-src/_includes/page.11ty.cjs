@@ -1,6 +1,7 @@
 const site = require('../_data/site.cjs');
 const relative = require('./relative-path.cjs');
 const {escapeHtml} = require('./lib.cjs');
+const socialProfiles = require('./social.cjs');
 
 const isActive = (url, link) =>
   link.href === '/' ? url === '/' : url.startsWith(link.prefix ?? link.href);
@@ -86,11 +87,8 @@ module.exports = function (data) {
           ${content}
         </div>
       </mnw-docs-page>
-      <mnw-site-footer slot="footer" class="site-footer" links-label="Project">
-        <a href="${site.repository}/issues">Issues</a>
-        <a href="${to('/release/')}">Release checklist</a>
-        <a href="https://lit.dev/">Built with Lit</a>
-        <a href="https://material-web.dev/">Material Web</a>
+      <mnw-site-footer slot="footer" class="site-footer">
+        ${socialProfiles()}
       </mnw-site-footer>
     </mnw-docs-shell>
   </body>

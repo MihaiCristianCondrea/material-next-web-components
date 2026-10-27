@@ -13,7 +13,10 @@ export const styles = css`
   ${scrollbarStyles}
   :host {
     display: block;
-    padding: 16px clamp(16px, 3vw, 32px);
+    box-sizing: border-box;
+    width: min(100%, var(--mnw-site-footer-max-width, 900px));
+    margin-inline: auto;
+    padding: 0 16px 24px;
     color: var(--md-sys-color-on-surface-variant, #44474c);
   }
 
@@ -22,23 +25,40 @@ export const styles = css`
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px 24px;
-    padding: 12px 20px;
-    border-radius: 28px;
-    background: var(--md-sys-color-surface-container, #edeef4);
+    gap: 12px 20px;
+    padding: 12px 16px 12px 20px;
+    border-radius: 24px;
+    background: var(
+      --mnw-site-footer-container-color,
+      var(--md-sys-color-surface-container, #edeef4)
+    );
     font: 400 14px/20px
       var(--md-ref-typeface-plain, 'Google Sans Flex', system-ui, sans-serif);
+  }
+
+  .copyright {
+    flex: 1 1 280px;
   }
 
   nav {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-end;
     gap: 4px;
+    margin-inline-start: auto;
   }
 
   nav[hidden] {
     display: none;
+  }
+
+  ::slotted(md-icon-button) {
+    --md-icon-button-icon-color: var(
+      --md-sys-color-on-surface-variant,
+      #44474c
+    );
+    --md-icon-button-icon-size: 20px;
   }
 
   ::slotted(a) {
@@ -61,9 +81,19 @@ export const styles = css`
     outline-offset: 2px;
   }
 
-  @media (max-width: 599px) {
+  @media (max-width: 600px) {
     footer {
+      flex-direction: column;
+      justify-content: center;
       padding: 16px;
+      text-align: center;
+    }
+    .copyright {
+      flex-basis: auto;
+    }
+    nav {
+      justify-content: center;
+      margin-inline-start: 0;
     }
   }
 `;

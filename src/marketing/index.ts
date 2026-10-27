@@ -13,7 +13,7 @@
  *            App Toolkit window rules: pure, no DOM
  *   data/    where settings persist and how views travel in URLs
  *   ui/      custom elements and Lit templates, Material Web only
- *   hub/     the controllers that assemble them: gallery, prototype, embed
+ *   hub/     the controllers that assemble them: gallery, prototype, the hub that joins them, embed
  */
 
 export * from './domain/product.js';
@@ -40,4 +40,5 @@ export * from './ui/screen-inspector.js';
 export * from './hub/screen-host.js';
 export * from './hub/gallery.js';
 export * from './hub/prototype.js';
+export * from './hub/hub.js';
 export * from './hub/embed.js';

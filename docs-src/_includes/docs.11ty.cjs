@@ -9,17 +9,28 @@ const attrJson = (value) => escapeHtml(JSON.stringify(value));
 const withHeadingIds = (html) => {
   const toc = [];
   const used = new Set();
-  const out = html.replace(/<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g, (match, level, attrs, text) => {
-    let id = (attrs.match(/\sid="([^"]+)"/) ?? [])[1];
-    if (!id) {
-      id = slug(text) || 'section';
-      while (used.has(id)) id += '-';
-      attrs += ` id="${id}"`;
+  const out = html.replace(
+    /<h([23])([^>]*)>([\s\S]*?)<\/h\1>/g,
+    (match, level, attrs, text) => {
+      let id = (attrs.match(/\sid="([^"]+)"/) ?? [])[1];
+      if (!id) {
+        id = slug(text) || 'section';
+        while (used.has(id)) id += '-';
+        attrs += ` id="${id}"`;
+      }
+      used.add(id);
+      // data-toc-label names the entry when the heading alone is ambiguous,
+      // as release dates in the changelog are.
+      const label =
+        (attrs.match(/\sdata-toc-label="([^"]+)"/) ?? [])[1] ?? stripTags(text);
+      if (level === '2')
+        toc.push({
+          label: label.replace(/&lt;/g, '<').replace(/&gt;/g, '>'),
+          href: `#${id}`,
+        });
+      return `<h${level}${attrs}>${text}</h${level}>`;
     }
-    used.add(id);
-    if (level === '2') toc.push({label: stripTags(text).replace(/&lt;/g, '<').replace(/&gt;/g, '>'), href: `#${id}`});
-    return `<h${level}${attrs}>${text}</h${level}>`;
-  });
+  );
   return {html: out, toc};
 };
 

@@ -1022,8 +1022,8 @@ await check(
       await shell.locator('#catalog h2, [aria-label="Filter screens"]').count()
     )
       throw new Error('unnecessary catalog header or filter remains');
-    if (!(await shell.locator('mnw-site-footer').count()))
-      throw new Error('missing shared copyright footer');
+    if (await shell.locator('mnw-site-footer, footer').count())
+      throw new Error('a marketing page should have no footer');
   }
 );
 await check(
@@ -1216,9 +1216,23 @@ await check(
   'the palette button themes the site and remembers the choice',
   'install/',
   async (p) => {
-    const footer = await p.locator('mnw-site-footer.site-footer').textContent();
-    if (/GitHub|Changelog/.test(footer))
-      throw new Error('the footer repeats links from the top app bar');
+    const footer = p.locator('mnw-site-footer.site-footer');
+    if (
+      /Issues|Release checklist|Built with Lit|Material Web/.test(
+        await footer.textContent()
+      )
+    )
+      throw new Error('the footer still has the old text links');
+    const profiles = await footer
+      .locator('md-icon-button')
+      .evaluateAll((buttons) =>
+        buttons.map((b) => b.getAttribute('aria-label'))
+      );
+    if (
+      profiles.join() !==
+      'GitHub,Instagram,YouTube,Pinterest,Email,LinkedIn,X,Facebook'
+    )
+      throw new Error(`the footer's social icons are ${profiles.join(', ')}`);
     const primary = () =>
       p.evaluate(() =>
         getComputedStyle(document.documentElement)

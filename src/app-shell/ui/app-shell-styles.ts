@@ -57,6 +57,10 @@ export const styles = css`
     transform: none;
   }
 
+  :host([navigation-mode='none']) .drawer {
+    display: none;
+  }
+
   .drawer {
     box-sizing: border-box;
     display: flex;
@@ -216,13 +220,8 @@ export const styles = css`
     border-bottom: 1px solid var(--_outline-variant);
   }
 
-  :host([appearance='outlined']) .drawer {
+  :host([appearance='outlined'][layout='permanent']) .drawer {
     border-inline-end: 1px solid var(--_outline-variant);
-  }
-
-  :host([appearance='outlined']) .drawer[popover],
-  :host([appearance='outlined'][layout='modal']) .drawer {
-    border-radius: 0;
   }
 
   .main {

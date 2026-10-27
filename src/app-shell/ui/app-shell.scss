@@ -58,6 +58,11 @@
 
 // Drawer ---------------------------------------------------------------------
 
+// navigation-mode="none": a single-screen page, no drawer.
+:host([navigation-mode='none']) .drawer {
+  display: none;
+}
+
 .drawer {
   box-sizing: border-box;
   display: flex;
@@ -234,13 +239,10 @@
   border-bottom: 1px solid var(--_outline-variant);
 }
 
-:host([appearance='outlined']) .drawer {
+// The permanent drawer is a column, so a line ends it; the modal drawer
+// keeps its rounded end corners and its shadow.
+:host([appearance='outlined'][layout='permanent']) .drawer {
   border-inline-end: 1px solid var(--_outline-variant);
-}
-
-:host([appearance='outlined']) .drawer[popover],
-:host([appearance='outlined'][layout='modal']) .drawer {
-  border-radius: 0;
 }
 
 // Top app bar and content -------------------------------------------------

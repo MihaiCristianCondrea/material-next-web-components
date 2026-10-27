@@ -51,8 +51,9 @@ export const styles = css`
   .panel {
     box-sizing: border-box;
     max-height: inherit;
-    overflow: auto;
+    overflow: hidden auto;
     overscroll-behavior: contain;
+    scrollbar-width: thin;
     padding: 16px;
     border-radius: 28px;
     background: var(--md-sys-color-surface-container, #f3edf7);
@@ -61,7 +62,7 @@ export const styles = css`
       0 4px 12px rgba(0, 0, 0, 0.12),
       0 16px 48px rgba(0, 0, 0, 0.16);
     transform-origin: top right;
-    animation: anchored-panel-open 220ms cubic-bezier(0.2, 0, 0, 1) both;
+    animation: anchored-panel-open 220ms cubic-bezier(0.2, 0, 0, 1) backwards;
   }
 
   :host(:dir(rtl)) .panel {

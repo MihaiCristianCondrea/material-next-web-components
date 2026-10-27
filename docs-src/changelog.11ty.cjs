@@ -17,6 +17,14 @@ module.exports = class {
     const source = readFileSync(join(__dirname, '../CHANGELOG.md'), 'utf8')
       .replace(/^# Changelog\s*/, '')
       .replace(/^# /gm, '## ');
-    return md.render(source);
+    // A release heading is its date, with its version on the next line; the
+    // version gives the heading its id and its entry in "On this page".
+    return md
+      .render(source)
+      .replace(
+        /<h2>([^<]+)<\/h2>\s*<p><strong>Version:<\/strong> <code>([^<]+)<\/code><\/p>/g,
+        (_, date, version) =>
+          `<h2 id="v${version.replace(/\./g, '-')}" data-toc-label="${version} · ${date}">${date}</h2>\n<p><strong>Version:</strong> <code>${version}</code></p>`
+      );
   }
 };

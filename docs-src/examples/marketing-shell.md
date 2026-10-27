@@ -1,7 +1,7 @@
 ---
 tags: reference
 name: Marketing shell
-description: "The whole marketing hub page around an app's screen cards: top app bar, preview settings, screen catalog and copyright footer."
+description: "The whole marketing hub page around an app's screen cards: top app bar, preview settings and the screen catalog."
 category: marketing
 icon: storefront
 status: experimental
@@ -12,7 +12,7 @@ order: 100
 
 ## Overview
 
-`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings behind the **Preview settings** button in the top app bar, the screen catalog, and a shared copyright footer. The cards go in its default slot.
+`<mnw-marketing-shell>` is the page of a marketing hub: the shared [`mnw-app-shell`](../app-shell/) with a drawer closed by default (or an optional connected drawer), preview settings behind the **Preview settings** button in the top app bar, and the screen catalog. A marketing page has no footer. With `navigation-mode="none"` it has no drawer and no menu button either, for a hub that is one page of screens. The cards go in its default slot.
 
 Most apps never use it directly: [`mountMarketingGallery()`](../../guides/marketing-hub/#the-gallery) renders it, fills it with live cards and wires every event. Use the element yourself only to build a different gallery (other card content, another data source) with the same page.
 

@@ -36,7 +36,7 @@ export interface GalleryOptions {
   /** The app's palette names (from App Toolkit). "captured" is implied. */
   palettes?: readonly string[];
   /** Drawer presentation. Defaults to `modal`, closed at every width. */
-  navigationMode?: 'auto' | 'modal' | 'permanent';
+  navigationMode?: 'auto' | 'modal' | 'permanent' | 'none';
   /** Shell width from which an automatic drawer is permanent. */
   permanentFrom?: number;
   /** Optional navigation elements for the shell's navigation slot. */
@@ -46,6 +46,11 @@ export interface GalleryOptions {
    * buttons or custom elements such as `<mnw-product-launcher>`.
    */
   actions?: () => unknown;
+  /**
+   * Opens a prototype URL, when a card's own buttons go to another screen.
+   * Defaults to a page load; `mountMarketingHub()` swaps the page instead.
+   */
+  open?: (href: string) => void;
   /** Overrides of the hub defaults, for example `{palette: 'android'}`. */
   defaults?: Partial<PreviewSettings>;
   /** The prototype page, relative to the gallery. */
@@ -87,6 +92,7 @@ export const mountMarketingGallery = ({
   permanentFrom = 900,
   navigation,
   actions,
+  open = (href) => location.assign(href),
 }: GalleryOptions): GalleryHandle => {
   installHubStyles();
   const registry = asRegistry(screens);
@@ -196,7 +202,7 @@ export const mountMarketingGallery = ({
           id,
           ...options,
           // A card's buttons that open another screen open it in the prototype.
-          onGo: (target, state) => location.assign(hrefFor(target, state)),
+          onGo: (target, state) => open(hrefFor(target, state)),
         })
       );
     }

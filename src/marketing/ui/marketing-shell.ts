@@ -13,7 +13,6 @@ import {
   DEFAULT_PREVIEW_SETTINGS,
   type PreviewSettings,
 } from '../domain/preview-settings.js';
-import '../../site-footer.js';
 import '../../app-shell/index.js';
 import type {
   NavigationRequestEvent,
@@ -26,7 +25,7 @@ import {styles} from './marketing-shell-styles.js';
 /**
  * A marketing hub composed with the shared app shell: a connected or closed
  * drawer, product heading, preview settings behind a top app bar button,
- * screen catalog and shared copyright footer.
+ * and screen catalog. A marketing page has no footer.
  *
  * @slot - The `mnw-screen-card` elements.
  * @slot empty - Shown when no cards are supplied.
@@ -56,9 +55,12 @@ export class MaterialNextMarketingShell extends LitElement {
   @property({attribute: false})
   palettes: readonly string[] = [];
 
-  /** Drawer policy: automatic modal/permanent, always closed until opened, or permanent. */
+  /**
+   * Drawer policy: automatic modal/permanent, always closed until opened,
+   * permanent, or `none`: no drawer and no menu button.
+   */
   @property({attribute: 'navigation-mode'})
-  navigationMode: 'auto' | AppShellNavigationMode = 'modal';
+  navigationMode: 'auto' | 'none' | AppShellNavigationMode = 'modal';
 
   /** Shell width from which the automatic drawer is permanent. */
   @property({type: Number, attribute: 'permanent-from'}) permanentFrom = 900;
@@ -165,8 +167,6 @@ export class MaterialNextMarketingShell extends LitElement {
         </section>
 
         <slot name="extra"></slot>
-
-        <mnw-site-footer slot="footer"></mnw-site-footer>
       </mnw-app-shell>
     `;
   }

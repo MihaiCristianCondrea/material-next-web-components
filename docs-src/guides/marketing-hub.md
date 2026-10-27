@@ -28,7 +28,7 @@ This guide builds one for **Pocket Notes**, a sample app with three screens. Its
 
 | The library provides                                                                           | The app provides                                                   |
 | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| The gallery page: shell, top app bar, preview settings, cards, footer                          | Its **screens**: Lit templates translated from its Composables     |
+| The gallery page: shell, top app bar, preview settings, cards                                  | Its **screens**: Lit templates translated from its Composables     |
 | The prototype page: inspector, compare mode, window sizes, capture mode                        | Its **theme**: palettes as `[data-palette]` CSS, fonts, kit styles |
 | `ScreenHost`: state, `set()` and `go()`, palette and theme, device frames, the animation clock | Its **product config**: name, icon, links                          |
 | The embed API for videos and capture scripts                                                   | Its own motion parts, illustrations and campaign code              |
@@ -111,7 +111,9 @@ The gallery uses `mnw-app-shell`, with a closed desktop drawer by default
 connected drawer (permanent from `permanentFrom`, 900px by default), or
 `navigationMode: 'modal'` for a closed drawer at every width. `navigation` can
 render additional destinations into the drawer. Privacy and conduct URLs are
-product settings; the shared footer connects Light/Dark/System to the preview theme.
+product settings; the drawer's footer connects Light/Dark/System to the preview theme.
+`navigationMode: 'none'` drops the drawer and the menu button for a hub that is one
+page of screens. The page has no footer.
 
 `src/gallery-page.js` is a few lines:
 
@@ -125,6 +127,21 @@ product settings; the shared footer connects Light/Dark/System to the preview th
 - opens the prototype page when a card is opened, or when a screen inside a card calls `go()`, carrying the screen's id, the settings and the state in the URL.
 
 It returns a handle with `settings()`, `update(patch)`, `destroy()` and the `registry`. `extra` adds app-specific sections after the catalog, such as motion parts; they render in light DOM with the app's CSS.
+
+### One page for the gallery and its screens
+
+The sample above uses `mountMarketingHub()`, which takes the gallery's options
+and opens each screen's prototype in the same page: no page load, no flash
+between them. A card's **Open** shows the prototype at `?id=<screen>` (the
+same parameters a `screen.html` link carries, so it can still be shared or
+captured), **All screens** and the browser's Back return to the gallery where
+it was scrolled, and Forward opens the screen again. Browsers with view
+transitions cross-fade the two. `prototypeDefaults`, `adsToggle` and
+`fillPhone` go to the prototype. The handle has `page()`, `go(href)` and
+`destroy()`.
+
+Keep a `screen.html` with `mountScreenPrototype()` when capture scripts or
+older links open it directly.
 
 ## The prototype page
 

@@ -10,6 +10,8 @@ import {styles} from './site-footer-styles.js';
  * A rounded copyright bar with optional social links.
  * @slot - Links or Material icon buttons, each with an accessible name.
  * @csspart surface - The footer bar.
+ * @cssprop --mnw-site-footer-max-width - Widest the bar gets, centered. Default `900px`.
+ * @cssprop --mnw-site-footer-container-color - The bar's color. Default `--md-sys-color-surface-container`.
  */
 @customElement('mnw-site-footer')
 export class MaterialNextSiteFooter extends LitElement {
@@ -30,7 +32,7 @@ export class MaterialNextSiteFooter extends LitElement {
         ? `${this.startYear}\u2013${this.endYear}`
         : String(this.endYear);
     return html`<footer part="surface">
-      <span>Copyright © ${years}, ${this.owner}</span>
+      <span class="copyright">Copyright © ${years}, ${this.owner}</span>
       <nav aria-label=${this.linksLabel} ?hidden=${!this.hasLinks}>
         <slot
           @slotchange=${(event: Event) => {

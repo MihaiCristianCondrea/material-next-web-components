@@ -15,6 +15,7 @@ import {
   resolvePalette,
   sanitizeSettings,
   shellLayout,
+  mountMarketingHub,
   writePrototypeView,
   DEFAULT_PREVIEW_SETTINGS,
   DEFAULT_PROTOTYPE_VIEW,
@@ -237,7 +238,7 @@ suite('screen frame defaults', () => {
 });
 
 suite('marketing elements', () => {
-  test('shell keeps its app bar clean and uses the shared copyright footer', async () => {
+  test('shell keeps its app bar clean and has no footer', async () => {
     const el = await fixture<MaterialNextMarketingShell>(
       html`<mnw-marketing-shell
         .product=${{
@@ -251,11 +252,30 @@ suite('marketing elements', () => {
     const root = el.shadowRoot!;
     assert.notExists(root.querySelector('.hero'));
     assert.notExists(root.querySelector('mnw-play-badge, mnw-github-badge'));
-    assert.exists(root.querySelector('mnw-site-footer[slot="footer"]'));
+    assert.notExists(root.querySelector('mnw-site-footer, footer'));
     assert.notExists(
       root.querySelector('.catalog-header, md-chip-set, .count')
     );
     assert.exists(root.querySelector('.grid slot'));
+  });
+
+  test('navigation-mode="none" has no drawer and no menu button', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell
+        navigation-mode="none"
+        .product=${{id: 'demo', name: 'Demo', icon: ''}}
+      ></mnw-marketing-shell>`
+    );
+    const shell = el.shadowRoot!.querySelector('mnw-app-shell')!;
+    await shell.updateComplete;
+    assert.notExists(shell.shadowRoot!.querySelector('.leading'));
+    assert.equal(
+      getComputedStyle(shell.shadowRoot!.querySelector('.drawer')!).display,
+      'none'
+    );
+    shell.openDrawer();
+    await shell.updateComplete;
+    assert.isFalse(shell.drawerOpen);
   });
 
   test('shell shows a fallback when no cards are supplied', async () => {
@@ -266,10 +286,6 @@ suite('marketing elements', () => {
     );
     const root = el.shadowRoot!;
     assert.notExists(root.querySelector('mnw-play-badge'));
-    assert.notInclude(
-      root.querySelector('mnw-site-footer')?.textContent ?? '',
-      'trademarks'
-    );
     assert.exists(root.querySelector('.empty'));
   });
 
@@ -416,5 +432,44 @@ suite('marketing elements', () => {
       selected: boolean;
     }>;
     assert.isTrue(e.detail.selected);
+  });
+});
+
+suite('marketing hub', () => {
+  test('opens a screen and returns to the gallery without a page load', async () => {
+    const start = location.href;
+    const root = await fixture<HTMLDivElement>(html`<div></div>`);
+    const hub = mountMarketingHub({
+      product: {id: 'hub-test', name: 'Hub test', icon: ''},
+      screens: [screen('a'), screen('b')],
+      root,
+      store: {load: () => DEFAULT_PREVIEW_SETTINGS, save: () => {}},
+    });
+    try {
+      assert.equal(hub.page(), 'gallery');
+      await new Promise((r) => requestAnimationFrame(r));
+      assert.lengthOf(root.querySelectorAll('mnw-screen-card'), 2);
+      const card = root.querySelector('mnw-screen-card')!;
+      assert.include(card.getAttribute('href')!, `${location.pathname}?id=a`);
+
+      hub.go(card.getAttribute('href')!);
+      await new Promise((r) => setTimeout(r, 50));
+      assert.equal(hub.page(), 'prototype');
+      assert.exists(root.querySelector('mnw-prototype-layout'));
+      assert.notExists(root.querySelector('mnw-marketing-shell'));
+      assert.equal(history.state?.mnwHubFrom, 'gallery');
+
+      const back = new Promise((r) =>
+        addEventListener('popstate', r, {once: true})
+      );
+      hub.go(location.pathname);
+      await back;
+      await new Promise((r) => setTimeout(r, 50));
+      assert.equal(hub.page(), 'gallery');
+      assert.exists(root.querySelector('mnw-marketing-shell'));
+    } finally {
+      hub.destroy();
+      history.replaceState(null, '', start);
+    }
   });
 });

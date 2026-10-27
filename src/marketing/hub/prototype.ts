@@ -47,6 +47,12 @@ export interface PrototypeOptions {
   root?: HTMLElement;
 }
 
+export interface PrototypeHandle {
+  hosts(): ScreenHost[];
+  /** Stops the screens and listeners and empties `root`, for a hub that swaps pages. */
+  destroy(): void;
+}
+
 type Side = {label: string; icon: string; patch: Partial<HostView>};
 type HostView = Pick<
   ScreenHostOptions,
@@ -69,7 +75,7 @@ export const mountScreenPrototype = ({
   adsToggle = false,
   fillPhone = true,
   root = document.body,
-}: PrototypeOptions) => {
+}: PrototypeOptions): PrototypeHandle => {
   installHubStyles();
   const registry = Array.isArray(screens)
     ? createScreenRegistry(screens)
@@ -133,7 +139,13 @@ export const mountScreenPrototype = ({
       onGo: () => {},
     });
     markReady();
-    return {hosts: () => [host]};
+    return {
+      hosts: () => [host],
+      destroy() {
+        host.destroy();
+        root.classList.remove('mnw-capture', 'mnw-capture--framed');
+      },
+    };
   }
 
   let hosts: ScreenHost[] = [];
@@ -181,8 +193,10 @@ export const mountScreenPrototype = ({
   };
 
   const syncUrl = () => {
+    // Keeps history.state: mountMarketingHub() records where a screen was
+    // opened from.
     history.replaceState(
-      null,
+      history.state,
       '',
       writePrototypeView(new URL(location.href), {...view, id}, defaults)
     );
@@ -249,12 +263,13 @@ export const mountScreenPrototype = ({
       const w = child.offsetWidth;
       const h = child.offsetHeight;
       if (!w || !h) continue;
-      // Room around the device for the frame's drop shadow, which falls
-      // mostly below it.
+      // As tall as the stage allows, less a hairline of room. The frame's
+      // shadow paints into the page padding around the stage (see
+      // prototype-layout.scss), where the window edge, not the stage, ends it.
       const scale = Math.min(
         1,
-        (stage.clientWidth - 64) / w,
-        (stage.clientHeight - 112) / h
+        (stage.clientWidth - 32) / w,
+        (stage.clientHeight - 24) / h
       );
       // A transform, not zoom: zoom shrinks the layout box but a device
       // frame's artwork can still paint at full size. The stage centers the
@@ -335,9 +350,19 @@ export const mountScreenPrototype = ({
     }
   };
 
-  media.addEventListener('change', () => view.theme === 'system' && draw());
+  const onSystemTheme = () => view.theme === 'system' && draw();
+  media.addEventListener('change', onSystemTheme);
   syncUrl();
   draw();
   markReady();
-  return {hosts: () => [...hosts]};
+  return {
+    hosts: () => [...hosts],
+    destroy() {
+      media.removeEventListener('change', onSystemTheme);
+      sizes.disconnect();
+      for (const h of hosts) h.destroy();
+      hosts = [];
+      render(null, root);
+    },
+  };
 };

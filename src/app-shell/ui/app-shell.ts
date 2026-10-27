@@ -97,9 +97,12 @@ export class MaterialNextAppShell extends LitElement {
   @property({attribute: 'active-path'})
   activePath = '';
 
-  /** `auto` follows the layout policy; `modal` and `permanent` force a layout. */
-  @property({attribute: 'navigation-mode'})
-  navigationMode: 'auto' | AppShellNavigationMode = 'auto';
+  /**
+   * `auto` follows the layout policy; `modal` and `permanent` force a layout;
+   * `none` has no drawer and no menu button, for single-screen pages.
+   */
+  @property({attribute: 'navigation-mode', reflect: true})
+  navigationMode: 'auto' | 'none' | AppShellNavigationMode = 'auto';
 
   /** The width, in CSS pixels of the shell, from which the drawer is permanent. */
   @property({type: Number, attribute: 'permanent-from'})
@@ -181,9 +184,10 @@ export class MaterialNextAppShell extends LitElement {
     super.disconnectedCallback();
   }
 
-  /** Opens the modal drawer. Does nothing beside a permanent drawer. */
+  /** Opens the modal drawer. Does nothing beside a permanent drawer or without one. */
   openDrawer() {
-    if (this.layout === 'modal') this.drawerOpen = true;
+    if (this.layout === 'modal' && this.navigationMode !== 'none')
+      this.drawerOpen = true;
   }
 
   /** Closes the modal drawer and returns focus to the menu button. */
@@ -218,7 +222,9 @@ export class MaterialNextAppShell extends LitElement {
     const layout =
       this.navigationMode === 'auto'
         ? resolveNavigationMode(this.width, this.policy)
-        : this.navigationMode;
+        : this.navigationMode === 'none'
+          ? 'modal'
+          : this.navigationMode;
     if (layout !== this.layout) {
       const switched = this.hasUpdated;
       // Before render hides or moves the drawer, which would drop focus.
@@ -512,7 +518,12 @@ export class MaterialNextAppShell extends LitElement {
 
   private renderLeading() {
     const back = this.leading === 'back';
-    if (!back && (this.leading !== 'menu' || this.layout !== 'modal')) {
+    if (
+      !back &&
+      (this.leading !== 'menu' ||
+        this.layout !== 'modal' ||
+        this.navigationMode === 'none')
+    ) {
       return nothing;
     }
     return html`<md-icon-button

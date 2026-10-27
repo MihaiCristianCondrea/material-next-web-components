@@ -4,7 +4,33 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.4 (October 27, 2026)
+# Unreleased
+
+**Version:** `0.0.5`
+
+### Added
+
+- `mountMarketingHub()`: the gallery and the prototype in one page. A card opens its screen at `?id=<screen>` without a page load, and **All screens** or Back return to the gallery where it was scrolled; view transitions cross-fade the two where browsers have them. `mountScreenPrototype()` returns a handle with `destroy()`.
+- `navigation-mode="none"` on `<mnw-app-shell>` and `<mnw-marketing-shell>` (`navigationMode: 'none'` for the gallery): no drawer and no menu button.
+
+### Changed
+
+- A marketing page has no footer: the gallery no longer renders the copyright bar.
+- `<mnw-site-footer>` follows the design Profile started with: at most 900px wide (`--mnw-site-footer-max-width`) and centered, 24px corners, and stacked and centered below 600px. `--mnw-site-footer-container-color` sets its color.
+- The documentation footer shows the author's social profiles instead of text links.
+- The prototype scales a device to the stage's full height.
+- The changelog dates each release and gives its version on the line below.
+
+### Fixed
+
+- `appearance="outlined"` squared off the modal drawer and drew a line along its edge. The modal drawer keeps its rounded corners; only a permanent drawer has the edge line.
+- A palette select in the preview settings panel made the panel scroll when its menu opened. Selects open their menus in the top layer, and the panel no longer keeps a transform after its entrance.
+
+---
+
+# October 27, 2026
+
+**Version:** `0.0.4`
 
 ### Added
 
@@ -38,7 +64,9 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.3 (October 27, 2026)
+# October 27, 2026
+
+**Version:** `0.0.3`
 
 ### Fixed
 
@@ -56,7 +84,9 @@ Last updated: October 27, 2026.
 
 ---
 
-# 0.0.2 (October 27, 2026)
+# October 27, 2026
+
+**Version:** `0.0.2`
 
 ### Added
 
@@ -85,7 +115,9 @@ Last updated: October 27, 2026.
 
 - Code scanning now skips `references/`, the read-only upstream snapshots, and build output. Their alerts were in code Material Next does not ship or run.
 
-# 0.0.1 (October 27, 2026)
+# October 27, 2026
+
+**Version:** `0.0.1`
 
 The first release of Material Next: Material 3 Expressive web components built on Lit and Material Web.
 

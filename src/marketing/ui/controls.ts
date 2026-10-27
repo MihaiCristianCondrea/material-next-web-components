@@ -49,7 +49,11 @@ export const segments = <T extends string>(
     )}
   </md-outlined-segmented-button-set>`;
 
-/** Outlined select whose visible label sits above it, outside the field. */
+/**
+ * Outlined select whose visible label sits above it, outside the field. Its
+ * menu opens in the top layer, so a scrolling or animated panel around it
+ * neither clips it nor scrolls to make room.
+ */
 export const select = <T extends string>(
   label: string,
   items: ReadonlyArray<Labelled<T>>,
@@ -59,7 +63,7 @@ export const select = <T extends string>(
   html`<md-outlined-select
     aria-label=${label}
     .value=${String(value)}
-    .menuPositioning=${'fixed' as const}
+    .menuPositioning=${'popover' as const}
     @change=${(e: Event) => onPick((e.target as HTMLSelectElement).value as T)}
   >
     ${items.map(
