@@ -4,6 +4,16 @@ Last updated: October 27, 2026.
 
 ---
 
+# Unreleased
+
+**Version:** `0.0.7`
+
+### Fixed
+
+- Rapid screen changes and Back/Forward navigation no longer leave a rejected view-transition promise unhandled. Interrupting an animation still renders the latest screen.
+
+---
+
 # October 27, 2026
 
 **Version:** `0.0.6`

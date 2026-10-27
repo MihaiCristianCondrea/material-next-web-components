@@ -92,13 +92,14 @@ export const mountMarketingHub = ({
   // A view transition where the browser has one: the page cross-fades
   // instead of flashing empty between the two views.
   const swap = () => {
-    const start = (
-      document as Document & {startViewTransition?: (cb: () => void) => void}
-    ).startViewTransition;
+    const start = document.startViewTransition;
     // A hidden page has nothing to animate, and its transition would wait.
-    if (start && document.visibilityState === 'visible')
-      start.call(document, show);
-    else show();
+    if (start && document.visibilityState === 'visible') {
+      const transition = start.call(document, show);
+      // A later navigation can skip this animation while its DOM update still succeeds.
+      // Only animation readiness is optional; callback failures remain observable.
+      void transition.ready.catch(() => {});
+    } else show();
   };
 
   function go(href: string) {

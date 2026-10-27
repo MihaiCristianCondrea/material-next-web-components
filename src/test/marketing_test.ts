@@ -481,4 +481,44 @@ suite('marketing hub', () => {
       history.replaceState(null, '', start);
     }
   });
+
+  test('rapid navigation replaces a view transition without an unhandled rejection', async () => {
+    if (!document.startViewTransition) return;
+    const start = location.href;
+    const nativeStart = document.startViewTransition;
+    const transitions: ViewTransition[] = [];
+    const errors: unknown[] = [];
+    const onUnhandled = (event: PromiseRejectionEvent) =>
+      errors.push(event.reason);
+    addEventListener('unhandledrejection', onUnhandled);
+    document.startViewTransition = (update) => {
+      const transition = nativeStart.call(document, update);
+      transitions.push(transition);
+      return transition;
+    };
+    const root = await fixture<HTMLDivElement>(html`<div></div>`);
+    const hub = mountMarketingHub({
+      product: {id: 'hub-interruption-test', name: 'Hub test', icon: ''},
+      screens: [
+        screen('a'),
+        screen('b', {render: () => html`<p data-current>B</p>`}),
+      ],
+      root,
+      store: {load: () => DEFAULT_PREVIEW_SETTINGS, save: () => {}},
+    });
+    try {
+      hub.go(`${location.pathname}?id=a`);
+      hub.go(`${location.pathname}?id=b`);
+      await until(() => !!root.querySelector('[data-current]'));
+      await Promise.all(transitions.map((transition) => transition.finished));
+      assert.deepEqual(errors, []);
+      assert.equal(root.querySelector('[data-current]')!.textContent, 'B');
+      assert.equal(new URL(location.href).searchParams.get('id'), 'b');
+    } finally {
+      hub.destroy();
+      document.startViewTransition = nativeStart;
+      removeEventListener('unhandledrejection', onUnhandled);
+      history.replaceState(null, '', start);
+    }
+  });
 });
