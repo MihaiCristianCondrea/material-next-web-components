@@ -57,6 +57,15 @@ Import the module and place the element in an app bar's trailing area:
 
 The project icons ship in `assets/marketing/launcher/`. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
 
+### Dark mode
+
+The panel, favorites card, hover surfaces, edit controls and monochrome artwork follow the host's
+`color-scheme`. This also works while the panel is open. Leave **Follow color palette** off for
+Google's light and dark colors, or turn it on to use the host's Material roles.
+
+Material Next's `applyColorTheme()` sets the scheme for light, dark and system modes. If a host owns
+its theme, set `color-scheme: light`, `dark` or `light dark` on its root along with its color tokens.
+
 ### Icon artwork
 
 The launcher draws each tile and its hover surface; an entry's `image` is only the mark. It is contained in a 40px square, so every icon reads at the same size whatever its proportions:

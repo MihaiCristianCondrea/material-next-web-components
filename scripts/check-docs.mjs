@@ -1158,6 +1158,23 @@ await check(
         'dark'
       )
         throw new Error('the dark mode was not remembered');
+      const launcher = p.locator('.site-actions mnw-product-launcher');
+      await launcher.locator('.trigger').click();
+      const darkPanel = await launcher
+        .locator('.panel')
+        .evaluate((el) => getComputedStyle(el).backgroundColor);
+      if (darkPanel !== 'rgb(45, 46, 48)')
+        throw new Error(`launcher does not follow dark mode: ${darkPanel}`);
+      await launcher.locator('.edit').click();
+      const doneColor = await launcher
+        .locator('.done')
+        .evaluate((el) => getComputedStyle(el).color);
+      if (doneColor !== 'rgb(227, 227, 227)')
+        throw new Error(
+          `launcher edit controls lack dark contrast: ${doneColor}`
+        );
+      await launcher.locator('.cancel').click();
+      await p.keyboard.press('Escape');
     } finally {
       // Later checks expect the site's own colors.
       await p.evaluate(() => localStorage.removeItem('mnw-docs:theme'));

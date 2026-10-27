@@ -132,6 +132,14 @@ suite('applyColorTheme', () => {
     assert.equal(primary, colorScheme('#006a6a', {dark: true}).primary);
   });
 
+  test('system mode opts the document into both browser color schemes', () => {
+    applyColorTheme({mode: 'dark'});
+    applyColorTheme({mode: 'system'});
+    assert.equal(document.documentElement.style.colorScheme, 'light dark');
+    applyColorTheme({sourceColor: '#006a6a', mode: 'system'});
+    assert.equal(document.documentElement.style.colorScheme, 'light dark');
+  });
+
   test('without a source color removes the style and keeps the mode', () => {
     applyColorTheme({sourceColor: '#006a6a', mode: 'light'});
     applyColorTheme({mode: 'light'});

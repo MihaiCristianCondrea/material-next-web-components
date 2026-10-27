@@ -28,7 +28,6 @@ export const styles = css`
     --_outline: light-dark(#c4c7c5, #5e5e5e);
     --_hover: light-dark(#f0f4f9, #333537);
     --_redirect-hover: light-dark(#dde3ea, #3c4043);
-    --_mono: var(--mnw-launcher-monochrome-filter, none);
     --mnw-scrollbar-thumb: light-dark(#c4c7c5, #5e5e5e);
     font-family: var(
       --md-ref-typeface-plain,
@@ -59,11 +58,6 @@ export const styles = css`
     --mnw-scrollbar-thumb: var(--md-sys-color-primary, #0b57d0);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :host([follow-color-palette]) {
-      --_mono: var(--mnw-launcher-monochrome-filter, invert(1));
-    }
-  }
   .trigger[aria-expanded='true'] {
     --md-icon-button-icon-color: var(--_primary);
     --md-icon-button-hover-icon-color: var(--_primary);
@@ -83,6 +77,7 @@ export const styles = css`
     background: transparent;
     color: var(--_text);
     color-scheme: inherit;
+    --md-focus-ring-color: var(--_primary);
     overflow: visible;
     z-index: 60;
   }
@@ -147,6 +142,14 @@ export const styles = css`
     font-weight: 500;
     line-height: 1.5rem;
     letter-spacing: -0.01em;
+  }
+
+  .edit,
+  .close {
+    --md-icon-button-icon-color: var(--_text);
+    --md-icon-button-hover-icon-color: var(--_text);
+    --md-icon-button-focus-icon-color: var(--_text);
+    --md-icon-button-pressed-icon-color: var(--_text);
   }
 
   .edit:hover {

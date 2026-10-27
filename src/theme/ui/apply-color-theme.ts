@@ -22,7 +22,7 @@ export const applyColorTheme = (
   if (!doc) return;
   const root = doc.documentElement;
   root.dataset.colorMode = mode;
-  root.style.colorScheme = mode === 'system' ? '' : mode;
+  root.style.colorScheme = mode === 'system' ? 'light dark' : mode;
   let style = doc.head.querySelector<HTMLStyleElement>(
     `style[${STYLE_ATTRIBUTE}]`
   );

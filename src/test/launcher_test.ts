@@ -549,7 +549,8 @@ suite('mnw-product-launcher', () => {
     pointer('pointerup', window, ...center('.card'));
     await el.updateComplete;
     assert.include(el.favoriteIds, 'console:play');
-    const favorite = tiles(el).at(-1)!;
+    const favorites = tiles(el);
+    const favorite = favorites[favorites.length - 1];
     pointer(
       'pointerdown',
       favorite,
@@ -591,6 +592,28 @@ suite('mnw-product-launcher', () => {
       getComputedStyle(el.shadowRoot!.querySelector('.card')!).backgroundColor,
       'rgb(27, 27, 27)'
     );
+  });
+
+  test('a live color-scheme switch updates view and edit controls without a rerender', async () => {
+    const {el} = await mount();
+    el.style.colorScheme = 'light';
+    el.show();
+    await el.updateComplete;
+    const panel = el.shadowRoot!.querySelector('.panel')!;
+    const edit = el.shadowRoot!.querySelector<HTMLElement>('.edit')!;
+    el.style.colorScheme = 'dark';
+    assert.equal(getComputedStyle(panel).backgroundColor, 'rgb(45, 46, 48)');
+    assert.equal(
+      getComputedStyle(edit.shadowRoot!.querySelector('button')!).color,
+      'rgb(227, 227, 227)'
+    );
+    edit.click();
+    await el.updateComplete;
+    const done = el.shadowRoot!.querySelector('.done')!;
+    assert.equal(getComputedStyle(done).color, 'rgb(227, 227, 227)');
+    el.style.colorScheme = 'light';
+    assert.equal(getComputedStyle(panel).backgroundColor, 'rgb(233, 238, 246)');
+    assert.equal(getComputedStyle(done).color, 'rgb(31, 31, 31)');
   });
 
   test('old stored favorites show the renamed admin and never retired products', async () => {
