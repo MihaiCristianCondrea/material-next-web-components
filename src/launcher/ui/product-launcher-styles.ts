@@ -219,8 +219,7 @@ export const styles = css`
     display: grid;
     place-items: center;
     flex: none;
-    width: 100%;
-    max-width: 96px;
+    width: 40px;
     height: 40px;
     border-radius: 14px;
     background: transparent;
@@ -230,7 +229,7 @@ export const styles = css`
 
   .icon img {
     display: block;
-    width: 100%;
+    width: 40px;
     height: 40px;
     min-width: 0;
     object-fit: contain;

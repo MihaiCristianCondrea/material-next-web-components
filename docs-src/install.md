@@ -12,7 +12,7 @@ description: Add Material Next to a project, import the modules you use, and loa
 npm install material-next-web-components lit @material/web
 ```
 
-The package has not been released yet. npm publishing is configured through GitHub releases. Until the first release (0.0.1) is out, install from a clone instead: see [Build from source](#build-from-source).
+Releases are published to npm from GitHub releases; the [changelog](../changelog/) lists what each one changes. To try unreleased changes, build from a clone: see [Build from source](#build-from-source).
 
 `lit` (^3.3.3) and `@material/web` (^2.4.1) are **peer dependencies**: your app installs them, and the library uses the same copies, so there is one Lit and one set of Material Web elements on the page. npm 7 and later install peer dependencies automatically; listing them yourself keeps their versions explicit.
 
@@ -104,7 +104,7 @@ git clone https://github.com/MihaiCristianCondrea/material-next-web-components.g
 cd material-next-web-components
 npm install
 npm run build      # compiles to dist/
-npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-0.0.1.tgz
+npm pack           # a .tgz to install elsewhere with npm install ./material-next-web-components-<version>.tgz
 ```
 
 `npm install`, Git dependency installs and `npm pack` run `prepare`, which builds
@@ -116,7 +116,7 @@ To consume an unreleased checkout locally:
 ```bash
 npm pack
 # In the consuming app:
-npm install /path/to/material-next-web-components-0.0.1.tgz
+npm install /path/to/material-next-web-components-<version>.tgz
 ```
 
 You can also use a Git dependency pinned to a full commit SHA. npm installs the

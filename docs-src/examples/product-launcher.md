@@ -57,6 +57,15 @@ Import the module and place the element in an app bar's trailing area:
 
 The project icons ship in `assets/marketing/launcher/`. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
 
+### Icon artwork
+
+The launcher draws each tile and its hover surface; an entry's `image` is only the mark. It is contained in a 40px square, so every icon reads at the same size whatever its proportions:
+
+- **Format**: SVG first, then PNG or WebP (at least 80px for sharp 2x screens).
+- **No frame of its own**: a transparent background, with no border, tile, circle or drop shadow. A logo that comes inside a rounded square looks smaller than its neighbours and doubles the tile.
+- **Cropped close**: little empty margin around the artwork. A wide logo keeps its proportions and is fitted to the square's width.
+- **One colour that inverts**: set `monochrome` for a single dark mark (GitHub's) so it turns light in dark themes.
+
 ### Entries and ids
 
 Every entry has a `kind` and a `key`, and its id is `kind:key`:

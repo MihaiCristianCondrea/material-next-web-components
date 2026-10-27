@@ -8,9 +8,12 @@ import {customElement, property} from 'lit/decorators.js';
 import {styles} from './marketing-top-app-bar-styles.js';
 
 /**
- * The hub's identity-only top app bar: the app icon and name. It reflects `scrolled` while the page is
- * scrolled, which gives it the raised container tone.
+ * The hub's top app bar: the app icon and name leading, and any actions
+ * trailing. It reflects `scrolled` while the page is scrolled, which gives it
+ * the raised container tone.
  *
+ * @slot actions - Trailing actions: icon buttons, buttons, links, a
+ *   `<mnw-product-launcher>` or any custom element, in reading order.
  */
 @customElement('mnw-marketing-top-app-bar')
 export class MaterialNextMarketingTopAppBar extends LitElement {
@@ -54,6 +57,7 @@ export class MaterialNextMarketingTopAppBar extends LitElement {
         ${this.icon ? html`<img src=${this.icon} alt="" />` : nothing}
         <span class="name">${this.name}</span>
       </a>
+      <div class="actions"><slot name="actions"></slot></div>
     </header>`;
   }
 }

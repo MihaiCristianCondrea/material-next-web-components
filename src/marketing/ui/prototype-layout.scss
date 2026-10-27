@@ -25,6 +25,12 @@
   background: var(--mnw-hub-stage);
   border: 1px solid var(--mnw-hub-border-subtle);
   overflow: auto;
+  // The stage holds a mock, so it scrolls without a bar like the mock does.
+  scrollbar-width: none;
+}
+
+.stage::-webkit-scrollbar {
+  display: none;
 }
 
 ::slotted([slot='stage']) {

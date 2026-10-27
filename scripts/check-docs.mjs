@@ -574,7 +574,7 @@ await check('the app bar launcher loads its icons', '', async (p) => {
       height: img.getBoundingClientRect().height,
     }))
   );
-  if (imageSizes.some((image) => image.height > 40.5 || image.width > 96.5))
+  if (imageSizes.some((image) => image.height > 40.5 || image.width > 40.5))
     throw new Error(
       `launcher artwork overflows its icon slot: ${JSON.stringify(imageSizes)}`
     );
@@ -1094,15 +1094,35 @@ await check(
   }
 );
 await check(
-  'marketing top bar presents identity without context or actions',
+  'marketing top bar puts its actions at the trailing end',
   'examples/marketing-top-app-bar/',
   async (p) => {
     const bar = p.locator('[data-demo] mnw-marketing-top-app-bar');
-    const content = await bar.textContent();
-    if (/GitHub|UI kit/.test(content))
-      throw new Error('promotional content remains in the marketing bar');
-    if (await bar.locator('slot, .context, mnw-github-badge').count())
-      throw new Error('marketing bar still exposes context or action slots');
+    if (await bar.locator('.context, mnw-github-badge').count())
+      throw new Error('the marketing bar shows a context label or badge');
+    const geometry = await bar.evaluate((el) => {
+      const root = el.shadowRoot;
+      const box = (node) => node.getBoundingClientRect();
+      const bar = box(root.querySelector('.bar'));
+      const actions = [...el.querySelectorAll('[slot="actions"]')].map(box);
+      return {
+        brand: box(root.querySelector('.brand')).right,
+        end:
+          bar.right -
+          parseFloat(getComputedStyle(root.querySelector('.bar')).paddingRight),
+        first: actions[0]?.left ?? 0,
+        last: actions.at(-1)?.right ?? 0,
+        count: actions.length,
+      };
+    });
+    if (
+      geometry.count !== 2 ||
+      geometry.first <= geometry.brand ||
+      Math.abs(geometry.last - geometry.end) > 1
+    )
+      throw new Error(
+        `marketing bar actions misplaced: ${JSON.stringify(geometry)}`
+      );
   }
 );
 await check(
@@ -1143,9 +1163,10 @@ await check(
     const text = await p.locator('.docs-route-content').textContent();
     if (
       !text.includes('Unreleased') ||
+      !text.includes('0.0.1') ||
       !text.includes('October 27, 2026') ||
       !text.includes('Added') ||
-      !text.includes('Removed')
+      !text.includes('Fixed')
     )
       throw new Error('missing changelog sections or update date');
   }

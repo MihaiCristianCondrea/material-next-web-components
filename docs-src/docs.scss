@@ -1363,7 +1363,18 @@ mnw-screen-card {
   width: min(100%, 380px);
 }
 
-// Outside a hub page (no installHubStyles()), give fill hosts the rule it adds.
+// Outside a hub page (no installHubStyles()), give mocks the rules it adds:
+// no scrollbars, as on Android, and fill hosts that fill.
+.mnw-mount,
+.mnw-mount * {
+  scrollbar-width: none;
+}
+
+.mnw-mount ::-webkit-scrollbar,
+.mnw-mount::-webkit-scrollbar {
+  display: none;
+}
+
 .demo .mnw-mount--fill > :not(mnw-device-frame) {
   width: 100% !important;
   height: 100% !important;

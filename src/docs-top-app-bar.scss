@@ -10,6 +10,9 @@
   width: 100%;
   min-height: 64px;
   padding: 8px clamp(16px, 4vw, 48px);
+  // Trailing actions are icon buttons whose glyph already sits 8px inside its
+  // 40px target, so the end edge needs less room than the brand's.
+  padding-inline-end: clamp(8px, 2vw, 24px);
   border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
   background: color-mix(
     in srgb,

@@ -1,0 +1,11 @@
+name: Material Next CodeQL
+
+# references/ holds read-only snapshots of other projects (Material Web, its
+# catalog, workshop samples) for research only: never imported, bundled or
+# edited (references/docs/references.md). Its code is not this library's, so
+# it is not analysed. Build output is not analysed either.
+paths-ignore:
+  - references
+  - docs
+  - dist
+  - node_modules

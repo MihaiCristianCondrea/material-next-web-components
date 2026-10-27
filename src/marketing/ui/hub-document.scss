@@ -31,6 +31,18 @@
   line-height: normal;
 }
 
+// Mocks scroll like the app does on Android: by touch, wheel or keys, with no
+// scrollbar drawn (Compose shows none).
+.mnw-mount,
+.mnw-mount * {
+  scrollbar-width: none;
+}
+
+.mnw-mount ::-webkit-scrollbar,
+.mnw-mount::-webkit-scrollbar {
+  display: none;
+}
+
 // Frameless previews fill their stage, as the app fills a phone.
 .mnw-mount--fill {
   width: 100%;

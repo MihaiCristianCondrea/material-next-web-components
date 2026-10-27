@@ -212,12 +212,13 @@ h2 {
   --md-focus-ring-shape: 16px;
 }
 
+// Every icon gets the same 40px square and is contained in it, so a wide logo
+// (Cloudflare) is as large as a square one, not as wide as the tile.
 .icon {
   display: grid;
   place-items: center;
   flex: none;
-  width: 100%;
-  max-width: 96px;
+  width: 40px;
   height: 40px;
   border-radius: 14px;
   background: transparent;
@@ -227,7 +228,8 @@ h2 {
 
 .icon img {
   display: block;
-  width: 100%;
+  // Fixed, not 100%: a percentage height in the grid's auto row is ignored.
+  width: 40px;
   height: 40px;
   min-width: 0;
   object-fit: contain;

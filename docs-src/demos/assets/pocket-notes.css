@@ -211,10 +211,12 @@
   text-align: center;
 }
 
+/* Bottom-end of the content, 16 dp above the navigation bar or from the
+   window edge beside the rail, as a Scaffold places it. */
 .pn-fab {
   position: absolute;
-  right: 16px;
-  bottom: 104px;
+  inset-inline-end: 16px;
+  bottom: 16px;
 }
 
 .pn-nav {
@@ -234,7 +236,10 @@
   border: 0;
   background: none;
   color: var(--md-sys-color-on-surface-variant);
-  font: 500 12px/16px 'Google Sans Flex', system-ui, sans-serif;
+  font:
+    500 12px/16px 'Google Sans Flex',
+    system-ui,
+    sans-serif;
   cursor: pointer;
 }
 
@@ -360,8 +365,10 @@
 }
 
 .pn-frame__body {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex: 1;
   min-width: 0;
+  min-height: 0;
 }

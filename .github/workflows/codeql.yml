@@ -23,6 +23,7 @@ jobs:
         uses: github/codeql-action/init@v4.39.0
         with:
           languages: javascript-typescript
+          config-file: ./.github/codeql/codeql-config.yml
       - name: Setup Node
         uses: actions/setup-node@v7
         with:

@@ -2,7 +2,7 @@
 
 Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
 
-> Status: unreleased. `0.0.1` is the first planned release. npm publishing is configured through GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
+> Status: `0.0.1` is on npm; `0.0.2` is in progress (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
 
 ## Links
 

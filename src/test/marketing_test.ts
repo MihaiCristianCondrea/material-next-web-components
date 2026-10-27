@@ -316,14 +316,53 @@ suite('marketing elements', () => {
     assert.equal((await changed).detail.theme, 'dark');
   });
 
-  test('standalone marketing bar contains identity only', async () => {
+  test('standalone marketing bar puts slotted actions after the brand', async () => {
     const el = await fixture<MaterialNextMarketingTopAppBar>(
-      html`<mnw-marketing-top-app-bar name="Demo"></mnw-marketing-top-app-bar>`
+      html`<mnw-marketing-top-app-bar name="Demo"
+        ><button slot="actions">Get</button
+        ><a slot="actions" href="#">Source</a></mnw-marketing-top-app-bar
+      >`
     );
-    assert.notExists(
-      el.shadowRoot!.querySelector('slot, .context, mnw-github-badge')
+    const root = el.shadowRoot!;
+    assert.notExists(root.querySelector('.context, mnw-github-badge'));
+    const slot = root.querySelector<HTMLSlotElement>(
+      '.actions slot[name="actions"]'
+    )!;
+    assert.deepEqual(
+      slot.assignedElements().map((e) => e.localName),
+      ['button', 'a']
     );
-    assert.notInclude(el.shadowRoot!.textContent!, 'UI kit');
+    const brand = root.querySelector('.brand')!.getBoundingClientRect();
+    const actions = root.querySelector('.actions')!.getBoundingClientRect();
+    const gutter = parseFloat(
+      getComputedStyle(root.querySelector('.bar')!).paddingInlineEnd
+    );
+    assert.isAbove(actions.left, brand.right);
+    assert.closeTo(
+      actions.right,
+      el.getBoundingClientRect().right - gutter,
+      1,
+      'actions end at the trailing gutter'
+    );
+  });
+
+  test('shell forwards actions to the app shell top app bar', async () => {
+    const el = await fixture<MaterialNextMarketingShell>(
+      html`<mnw-marketing-shell .product=${{id: 'demo', name: 'Demo', icon: ''}}
+        ><button slot="actions" id="get">Get</button></mnw-marketing-shell
+      >`
+    );
+    const forwarded = el.shadowRoot!.querySelector<HTMLSlotElement>(
+      'slot[name="actions"]'
+    )!;
+    assert.equal(forwarded.slot, 'actions');
+    assert.equal(forwarded.assignedElements()[0]?.id, 'get');
+    const shell = el.shadowRoot!.querySelector('mnw-app-shell')!;
+    await shell.updateComplete;
+    const bar = shell.shadowRoot!.querySelector<HTMLSlotElement>(
+      '.bar slot[name="actions"]'
+    )!;
+    assert.equal(bar.assignedElements({flatten: true})[0]?.id, 'get');
   });
 
   test('screen card reports its per-card toggles', async () => {

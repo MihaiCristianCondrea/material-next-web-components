@@ -74,6 +74,34 @@ document.body.append(shell);
 
 `navigation-mode` defaults to `modal` (closed at every width). It also accepts `auto` (permanent from `permanent-from`, default 900px) or `permanent`. Switching keeps the same shell, navigation and screen nodes. The `navigation` slot accepts app-specific destinations, with Screens as the default.
 
+### Top app bar actions
+
+Anything in the `actions` slot sits at the trailing end of the top app bar, in
+reading order: icon buttons, buttons, links, menus or your own custom elements.
+
+```html
+<mnw-marketing-shell>
+  <md-icon-button
+    slot="actions"
+    href="https://github.com/example/notes"
+    aria-label="Source"
+  >
+    <md-icon>code</md-icon>
+  </md-icon-button>
+  <md-filled-tonal-button
+    slot="actions"
+    href="https://play.google.com/store/apps/details?id=com.example.notes"
+  >
+    Get the app
+  </md-filled-tonal-button>
+  <mnw-product-launcher slot="actions"></mnw-product-launcher>
+</mnw-marketing-shell>
+```
+
+With `mountMarketingGallery()`, pass `actions: () => html\`...\``; it renders
+in light DOM, so your page's styles apply. Give icon-only actions an
+`aria-label`.
+
 `product`, `settings`, `defaults`, `palettes` and `categories` are objects or arrays, so they are JavaScript properties only. `category`, `count` and `catalog-title` also have attributes.
 
 ## Product

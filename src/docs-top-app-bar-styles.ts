@@ -23,6 +23,7 @@ export const styles = css`
     width: 100%;
     min-height: 64px;
     padding: 8px clamp(16px, 4vw, 48px);
+    padding-inline-end: clamp(8px, 2vw, 24px);
     border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
     background: color-mix(
       in srgb,

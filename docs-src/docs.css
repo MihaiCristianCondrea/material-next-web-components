@@ -1379,6 +1379,16 @@ mnw-screen-card {
   width: min(100%, 380px);
 }
 
+.mnw-mount,
+.mnw-mount * {
+  scrollbar-width: none;
+}
+
+.mnw-mount ::-webkit-scrollbar,
+.mnw-mount::-webkit-scrollbar {
+  display: none;
+}
+
 .demo .mnw-mount--fill > :not(mnw-device-frame) {
   width: 100% !important;
   height: 100% !important;

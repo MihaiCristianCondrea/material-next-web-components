@@ -35,6 +35,8 @@ export type CategoryChangeEvent = CustomEvent<{category: string}>;
  *
  * @slot - The `mnw-screen-card` elements.
  * @slot empty - Shown when no card matches the filter.
+ * @slot actions - Top app bar actions, trailing: icon buttons, buttons or any
+ *   custom element, for example `<mnw-product-launcher>`.
  * @slot navigation - App-specific navigation; defaults to the screen catalog.
  * @slot extra - App-specific sections after the catalog, for example motion parts.
  * @fires settings-change - From the preview controls.
@@ -115,6 +117,7 @@ export class MaterialNextMarketingShell extends LitElement {
           ${p.icon ? html`<img src=${p.icon} alt="" width="32" height="32" />` : nothing}
           <span>${p.name}</span>
         </a>
+        <slot slot="actions" name="actions"></slot>
         <slot slot="navigation" name="navigation">
           <mnw-navigation-item href="#catalog" icon="grid_view"
             >${this.catalogTitle}</mnw-navigation-item

@@ -114,6 +114,16 @@ export const styles = css`
     line-height: normal;
   }
 
+  .mnw-mount,
+  .mnw-mount * {
+    scrollbar-width: none;
+  }
+
+  .mnw-mount ::-webkit-scrollbar,
+  .mnw-mount::-webkit-scrollbar {
+    display: none;
+  }
+
   .mnw-mount--fill {
     width: 100%;
     height: 100%;

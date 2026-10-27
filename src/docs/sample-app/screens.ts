@@ -122,15 +122,18 @@ const frame = (
         <nav class="pn-rail" aria-label="Sections">
           ${navItems(ctx, current)}
         </nav>
-        <div class="pn-frame__body">${body}</div>
+        <div class="pn-frame__body">
+          ${body} ${fab ? html`<div class="pn-fab">${fab}</div>` : nothing}
+        </div>
       </div>
-      ${fab ? html`<div class="pn-fab" style="bottom:24px">${fab}</div>` : nothing}
       ${layout.systemNav ? systemNav(ctx) : nothing}
     </div>`;
   }
   return html`<div class="pn-screen" style=${size}>
-    ${statusBar()} ${body}
-    ${fab ? html`<div class="pn-fab">${fab}</div>` : nothing}
+    ${statusBar()}
+    <div class="pn-frame__body">
+      ${body} ${fab ? html`<div class="pn-fab">${fab}</div>` : nothing}
+    </div>
     <nav class="pn-nav" aria-label="Sections">${navItems(ctx, current)}</nav>
     ${systemNav(ctx)}
   </div>`;
@@ -187,12 +190,12 @@ export const notesScreen: MarketingScreen<NotesState> = {
                   label=${f === 'all' ? 'All' : 'Pinned'}
                   .selected=${s.filter === f}
                   @click=${(e: Event) => {
-                  // The screen's state decides what is selected, not the chip.
-                  (
-                    e.currentTarget as HTMLElement & {selected: boolean}
-                  ).selected = s.filter === f;
-                  s.set?.({filter: f});
-                }}
+                    // The screen's state decides what is selected, not the chip.
+                    (
+                      e.currentTarget as HTMLElement & {selected: boolean}
+                    ).selected = s.filter === f;
+                    s.set?.({filter: f});
+                  }}
                 ></md-filter-chip>`
             )}
           </md-chip-set>

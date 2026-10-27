@@ -37,6 +37,11 @@ export interface LauncherItemInput {
   /**
    * An image URL, or `asset:launcher/<file>.svg` for an icon shipped in
    * `assets/marketing/` (resolved with marketingAsset() when rendered).
+   *
+   * The launcher draws the tile; the image is only the mark, contained in a
+   * 40px square. SVG is best, then PNG or WebP: transparent, with no border,
+   * background or tile of its own, and cropped close to the artwork (a wide
+   * logo keeps its proportions inside the square).
    */
   image?: string;
   /** The image is a single dark colour that should invert in dark themes. */

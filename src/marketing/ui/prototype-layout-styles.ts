@@ -43,6 +43,11 @@ export const styles = css`
     background: var(--mnw-hub-stage);
     border: 1px solid var(--mnw-hub-border-subtle);
     overflow: auto;
+    scrollbar-width: none;
+  }
+
+  .stage::-webkit-scrollbar {
+    display: none;
   }
 
   ::slotted([slot='stage']) {

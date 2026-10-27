@@ -12,7 +12,19 @@ const escapeHtml = (value = '') =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-const stripTags = (html = '') => String(html).replace(/<[^>]+>/g, '');
+/**
+ * The text of an HTML fragment. Tags are removed until none remain, so a
+ * nested `<scr<b>ipt>` cannot rebuild one, and stray angle brackets go too.
+ */
+const stripTags = (html = '') => {
+  let text = String(html);
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<[^<>]*>/g, '');
+  } while (text !== previous);
+  return text.replace(/[<>]/g, '');
+};
 
 const slug = (value) =>
   stripTags(value)
@@ -83,11 +95,7 @@ const table = (caption, head, rows) =>
     : '';
 
 const textOf = (fragment) =>
-  fragment
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/"/g, '&quot;');
+  stripTags(fragment).replace(/\s+/g, ' ').trim().replace(/"/g, '&quot;');
 
 /**
  * Labels every body cell with its column header (`data-label`), so phones can

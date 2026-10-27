@@ -78,7 +78,13 @@ for (const item of outputs) {
     const scrollbarPath = scrollbarImport.startsWith('.')
       ? scrollbarImport
       : `./${scrollbarImport}`;
-    const cssText = result.css.replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+    // Into a template literal: backslashes first (a CSS escape such as
+    // `content: "\201C"` would otherwise be read as a JavaScript escape),
+    // then backticks and `${`.
+    const cssText = result.css
+      .replace(/\\/g, '\\\\')
+      .replace(/`/g, '\\`')
+      .replace(/\$\{/g, '\\${');
     await writeFormatted(
       item.output,
       `/**\n * @license\n * SPDX-License-Identifier: BSD-3-Clause\n *\n * Generated from ${relative(

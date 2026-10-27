@@ -58,7 +58,12 @@ export const isExcluded = (
   if (page === href) return true;
   // Web products and consoles own the pages under them; a profile or a
   // shortcut does not (a repository is not the profile it lives under).
-  const path = (url: string) => url.replace(/\?.*$/, '');
+  // Up to the query. indexOf, not /\?.*$/: that regex is quadratic on a URL
+  // with many `?`, and the page URL is the visitor's.
+  const path = (url: string) => {
+    const query = url.indexOf('?');
+    return query < 0 ? url : url.slice(0, query);
+  };
   return (
     (item.kind === 'web' || item.kind === 'console') &&
     `${path(page)}/`.startsWith(`${path(href)}/`)

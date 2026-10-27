@@ -42,6 +42,11 @@ export interface GalleryOptions {
   permanentFrom?: number;
   /** Optional navigation elements for the shell's navigation slot. */
   navigation?: () => unknown;
+  /**
+   * Top app bar actions, trailing, rendered in light DOM: icon buttons,
+   * buttons or custom elements such as `<mnw-product-launcher>`.
+   */
+  actions?: () => unknown;
   /** Overrides of the hub defaults, for example `{palette: 'android'}`. */
   defaults?: Partial<PreviewSettings>;
   /** The prototype page, relative to the gallery. */
@@ -82,6 +87,7 @@ export const mountMarketingGallery = ({
   navigationMode = 'modal',
   permanentFrom = 900,
   navigation,
+  actions,
 }: GalleryOptions): GalleryHandle => {
   installHubStyles();
   const registry = asRegistry(screens);
@@ -163,7 +169,7 @@ export const mountMarketingGallery = ({
           category = e.detail.category;
           draw();
         }}
-        >${navigation ? html`<div slot="navigation">${navigation()}</div>` : nothing}${repeat(visible, (s) => s.id, card)}${
+        >${actions ? html`<div slot="actions" style="display:flex;align-items:center;gap:8px">${actions()}</div>` : nothing}${navigation ? html`<div slot="navigation">${navigation()}</div>` : nothing}${repeat(visible, (s) => s.id, card)}${
           extra ? html`<div slot="extra">${extra()}</div>` : nothing
         }</mnw-marketing-shell
       >`,

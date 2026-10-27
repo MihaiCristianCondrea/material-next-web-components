@@ -28,7 +28,7 @@ description: What is stable, what is experimental, and what comes next.
 
 ## Next
 
-1. Release 0.0.1 to npm, then move Android Insider's and Smart Cleaner's hubs onto `marketing.js`.
+1. Move Android Insider's and Smart Cleaner's hubs onto `marketing.js`, now that 0.0.1 is on npm.
 2. Move the Android system bars (status bar, gesture and 3-button navigation) that each app's screens draw into the library.
 3. Stabilize the marketing elements' names and tokens once two apps use them.
 4. Review the documentation layout elements for public use.
