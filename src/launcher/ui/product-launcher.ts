@@ -141,8 +141,14 @@ export class MaterialNextProductLauncher extends LitElement {
     pointerId: number;
     moved: boolean;
     before: LauncherItemId[];
+    source: HTMLElement;
+    bounds: DOMRect;
+    ghost?: HTMLElement;
   };
   private positions?: Map<string, DOMRect>;
+  private modeBounds?: DOMRect;
+  private motions = new Map<HTMLElement, Animation>();
+  private ghosts = new Set<HTMLElement>();
   private refocus?: string;
   private restoreFocus?: boolean;
   private ignoreClick = false;
@@ -168,6 +174,7 @@ export class MaterialNextProductLauncher extends LitElement {
     this.activeStore = undefined;
     this.stopListening();
     this.endDrag();
+    this.cancelMotion();
     super.disconnectedCallback();
   }
 
@@ -230,6 +237,7 @@ export class MaterialNextProductLauncher extends LitElement {
       this.restoreFocus ??= !!active && !!this.surface?.contains(active);
       if (this.editing) this.finishEditing(false);
       this.endDrag();
+      this.cancelMotion();
     }
   }
 
@@ -238,6 +246,7 @@ export class MaterialNextProductLauncher extends LitElement {
       this.syncPopover(changed.get('open') !== undefined);
     }
     this.playReorder();
+    this.playModeChange();
     if (this.refocus) {
       const target = this.renderRoot.querySelector<HTMLElement>(
         `[data-focus="${CSS.escape(this.refocus)}"]`
@@ -319,7 +328,7 @@ export class MaterialNextProductLauncher extends LitElement {
 
   private listen() {
     document.addEventListener('pointerdown', this.onDocumentPointerDown, true);
-    window.addEventListener('resize', this.place);
+    window.addEventListener('resize', this.onResize);
     window.addEventListener('scroll', this.place, {passive: true});
   }
 
@@ -329,9 +338,16 @@ export class MaterialNextProductLauncher extends LitElement {
       this.onDocumentPointerDown,
       true
     );
-    window.removeEventListener('resize', this.place);
+    window.removeEventListener('resize', this.onResize);
     window.removeEventListener('scroll', this.place);
   }
+
+  private readonly onResize = () => {
+    if (this.drag) this.ids = this.drag.before;
+    this.endDrag();
+    this.cancelMotion();
+    this.place();
+  };
 
   private readonly onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && this.open) {
@@ -356,12 +372,14 @@ export class MaterialNextProductLauncher extends LitElement {
   // Editing ------------------------------------------------------------------
 
   private startEditing() {
+    this.captureMode();
     this.editing = true;
     this.announcement = 'Editing favorites. Changes are saved with Done.';
     this.refocus = 'cancel';
   }
 
   private finishEditing(save: boolean) {
+    this.captureMode();
     this.endDrag();
     this.editing = false;
     if (save) this.commit([...this.ids], 'Favorites saved', 'edit');
@@ -453,6 +471,8 @@ export class MaterialNextProductLauncher extends LitElement {
 
   private onPointerDown(e: PointerEvent, item: LauncherItem) {
     if (!this.editing || e.button !== 0) return;
+    this.endDrag();
+    const source = e.currentTarget as HTMLElement;
     this.drag = {
       id: item.id,
       x: e.clientX,
@@ -460,6 +480,8 @@ export class MaterialNextProductLauncher extends LitElement {
       pointerId: e.pointerId,
       moved: false,
       before: [...this.ids],
+      source,
+      bounds: source.getBoundingClientRect(),
     };
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
@@ -474,8 +496,22 @@ export class MaterialNextProductLauncher extends LitElement {
         return;
       drag.moved = true;
       this.dragging = drag.id;
+      const ghost = drag.source.cloneNode(true) as HTMLElement;
+      ghost.className = 'tile drag-preview';
+      ghost.removeAttribute('data-favorite');
+      ghost.removeAttribute('data-focus');
+      ghost.removeAttribute('data-autofocus');
+      ghost.inert = true;
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.style.width = `${drag.bounds.width}px`;
+      ghost.style.height = `${drag.bounds.height}px`;
+      this.surface?.append(ghost);
+      this.ghosts.add(ghost);
+      drag.ghost = ghost;
+      drag.source.classList.add('tile--dragging');
     }
     e.preventDefault();
+    drag.ghost!.style.transform = `translate3d(${drag.bounds.left + e.clientX - drag.x}px, ${drag.bounds.top + e.clientY - drag.y}px, 0) scale(1.04)`;
     // Hit-test the grid cells, which stay put, not the tiles, which slide
     // to their new places and would bounce the drag back and forth.
     const cells = [
@@ -502,7 +538,7 @@ export class MaterialNextProductLauncher extends LitElement {
   private readonly onPointerUp = (e: PointerEvent) => {
     const drag = this.drag;
     if (!drag || e.pointerId !== drag.pointerId) return;
-    this.endDrag();
+    this.endDrag(true);
     if (!drag.moved) return;
     this.ignoreClick = true;
     setTimeout(() => {
@@ -538,47 +574,169 @@ export class MaterialNextProductLauncher extends LitElement {
 
   private readonly onPointerCancel = (e: PointerEvent) => {
     if (!this.drag || e.pointerId !== this.drag.pointerId) return;
+    this.capturePositions();
     this.ids = this.drag.before;
     this.endDrag();
   };
 
-  private endDrag() {
+  private endDrag(settle = false) {
+    const ghost = this.drag?.ghost;
+    const id = this.drag?.id;
+    this.drag?.source.classList.remove('tile--dragging');
     this.drag = undefined;
     this.dragging = undefined;
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
     window.removeEventListener('pointercancel', this.onPointerCancel);
+    if (!ghost) return;
+    if (!settle || prefersReducedMotion()) {
+      ghost.remove();
+      this.ghosts.delete(ghost);
+      return;
+    }
+    // Drop into the final draft, including a move between lists.
+    void this.updateComplete.then(() => {
+      if (!ghost.isConnected) return;
+      const list = this.ids.includes(id!) ? 'fav' : 'more';
+      const target = this.renderRoot.querySelector<HTMLElement>(
+        `[data-focus="${CSS.escape(`${list}:${id}`)}"]`
+      );
+      if (!target) {
+        ghost.remove();
+        this.ghosts.delete(ghost);
+        return;
+      }
+      const box = target.parentElement!.getBoundingClientRect();
+      target.classList.add('tile--landing');
+      const remove = () => {
+        target.classList.remove('tile--landing');
+        ghost.remove();
+        this.ghosts.delete(ghost);
+      };
+      const animation = this.animateElement(
+        ghost,
+        [
+          {transform: ghost.style.transform, opacity: 1},
+          {
+            transform: `translate3d(${box.left}px, ${box.top}px, 0) scale(1)`,
+            opacity: 1,
+          },
+        ],
+        180
+      );
+      if (animation) void animation.finished.then(remove, remove);
+      else remove();
+    });
   }
 
   // Tiles slide to their new places instead of jumping (FLIP).
 
   private capturePositions() {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || !this.open) return;
     this.positions = new Map(
-      [...this.renderRoot.querySelectorAll<HTMLElement>('[data-favorite]')].map(
-        (tile) => [tile.dataset.favorite!, tile.getBoundingClientRect()]
-      )
+      [
+        ...this.renderRoot.querySelectorAll<HTMLElement>(
+          '.grid--favorites [data-focus]'
+        ),
+      ].map((tile) => [tile.dataset.focus!, tile.getBoundingClientRect()])
     );
+    // Measure the current visual position first, then stop the previous FLIP.
+    for (const tile of this.renderRoot.querySelectorAll<HTMLElement>(
+      '.grid--favorites [data-focus]'
+    )) {
+      this.motions.get(tile)?.cancel();
+      this.motions.delete(tile);
+    }
   }
 
   private playReorder() {
     const before = this.positions;
     this.positions = undefined;
-    if (!before) return;
+    if (!before || !this.open || prefersReducedMotion()) return;
     for (const tile of this.renderRoot.querySelectorAll<HTMLElement>(
-      '[data-favorite]'
+      '.grid--favorites [data-focus]'
     )) {
-      const old = before.get(tile.dataset.favorite!);
+      if (this.dragging && tile.dataset.favorite === this.dragging) continue;
+      const old = before.get(tile.dataset.focus!);
       if (!old) continue;
       const now = tile.getBoundingClientRect();
       const dx = old.left - now.left;
       const dy = old.top - now.top;
       if (!dx && !dy) continue;
-      tile.animate?.(
-        [{transform: `translate(${dx}px, ${dy}px)`}, {transform: 'none'}],
-        {duration: 280, easing: 'cubic-bezier(0.34, 1.36, 0.64, 1)'}
+      this.animateElement(tile, [
+        {transform: `translate(${dx}px, ${dy}px)`},
+        {transform: 'none'},
+      ]);
+    }
+  }
+
+  private animateElement(
+    element: HTMLElement,
+    frames: Keyframe[],
+    duration = 240
+  ) {
+    this.motions.get(element)?.cancel();
+    this.motions.delete(element);
+    if (prefersReducedMotion() || !element.animate) return;
+    const animation = element.animate(frames, {
+      duration,
+      easing: 'cubic-bezier(0.2, 0, 0, 1)',
+    });
+    this.motions.set(element, animation);
+    const release = () => {
+      if (this.motions.get(element) === animation) this.motions.delete(element);
+    };
+    void animation.finished.then(release, release);
+    return animation;
+  }
+
+  private captureMode() {
+    if (!this.open || prefersReducedMotion()) return;
+    this.modeBounds = this.surface
+      ?.querySelector('.panel')
+      ?.getBoundingClientRect();
+    this.capturePositions();
+    for (const element of this.renderRoot.querySelectorAll<HTMLElement>(
+      '.panel, .mode-header, .available, .grid--redirects'
+    )) {
+      this.motions.get(element)?.cancel();
+      this.motions.delete(element);
+    }
+  }
+
+  private playModeChange() {
+    const before = this.modeBounds;
+    this.modeBounds = undefined;
+    if (!before || !this.open || prefersReducedMotion()) return;
+    const panel = this.surface?.querySelector<HTMLElement>('.panel');
+    if (!panel) return;
+    this.place();
+    const after = panel.getBoundingClientRect();
+    this.animateElement(panel, [
+      {height: `${before.height}px`},
+      {height: `${after.height}px`},
+    ]);
+    for (const element of panel.querySelectorAll<HTMLElement>(
+      '.mode-header, .available, .grid--redirects'
+    )) {
+      this.animateElement(
+        element,
+        [
+          {opacity: 0, translate: '0 6px'},
+          {opacity: 1, translate: '0 0'},
+        ],
+        180
       );
     }
+  }
+
+  private cancelMotion() {
+    for (const animation of this.motions.values()) animation.cancel();
+    this.motions.clear();
+    for (const ghost of this.ghosts) ghost.remove();
+    this.ghosts.clear();
+    this.positions = undefined;
+    this.modeBounds = undefined;
   }
 
   // Rendering ----------------------------------------------------------------
@@ -745,52 +903,54 @@ export class MaterialNextProductLauncher extends LitElement {
           .inert=${!this.open}
         >
           <div class="card ${this.editing ? 'card--editing' : ''}">
-            ${
-              this.editing
-                ? html`
-                    <header class="edit-header">
-                      <button
-                        class="text-action cancel"
-                        data-focus="cancel"
-                        @click=${() => this.finishEditing(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        class="text-action done"
-                        data-focus="done"
-                        @click=${() => this.finishEditing(true)}
-                      >
-                        Done
-                      </button>
-                    </header>
-                    <h2 id="heading" class="edit-heading">
-                      Drag and drop apps
-                    </h2>
-                  `
-                : html`
-                    <header class="header">
-                      <div class="heading">
-                        <h2 id="heading">${this.heading}</h2>
-                      </div>
-                      <md-icon-button
-                        class="edit"
-                        data-focus="edit"
-                        aria-label="Edit favorites"
-                        title="Edit favorites"
-                        @click=${() => this.startEditing()}
-                      >
-                        <md-icon>edit</md-icon>
-                      </md-icon-button>
-                      <md-icon-button
-                        class="close"
-                        aria-label="Close"
-                        @click=${() => this.requestClose(true)}
-                        ><md-icon>close</md-icon></md-icon-button
-                      >
-                    </header>
-                  `
-            }
+            <div class="mode-header">
+              ${
+                this.editing
+                  ? html`
+                      <header class="edit-header">
+                        <button
+                          class="text-action cancel"
+                          data-focus="cancel"
+                          @click=${() => this.finishEditing(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          class="text-action done"
+                          data-focus="done"
+                          @click=${() => this.finishEditing(true)}
+                        >
+                          Done
+                        </button>
+                      </header>
+                      <h2 id="heading" class="edit-heading">
+                        Drag and drop apps
+                      </h2>
+                    `
+                  : html`
+                      <header class="header">
+                        <div class="heading">
+                          <h2 id="heading">${this.heading}</h2>
+                        </div>
+                        <md-icon-button
+                          class="edit"
+                          data-focus="edit"
+                          aria-label="Edit favorites"
+                          title="Edit favorites"
+                          @click=${() => this.startEditing()}
+                        >
+                          <md-icon>edit</md-icon>
+                        </md-icon-button>
+                        <md-icon-button
+                          class="close"
+                          aria-label="Close"
+                          @click=${() => this.requestClose(true)}
+                          ><md-icon>close</md-icon></md-icon-button
+                        >
+                      </header>
+                    `
+              }
+            </div>
             ${
               view.favorites.length
                 ? html`<ul class="grid grid--favorites" aria-label="Favorites">

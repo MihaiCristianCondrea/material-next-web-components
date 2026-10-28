@@ -351,12 +351,22 @@ export const styles = css`
     user-select: none;
   }
 
-  .tile--dragging {
-    z-index: 1;
+  .tile--dragging,
+  .tile--landing {
+    opacity: 0;
+  }
+
+  .drag-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
     cursor: grabbing;
-    background: var(--_hover);
+    background: var(--_card);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-    transform: scale(1.04);
+    transform-origin: center;
+    will-change: transform;
   }
 
   .hint,

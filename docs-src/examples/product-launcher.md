@@ -138,7 +138,7 @@ An entry is hidden when any of these match it:
 Choose Edit to start a temporary draft. **Done** saves the draft and fires `launcher-change` once.
 **Cancel**, Escape, clicking outside or closing the panel discard it. Other tabs continue to see
 saved favorites until Done. Select an app to add or remove it; drag within Favorites to reorder,
-or between Favorites and More apps to add or remove. Alt+arrow keys reorder, and Delete removes.
+or between Favorites and More apps to add or remove. A lifted preview follows the pointer while the other tiles move into place; dropping settles it into its slot. Entering and leaving Edit mode animates the panel and controls. Alt+arrow keys reorder, and Delete removes.
 Reset to defaults also stays temporary until Done.
 
 ### Storage
@@ -173,13 +173,13 @@ The panel follows the Google apps launcher: a single rounded favorites surface, 
 ## Accessibility
 
 - The apps button reports `aria-expanded`; the panel is a labelled dialog that takes focus when it opens and returns it to the button when Escape, the close button or a tap on the scrim closes it. A click outside or tabbing past the panel closes it too.
-- The edit button is a toggle (`aria-pressed`). In edit mode each favorite is a focusable group named with its position ("GitHub profile, 1 of 2"), described by the reordering instructions.
+- Edit moves focus to Cancel. Each favorite is a button named with its remove action and position, described by the reordering instructions. Done and Cancel return focus to Edit.
 - Moves, additions, removals and resets are announced in a polite live region; focus stays on the moved tile or goes to its neighbour after a removal.
-- Links that open a new tab say so to screen readers. Tiles are at least 96px tall; the remove badge's hit area is 40px.
-- On phones (below 600px) the panel is a bottom sheet with a close button. With reduced motion, the open and reorder animations are off.
+- Links that open a new tab say so to screen readers. Tiles are at least 96px tall. The drag preview is inert and hidden from accessibility tools.
+- On phones (below 600px) the panel is a bottom sheet with a close button. Reduced motion disables opening, mode-change, reorder and drop animations. Closing or disconnecting clears active motion.
 
 ## Limitations
 
 - The panel is placed under the button, aligned to its end edge; it suits app bars, not buttons near the start of the window.
 - Favorites live on one device and origin unless you pass a `store` that syncs them.
-- Dragging works within favorites; redirects and other entries are added with their add buttons.
+- Favorites can be reordered or dragged to More apps to remove them. Entries in More apps can be dragged into Favorites or selected to add them. Changes remain temporary until Done.

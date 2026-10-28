@@ -9,7 +9,7 @@ import {existsSync, readdirSync, readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 
-const read = (file) => readFileSync(file, 'utf8');
+const read = (file) => readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
 const problems = [];
 
 const marketing = await import(pathToFileURL('dist/marketing/index.js').href);

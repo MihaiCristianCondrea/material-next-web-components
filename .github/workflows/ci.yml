@@ -24,12 +24,16 @@ jobs:
         with:
           node-version: 24
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
       - name: Build
         run: npm run build
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Test
         run: npm test
+      - name: Check package exports
+        run: npm run smoke:exports
       - name: Build and check documentation
         run: npm run docs && npm run docs:check

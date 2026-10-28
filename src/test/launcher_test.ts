@@ -611,6 +611,96 @@ suite('mnw-product-launcher', () => {
     );
   });
 
+  test('a lifted tile follows the pointer while grid cells reorder, and closing cancels motion', async () => {
+    const {el, storage} = await mount();
+    el.show();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
+    await el.updateComplete;
+    const root = el.shadowRoot!;
+    const source = tiles(el)[1];
+    const cell = source.parentElement!;
+    const box = cell.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const pointer = (
+      type: string,
+      target: EventTarget,
+      clientX: number,
+      clientY: number
+    ) =>
+      target.dispatchEvent(
+        new PointerEvent(type, {
+          pointerId: 9,
+          button: 0,
+          clientX,
+          clientY,
+          bubbles: true,
+        })
+      );
+    pointer('pointerdown', source, x, y);
+    pointer('pointermove', window, x + 12, y + 12);
+    await el.updateComplete;
+    const ghost = root.querySelector<HTMLElement>('.drag-preview')!;
+    assert.exists(ghost);
+    assert.isTrue(ghost.inert);
+    const before = ghost.getBoundingClientRect();
+    pointer('pointermove', window, x + 22, y + 27);
+    const after = ghost.getBoundingClientRect();
+    assert.closeTo(after.left - before.left, 10, 0.5);
+    assert.closeTo(after.top - before.top, 15, 0.5);
+    const first = root
+      .querySelector('.grid--favorites > .cell')!
+      .getBoundingClientRect();
+    pointer(
+      'pointermove',
+      window,
+      first.left + first.width / 2,
+      first.top + first.height / 2
+    );
+    await el.updateComplete;
+    assert.equal(titles(el)[0], 'Repo');
+    // A second reorder interrupts the first instead of stacking transforms.
+    pointer('pointermove', window, x, y);
+    await el.updateComplete;
+    for (const tile of tiles(el))
+      assert.isAtMost(tile.getAnimations().length, 1);
+    window.dispatchEvent(new Event('resize'));
+    await el.updateComplete;
+    assert.notExists(root.querySelector('.drag-preview'));
+    assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
+    el.close();
+    await el.updateComplete;
+    assert.notExists(root.querySelector('.drag-preview'));
+    assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
+    assert.isFalse(storage.data.has('mnw-launcher:favorites'));
+  });
+
+  test('Edit and Cancel animate the mode change and closing clears pending animations', async () => {
+    const {el} = await mount();
+    el.show();
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('.edit')!.click();
+    await el.updateComplete;
+    const panel = el.shadowRoot!.querySelector<HTMLElement>('.panel')!;
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      assert.isAbove(panel.getAnimations().length, 0);
+    }
+    el.shadowRoot!.querySelector<HTMLElement>('.cancel')!.click();
+    await el.updateComplete;
+    assert.deepEqual(el.favoriteIds, [...catalog.defaultFavorites]);
+    el.close();
+    await el.updateComplete;
+    assert.isAtMost(
+      panel.getAnimations().length,
+      1,
+      'only the CSS opening animation may remain'
+    );
+    el.show();
+    await el.updateComplete;
+    assert.exists(el.shadowRoot!.querySelector('.edit'));
+  });
+
   test('a live color-scheme switch updates view and edit controls without a rerender', async () => {
     const {el} = await mount();
     el.style.colorScheme = 'light';

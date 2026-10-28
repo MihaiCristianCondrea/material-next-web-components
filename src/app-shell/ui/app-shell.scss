@@ -354,9 +354,11 @@
 
 // Compact: the shell is narrower than 600px.
 .frame--compact {
+  // The drawer header and bar must use the same compact geometry.
+  --_bar-height: var(--mnw-app-shell-top-app-bar-height, 64px);
+
   .bar {
     gap: 8px;
-    min-height: var(--mnw-app-shell-top-app-bar-height, 64px);
     padding: 8px 16px;
   }
 

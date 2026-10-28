@@ -1,6 +1,6 @@
 # Changelog
 
-Last updated: October 27, 2026.
+Last updated: October 28, 2026.
 
 ---
 
@@ -10,7 +10,14 @@ Last updated: October 27, 2026.
 
 ### Fixed
 
+- The compact drawer header uses the same height as the top app bar, keeping outlined dividers aligned on phones.
+- Launcher drags keep a lifted preview under the pointer while neighboring tiles move into place. Interrupted reorders replace their previous animation, and drops settle into the final slot.
+- Lint, production tests and documentation asset copying run under the default Windows npm shell.
 - Rapid screen changes and Back/Forward navigation no longer leave a rejected view-transition promise unhandled. Interrupting an animation still renders the latest screen.
+
+### Changed
+
+- Entering and leaving the launcher's Edit mode animates the panel height, favorites and controls. Reduced motion skips these transitions; closing or removing the launcher clears pending motion.
 
 ---
 

@@ -324,9 +324,11 @@ export const styles = css`
     border-start-start-radius: var(--_radius);
   }
 
+  .frame--compact {
+    --_bar-height: var(--mnw-app-shell-top-app-bar-height, 64px);
+  }
   .frame--compact .bar {
     gap: 8px;
-    min-height: var(--mnw-app-shell-top-app-bar-height, 64px);
     padding: 8px 16px;
   }
   .frame--compact .headline {

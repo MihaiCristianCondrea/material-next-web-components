@@ -451,4 +451,27 @@ suite('mnw-app-shell', () => {
       'open_in_new'
     );
   });
+
+  test('drawer and app bar dividers share compact, wide and custom heights', async () => {
+    for (const width of [400, 700, 1000]) {
+      const {shell} = await mount(
+        width,
+        'appearance="outlined" drawer-heading="Menu"'
+      );
+      shell.openDrawer();
+      await shell.updateComplete;
+      const root = shell.shadowRoot!;
+      const bar = root.querySelector<HTMLElement>('.bar')!;
+      const header = root.querySelector<HTMLElement>('.drawer-header')!;
+      assert.closeTo(
+        header.getBoundingClientRect().height,
+        bar.getBoundingClientRect().height,
+        0.5,
+        `${width}px`
+      );
+      shell.style.setProperty('--mnw-app-shell-top-app-bar-height', '80px');
+      assert.closeTo(header.getBoundingClientRect().height, 80, 0.5);
+      assert.closeTo(bar.getBoundingClientRect().height, 80, 0.5);
+    }
+  });
 });
