@@ -13,6 +13,11 @@ Last updated: October 28, 2026.
 - The Android preview: `definePreviewApp()` declares an app once (name, mark, tabs, drawer entries and footer, overflow menu), and `previewScreen()` draws each marketing screen's content inside the App Toolkit shell, `<mnw-android-screen>`. The shell picks the navigation from the window (navigation bar and modal drawer, rail, expandable rail, permanent drawer) and owns its controls: the app bar shows the menu only in the bottom bar layout, the rail owns its expand and collapse button, a child destination shows Back, and the overflow button appears only when there is something in it.
 - Sheets and full-screen dialogs drawn by the shell inside the screen, clipped by it: the content behind them is inert, focus moves in and back, and Escape, Back and the scrim close the topmost layer.
 - `previewChrome()`, the shell's decisions for a window, for tests and custom shells.
+- Destinations of three kinds, as in App Toolkit: a tab's root, a child that keeps the navigation bar, and a page that covers it on a phone.
+
+### Fixed
+
+- The docs footer keeps its own light and dark surface colours: the page no longer paints another background and divider around it.
 
 ### Changed
 

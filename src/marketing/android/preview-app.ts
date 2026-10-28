@@ -97,8 +97,13 @@ export const definePreviewApp = (config: PreviewAppConfig): PreviewApp => {
 export const iconOf = (icon: PreviewIconInput): PreviewIcon =>
   typeof icon === 'string' ? {name: icon} : icon;
 
-/** Where the destination sits: a tab's root, or a page opened from one (the app bar shows Back). */
-export type PreviewDestinationKind = 'root' | 'child';
+/**
+ * Where the destination sits (`DestinationKind`): a tab's `root`; a `child` pushed onto the tab,
+ * which keeps the navigation bar; or a `page` (settings, help, anything the drawer opens), which
+ * covers the navigation bar on a phone and opens beside the rail or drawer on wider windows. Both
+ * show Back.
+ */
+export type PreviewDestinationKind = 'root' | 'child' | 'page';
 
 /** The navigation UI the preview remembers between renders. */
 export interface PreviewNavigationState {
@@ -129,9 +134,9 @@ export type PreviewRailButton = 'expand' | 'collapse' | null;
  * | expandedRail (840 dp) | rail, collapsed or expanded | none | expand / collapse |
  * | permanentDrawer (1200 dp) | permanent drawer with the tabs | none | none |
  *
- * A child destination shows Back in every layout. The app bar names the app's destination; once
- * the navigation beside it names the app (an expanded rail, the permanent drawer) it names the
- * tab instead.
+ * A child or page shows Back in every layout and names itself. A tab's root names the app, until
+ * the navigation beside it names the app (an expanded rail, the permanent drawer): then it names
+ * the tab. A root marks its tab in the navigation; a child or page marks none.
  */
 export interface PreviewChrome {
   layout: ShellLayout;
@@ -144,11 +149,18 @@ export interface PreviewChrome {
   drawerOpen: boolean;
   /** The rail layout's modal rail is open. */
   railOpen: boolean;
+  /** The tab drawn as selected, or null while a child or page covers its root. */
+  selectedTab: string | null;
+  /** What the app bar names by default: the app, the tab, or the destination itself. */
+  titleSource: 'app' | 'tab' | 'destination';
   overflow: boolean;
   overflowOpen: boolean;
   /** The navigation beside the content names the app. */
   navigationNamesApp: boolean;
-  /** Bottom insets in dp: the navigation bar (80) and the system navigation (24 gesture, 48 buttons). */
+  /**
+   * Bottom insets in dp: the navigation bar (80, under roots and children on a phone) and the
+   * system navigation (24 gesture, 48 buttons).
+   */
   bottomBar: number;
   systemNav: number;
 }
@@ -160,27 +172,28 @@ export const previewChrome = (
     kind = 'root',
     navType = 'gesture',
     navigation = {},
-    hasOverflow,
+    tab,
   }: {
     window?: string | WindowSpec | null;
     kind?: PreviewDestinationKind;
     navType?: 'gesture' | 'buttons';
     navigation?: PreviewNavigationState;
-    /** Destination actions or app overflow entries exist. Defaults to the app's overflow. */
-    hasOverflow?: boolean;
+    /** The tab the destination belongs to. */
+    tab?: string;
   } = {}
 ): PreviewChrome => {
   const layout = shellLayout(window);
   const {mode} = layout;
-  const child = kind === 'child';
+  const root = kind === 'root';
   const railExpanded =
     mode === 'expandedRail' && Boolean(navigation.railExpanded);
-  const overflow =
-    !child && (hasOverflow ?? Boolean(app.config.overflow?.length));
+  const navigationNamesApp = mode === 'permanentDrawer' || railExpanded;
+  // The overflow is the app's (ShellGraph.overflow), beside any destination actions.
+  const overflow = root && Boolean(app.config.overflow?.length);
   return {
     layout,
     mode,
-    navButton: child ? 'back' : mode === 'bottomBar' ? 'menu' : null,
+    navButton: !root ? 'back' : mode === 'bottomBar' ? 'menu' : null,
     railButton:
       mode === 'rail'
         ? 'expand'
@@ -192,10 +205,12 @@ export const previewChrome = (
     railExpanded,
     drawerOpen: mode === 'bottomBar' && Boolean(navigation.drawerOpen),
     railOpen: mode === 'rail' && Boolean(navigation.railOpen),
+    selectedTab: root ? (app.tab(tab)?.id ?? null) : null,
+    titleSource: !root ? 'destination' : navigationNamesApp ? 'tab' : 'app',
     overflow,
     overflowOpen: overflow && Boolean(navigation.overflowOpen),
-    navigationNamesApp: mode === 'permanentDrawer' || railExpanded,
-    bottomBar: mode === 'bottomBar' && !child ? 80 : 0,
+    navigationNamesApp,
+    bottomBar: mode === 'bottomBar' && kind !== 'page' ? 80 : 0,
     systemNav: layout.systemNav ? (navType === 'buttons' ? 48 : 24) : 0,
   };
 };

@@ -6,11 +6,10 @@
 import '@material/web/icon/icon.js';
 import '@material/web/iconbutton/icon-button.js';
 import '@material/web/textfield/filled-text-field.js';
-import '@material/web/labs/navigationbar/navigation-bar.js';
-import '@material/web/labs/navigationtab/navigation-tab.js';
 import {LitElement, html, nothing, type PropertyValues} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {keyed} from 'lit/directives/keyed.js';
 import type {WindowSpec} from '../domain/windows.js';
 import {
   iconOf,
@@ -101,7 +100,10 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   @property() kind: PreviewDestinationKind = 'root';
 
-  /** The app bar title. Defaults to the tab's label, or the app's name beside navigation that does not name it. */
+  /**
+   * The app bar title, overriding the shell's: a tab's root names the app, or the tab once the
+   * navigation beside it names the app; a child or page has no default.
+   */
   @property() heading?: string;
 
   @property({attribute: 'top-bar'}) topBar: PreviewTopBar = 'small';
@@ -187,7 +189,7 @@ export class MaterialNextAndroidScreen extends LitElement {
   }
 
   private systemBack = () => {
-    if (!this.dismissTop() && this.kind === 'child') this.emit('preview-back');
+    if (!this.dismissTop() && this.kind !== 'root') this.emit('preview-back');
   };
 
   private onScroll = () => {
@@ -205,15 +207,12 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   override willUpdate() {
     if (!this.app) return;
-    const tabRoot = this.kind === 'root';
     this.chrome = previewChrome(this.app, {
       window: this.window,
       kind: this.kind,
       navType: this.navType,
       navigation: this.navigation,
-      hasOverflow:
-        tabRoot &&
-        (this.actions.length > 0 || Boolean(this.app.config.overflow?.length)),
+      tab: this.tab,
     });
   }
 
@@ -285,7 +284,7 @@ export class MaterialNextAndroidScreen extends LitElement {
           >`
       )}
       ${
-        c.overflow && !this.actions.length
+        c.overflow
           ? html`<md-icon-button
               aria-label="More options"
               aria-haspopup="menu"
@@ -297,9 +296,15 @@ export class MaterialNextAndroidScreen extends LitElement {
       }
     </div>`;
     const tab = app.tab(this.tab);
-    const title =
+    const text =
       this.heading ??
-      (this.kind === 'root' && tab ? tab.label : app.config.name);
+      (c.titleSource === 'tab'
+        ? (tab?.label ?? app.config.name)
+        : c.titleSource === 'app'
+          ? app.config.name
+          : '');
+    // A new title fades in where the old one stood, as the app's shared title bounds do.
+    const title = keyed(text, html`<span class="title__text">${text}</span>`);
     const barClass = `topbar topbar--${this.topBar} ${c.navButton ? '' : 'topbar--no-nav'}`;
     if (this.topBar === 'search') {
       return html`<div class=${barClass}>
@@ -350,37 +355,24 @@ export class MaterialNextAndroidScreen extends LitElement {
       : icon(tab.icon);
   }
 
+  /** ShellNavigationBar (Compose NavigationBar): 80 dp, a 56 x 32 dp pill behind the selected icon. */
   private renderNavigationBar() {
     const c = this.chrome;
-    if (c.mode !== 'bottomBar' || this.kind === 'child') return nothing;
-    const tabs = this.app!.config.tabs;
-    const active = Math.max(
-      0,
-      tabs.findIndex((t) => t.id === this.tab)
-    );
-    return html`<md-navigation-bar class="navbar" .activeIndex=${active}>
-      ${tabs.map(
-        (t) =>
-          html`<md-navigation-tab
-            label=${t.label}
-            ?active=${t.id === this.tab}
-            @click=${() => this.chooseTab(t)}
-            >${this.tabIconSlot(t)}</md-navigation-tab
-          >`
-      )}
-    </md-navigation-bar>`;
-  }
-
-  private tabIconSlot(t: PreviewTab) {
-    const sel = iconOf(t.selectedIcon ?? t.icon);
-    const un = iconOf(t.icon);
-    return html`<md-icon
-        slot="active-icon"
-        class="filled ${sel.rounded ? 'rounded' : ''}"
-        >${sel.name}</md-icon
-      ><md-icon slot="inactive-icon" class=${un.rounded ? 'rounded' : ''}
-        >${un.name}</md-icon
-      >`;
+    if (c.mode !== 'bottomBar' || this.kind === 'page') return nothing;
+    // Under a child no tab is marked (`highlightedTab`).
+    return html`<nav class="navbar" aria-label="Tabs">
+      ${this.app!.config.tabs.map((t) => {
+        const selected = t.id === c.selectedTab;
+        return html`<button
+          class="navbar__item"
+          aria-current=${ifDefined(selected ? 'page' : undefined)}
+          @click=${() => this.chooseTab(t)}
+        >
+          <span class="navbar__indicator">${this.tabIcon(t, selected)}</span>
+          <span class="navbar__label">${t.label}</span>
+        </button>`;
+      })}
+    </nav>`;
   }
 
   private entryItem(
@@ -450,11 +442,11 @@ export class MaterialNextAndroidScreen extends LitElement {
           (t) =>
             html`<button
               class="rail__item"
-              aria-current=${ifDefined(t.id === this.tab ? 'page' : undefined)}
+              aria-current=${ifDefined(t.id === this.chrome.selectedTab ? 'page' : undefined)}
               @click=${() => this.chooseTab(t)}
             >
               <span class="rail__indicator"
-                >${this.tabIcon(t, t.id === this.tab)}</span
+                >${this.tabIcon(t, t.id === this.chrome.selectedTab)}</span
               >
               <span class="rail__label"
                 >${expanded ? t.label : (t.shortLabel ?? t.label)}</span
@@ -484,10 +476,10 @@ export class MaterialNextAndroidScreen extends LitElement {
                 (t) =>
                   html`<button
                     class="drawer__item"
-                    aria-current=${ifDefined(t.id === this.tab ? 'page' : undefined)}
+                    aria-current=${ifDefined(t.id === this.chrome.selectedTab ? 'page' : undefined)}
                     @click=${() => this.chooseTab(t)}
                   >
-                    ${this.tabIcon(t, t.id === this.tab)}<span>${t.label}</span>
+                    ${this.tabIcon(t, t.id === this.chrome.selectedTab)}<span>${t.label}</span>
                     ${t.badge !== undefined ? html`<span class="badge">${t.badge}</span>` : nothing}
                   </button>`
               )

@@ -27,7 +27,11 @@ Which controls appear is decided by `previewChrome()`, never by a screen, follow
 | Expanded rail (840 dp)     | Rail, collapsed or expanded  | No menu               | Expand or collapse         |
 | Permanent drawer (1200 dp) | Drawer with the tabs         | No menu               | None                       |
 
-A child destination (`kind: 'child'`) shows Back in every layout and covers the navigation bar. The overflow button appears only on a tab's root, and only when the app declares overflow entries or the destination has actions.
+A destination is a tab's `root`, a `child` pushed onto the tab, or a `page` such as settings or help. A child keeps the navigation bar and marks no tab. A page covers the navigation bar on a phone and opens beside the rail or drawer on wider windows. Both show Back.
+
+The app bar on a tab's root names the app until the navigation beside it names the app, as an expanded rail or the permanent drawer does. From then on it names the tab. A child or page names itself through `title`, which also overrides the shell's title anywhere. When the title changes, the new one fades in, and an expanding rail shows its name and labels once it has opened.
+
+The overflow button appears on a tab's root when the app declares overflow entries, beside any actions the destination adds. An expanded rail stays expanded when another tab or entry opens.
 
 ## Live demo
 

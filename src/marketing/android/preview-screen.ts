@@ -77,11 +77,13 @@ export const previewScreen = (
 ): TemplateResult => {
   const navigation: PreviewNavigationState = {};
   for (const key of NAVIGATION_KEYS) navigation[key] = Boolean(state[key]);
+  // Another destination opens with its own state; an expanded rail stays expanded, as the frame
+  // around the app's displays keeps it.
   const open = (target: PreviewTab | PreviewEntry) =>
-    state.go?.(
-      ('screen' in target && target.screen) || target.id,
-      target.screenState ?? {}
-    );
+    state.go?.(('screen' in target && target.screen) || target.id, {
+      ...(state.railExpanded ? {railExpanded: true} : {}),
+      ...target.screenState,
+    });
   const topBar = d.topBar ?? (d.search ? 'search' : 'small');
   return html`<mnw-android-screen
     .app=${app}

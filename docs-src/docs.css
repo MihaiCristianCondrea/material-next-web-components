@@ -1219,10 +1219,6 @@ td:first-child {
 }
 .site-footer {
   margin-top: 64px;
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  background: var(--md-sys-color-surface-container-low);
-  color: var(--md-sys-color-on-surface-variant);
-  font-size: 14px;
 }
 
 .site-footer__inner {

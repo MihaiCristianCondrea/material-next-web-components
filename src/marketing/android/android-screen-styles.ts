@@ -203,26 +203,56 @@ export const styles = css`
 
   .navbar {
     flex-shrink: 0;
-    --md-navigation-bar-container-color: var(--md-sys-color-surface-container);
-    --md-navigation-bar-container-elevation: 0;
-    --md-navigation-bar-container-height: 80px;
-    --md-navigation-bar-active-indicator-color: var(
-      --md-sys-color-secondary-container
-    );
-    --md-navigation-bar-active-indicator-width: 56px;
-    --md-navigation-bar-active-icon-color: var(
-      --md-sys-color-on-secondary-container
-    );
-    --md-navigation-bar-active-label-text-color: var(--md-sys-color-secondary);
-    --md-navigation-bar-inactive-icon-color: var(
-      --md-sys-color-on-surface-variant
-    );
-    --md-navigation-bar-inactive-label-text-color: var(
-      --md-sys-color-on-surface-variant
-    );
-    --md-navigation-bar-label-text-font: var(--_font);
-    --md-navigation-bar-label-text-size: 12px;
-    --md-navigation-bar-label-text-weight: 500;
+    height: 80px;
+    display: flex;
+    gap: 8px;
+    background: var(--md-sys-color-surface-container);
+  }
+
+  .navbar__item {
+    all: unset;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding-bottom: 4px;
+    cursor: pointer;
+    color: var(--md-sys-color-on-surface-variant);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .navbar__indicator {
+    width: 56px;
+    height: 32px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    --md-icon-size: 24px;
+  }
+
+  .navbar__label {
+    font: 500 12px/16px var(--_font);
+    letter-spacing: 0.5px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .navbar__item[aria-current='page'] {
+    color: var(--md-sys-color-secondary);
+  }
+
+  .navbar__item[aria-current='page'] .navbar__indicator {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+  }
+
+  .navbar__item:focus-visible .navbar__indicator {
+    outline: 2px solid var(--md-sys-color-secondary);
   }
 
   .sysnav {
@@ -319,6 +349,7 @@ export const styles = css`
     display: flex;
     flex-direction: column;
     padding-bottom: calc(8px + var(--_system-nav));
+    overflow: hidden;
     transition: width 0.25s cubic-bezier(0.2, 0, 0, 1);
   }
 
@@ -627,6 +658,21 @@ export const styles = css`
     animation: fade-in 200ms linear both;
   }
 
+  :host([interactive]) .rail--expanded .rail__title,
+  :host([interactive]) .rail--expanded .rail__label {
+    animation: rail-label-in 300ms linear both;
+  }
+
+  :host([interactive]) .title__text {
+    animation: fade-in 200ms linear both;
+  }
+
+  @keyframes rail-label-in {
+    0%,
+    50% {
+      opacity: 0;
+    }
+  }
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -647,7 +693,10 @@ export const styles = css`
     :host([interactive]) .sheet,
     :host([interactive]) .modal-drawer,
     :host([interactive]) .modal-rail,
-    :host([interactive]) .fullscreen {
+    :host([interactive]) .fullscreen,
+    :host([interactive]) .rail--expanded .rail__title,
+    :host([interactive]) .rail--expanded .rail__label,
+    :host([interactive]) .title__text {
       animation: none;
     }
     .rail {

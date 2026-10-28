@@ -78,12 +78,28 @@ suite('previewChrome', () => {
     }
   });
 
-  test('a child destination shows Back in every layout and drops the bar', () => {
+  test('a child keeps the navigation bar; a page covers it; both show Back', () => {
     for (const w of [430, 600, 840, 1200]) {
-      const c = previewChrome(APP, {window: win(w), kind: 'child'});
-      assert.equal(c.navButton, 'back', `at ${w}`);
-      assert.equal(c.bottomBar, 0);
+      for (const kind of ['child', 'page'] as const) {
+        const c = previewChrome(APP, {window: win(w), kind, tab: 'home'});
+        assert.equal(c.navButton, 'back', `${kind} at ${w}`);
+        assert.isNull(c.selectedTab, `${kind} marks no tab`);
+      }
     }
+    assert.equal(previewChrome(APP, {kind: 'child'}).bottomBar, 80);
+    assert.equal(previewChrome(APP, {kind: 'page'}).bottomBar, 0);
+  });
+
+  test('the app bar names the app until the navigation beside it does', () => {
+    const source = (w: number, railExpanded = false) =>
+      previewChrome(APP, {window: win(w), navigation: {railExpanded}})
+        .titleSource;
+    assert.equal(source(430), 'app');
+    assert.equal(source(700), 'app');
+    assert.equal(source(900), 'app');
+    assert.equal(source(900, true), 'tab');
+    assert.equal(source(1200), 'tab');
+    assert.equal(previewChrome(APP, {kind: 'child'}).titleSource, 'destination');
   });
 
   test('the rail button expands, collapses, or is absent', () => {
@@ -126,6 +142,7 @@ suite('previewChrome', () => {
     assert.isFalse(previewChrome(NO_OVERFLOW).overflow);
     assert.isTrue(previewChrome(WITH_OVERFLOW).overflow);
     assert.isFalse(previewChrome(WITH_OVERFLOW, {kind: 'child'}).overflow);
+    assert.isFalse(previewChrome(WITH_OVERFLOW, {kind: 'page'}).overflow);
   });
 
   test('insets: the bar on roots, the system navigation by type', () => {
@@ -168,7 +185,7 @@ suite('mnw-android-screen', () => {
   test('phone: menu in the app bar, a navigation bar, no rail', async () => {
     const el = await screen();
     assert.include(buttonLabels(el), 'Open navigation drawer');
-    assert.ok(shadow(el).querySelector('md-navigation-bar'));
+    assert.ok(shadow(el).querySelector('.navbar'));
     assert.notOk(shadow(el).querySelector('.rail'));
     assert.notInclude(buttonLabels(el), 'More options');
   });
@@ -177,7 +194,7 @@ suite('mnw-android-screen', () => {
     const el = await screen({window: 'fold'});
     assert.notInclude(buttonLabels(el), 'Open navigation drawer');
     assert.include(buttonLabels(el), 'Expand navigation');
-    assert.notOk(shadow(el).querySelector('md-navigation-bar'));
+    assert.notOk(shadow(el).querySelector('.navbar'));
   });
 
   test('desktop: a permanent drawer with the tabs and no navigation buttons', async () => {
@@ -219,6 +236,45 @@ suite('mnw-android-screen', () => {
     buttonByLabel(el, 'Navigate up').click();
     assert.equal(back, 1);
     assert.equal(shadow(el).querySelector('.title')!.textContent, 'Details');
+  });
+
+  test('a child keeps the navigation bar with no tab marked; a page covers it', async () => {
+    const child = await screen({kind: 'child', heading: 'Details'});
+    const bar = shadow(child).querySelector('.navbar');
+    assert.ok(bar);
+    assert.equal(
+      shadow(child).querySelectorAll('.navbar__item[aria-current]').length,
+      0
+    );
+    const page = await screen({kind: 'page', heading: 'Settings'});
+    assert.notOk(shadow(page).querySelector('.navbar'));
+    assert.include(buttonLabels(page), 'Navigate up');
+  });
+
+  test('actions and the overflow menu sit side by side', async () => {
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen
+        .app=${WITH_OVERFLOW}
+        tab="home"
+        interactive
+        .actions=${[{id: 'sort', icon: 'sort', label: 'Sort'}]}
+      ></mnw-android-screen>`
+    );
+    await el.updateComplete;
+    assert.includeMembers(buttonLabels(el), ['Sort', 'More options']);
+  });
+
+  test('the app bar names the app, or the tab beside a rail that names it', async () => {
+    const title = (el: Element) =>
+      shadow(el).querySelector('.title')!.textContent!.trim();
+    assert.equal(title(await screen()), 'Sample');
+    assert.equal(title(await screen({window: 'fold'})), 'Sample');
+    assert.equal(
+      title(await screen({window: 'fold', navigation: {railExpanded: true}})),
+      'Home'
+    );
+    assert.equal(title(await screen({window: 'desktop'})), 'Home');
+    assert.equal(title(await screen({heading: 'Custom'})), 'Custom');
   });
 
   test('without interactive nothing reacts: captures stay as rendered', async () => {
@@ -328,11 +384,27 @@ suite('previewScreen', () => {
     const el = host.querySelector('mnw-android-screen')!;
     await el.updateComplete;
     buttonByLabel(el, 'Open navigation drawer').click();
-    [...shadow(el).querySelectorAll('md-navigation-tab')][1].dispatchEvent(
-      new Event('click')
-    );
+    shadow(el).querySelectorAll<HTMLElement>('.navbar__item')[1].click();
     assert.deepEqual(calls[0], ['set', {drawerOpen: true}]);
     assert.deepEqual(calls[calls.length - 1], ['go', 'tools-screen', {}]);
+  });
+
+  test('an expanded rail stays expanded on another destination', async () => {
+    const calls: unknown[] = [];
+    const state = {
+      window: 'fold',
+      railExpanded: true,
+      set: () => {},
+      go: (id: string, s: unknown) => calls.push([id, s]),
+    } as unknown as PreviewScreenState;
+    render(
+      previewScreen(APP, state, {tab: 'home', content: html`<p>x</p>`}),
+      host
+    );
+    const el = host.querySelector('mnw-android-screen')!;
+    await el.updateComplete;
+    shadow(el).querySelectorAll<HTMLElement>('.rail__item')[1].click();
+    assert.deepEqual(calls, [['tools-screen', {railExpanded: true}]]);
   });
 
   test('a static embed renders the shell without set() and settles its parts', async () => {
@@ -363,9 +435,9 @@ suite('previewScreen', () => {
     assert.ok(shadow(el).querySelector('.modal-drawer'));
     assert.ok(shadow(el).querySelector('.sheet'));
     // settle() reached the Material Web parts inside the shadow root.
-    const bar = shadow(el).querySelector('md-navigation-bar') as HTMLElement & {
+    const button = shadow(el).querySelector('md-icon-button') as HTMLElement & {
       hasUpdated?: boolean;
     };
-    assert.isTrue(Boolean(bar.hasUpdated));
+    assert.isTrue(Boolean(button.hasUpdated));
   });
 });
