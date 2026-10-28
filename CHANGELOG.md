@@ -14,11 +14,13 @@ Last updated: October 28, 2026.
 - Sheets and full-screen dialogs drawn by the shell inside the screen, clipped by it: the content behind them is inert, focus moves in and back, and Escape, Back and the scrim close the topmost layer.
 - `previewChrome()`, the shell's decisions for a window, for tests and custom shells.
 - Destinations of three kinds, as in App Toolkit: a tab's root, a child that keeps the navigation bar, and a page that covers it on a phone.
+- Product identity: `defineProductIdentity()` declares an app once (name, launcher icon and in-app mark, fonts, palettes, destinations, links). The Android preview reads `identity.app`, the marketing hub `identity.product`, and `loadProductFonts()` registers the fonts and sets the typeface tokens. Assets stay in the app and resolve against a base the host can move.
+- App Toolkit presets: `toolkitFooter()` and `supportUs()`, the library's drawer footer and overflow entry, so every App Toolkit app declares only its own destinations.
+- A preview app's `logo` can be a function, resolved each time the drawer is drawn.
 
 ### Fixed
 
 - Switching tabs with the fold rail expanded no longer replays its label entrance animation. Labels stay visible during navigation; opening the rail still reveals them after it widens.
-
 - The docs footer keeps its own light and dark surface colours: the page no longer paints another background and divider around it.
 
 ### Changed

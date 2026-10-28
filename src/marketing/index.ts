@@ -6,8 +6,8 @@
 /**
  * Material Next marketing: a ready-made marketing hub for Android apps built
  * with App Toolkit. The app keeps its screens (Lit templates translated from
- * Compose), its palettes and its product config; this module provides the
- * hub around them.
+ * Compose), its palettes, its assets and one product identity; this module
+ * provides the hub and the Android preview around them.
  *
  *   domain/  what a product, a screen and the preview settings are, and the
  *            App Toolkit window rules: pure, no DOM
@@ -17,6 +17,7 @@
  */
 
 export * from './domain/product.js';
+export * from './domain/identity.js';
 export * from './domain/screen.js';
 export * from './domain/preview-settings.js';
 export * from './domain/windows.js';
@@ -25,6 +26,7 @@ export * from './data/preview-settings-store.js';
 export * from './data/prototype-url.js';
 
 export * from './ui/assets.js';
+export * from './ui/identity-fonts.js';
 export * from './ui/hub-document.js';
 export * from './ui/options.js';
 export * from './ui/controls.js';
@@ -45,3 +47,4 @@ export * from './hub/embed.js';
 export * from './android/preview-app.js';
 export * from './android/android-screen.js';
 export * from './android/preview-screen.js';
+export * from './android/toolkit.js';

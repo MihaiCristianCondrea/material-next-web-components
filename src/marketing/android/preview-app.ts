@@ -54,8 +54,11 @@ export interface PreviewEntry {
 export interface PreviewAppConfig {
   /** The app's name, in the drawer header and the expanded rail. */
   name: string;
-  /** The app's mark, an image URL, drawn at the title's line height. */
-  logo?: string;
+  /**
+   * The app's mark, an image URL drawn at the title's line height, or a function that returns it
+   * when drawn (a product identity resolves it against its current asset base).
+   */
+  logo?: string | (() => string);
   tabs: PreviewTab[];
   drawer?: {
     /** Entries under the tabs (the drawer's top section). */
@@ -92,6 +95,12 @@ export const definePreviewApp = (config: PreviewAppConfig): PreviewApp => {
     config: frozen,
     tab: (id) => frozen.tabs.find((t) => t.id === id),
   };
+};
+
+/** The app's mark as an URL, resolved now. */
+export const logoOf = (app: PreviewApp): string | undefined => {
+  const {logo} = app.config;
+  return typeof logo === 'function' ? logo() : logo;
 };
 
 export const iconOf = (icon: PreviewIconInput): PreviewIcon =>

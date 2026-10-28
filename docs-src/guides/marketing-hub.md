@@ -46,11 +46,11 @@ npm install material-next-web-components lit @material/web
 
 ## The product
 
-One object describes the app to the hub. Keep it in `src/config/product.js`.
+One identity describes the app to everything that draws it: its name, icons, fonts, palettes, tabs and links. Keep it in `src/config/identity.js`; the hub reads `IDENTITY.product`, the Android preview `IDENTITY.app`, and the screens take their tabs from it.
 
 {% source "src/docs/sample-app/product.ts" %}
 
-`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. The full shape is on the [marketing shell](../../examples/marketing-shell/#product) page.
+`id` namespaces the preview settings saved in the browser, so two hubs on `localhost:5173` keep their own. The identity's fields are on the [Android preview](../../examples/android-screen/#product-identity) page; the product the hub receives is on the [marketing shell](../../examples/marketing-shell/#product) page. Anything only the hub shows (a headline, badges, stories) stays in `src/config/product.js` beside it.
 
 ## Screens
 
@@ -265,10 +265,10 @@ Add the destination to `.gitignore`: it is generated.
 
 ## Checklist
 
-1. `product.js` with the real name, icon, store and repository links.
+1. `identity.js` with the real name, icons, fonts, palettes, tabs and links; `product.js` only for what the hub alone shows.
 2. Every screen translated from its Composable, rendering only from state, with real strings.
 3. A `category` on each screen, and `controls` for the states worth showing.
-4. Palettes as `[data-palette]` CSS in light and dark; fonts and Material Symbols loaded.
+4. Palettes as `[data-palette]` CSS in light and dark, named in the identity; fonts and Material Symbols loaded with `loadProductFonts(IDENTITY)`.
 5. `gallery-page.js` and `screen-page.js`, and `npm run assets` copying the marketing assets.
 6. Captures and videos through the prototype page's capture mode or `createMarketingEmbed()`.
 

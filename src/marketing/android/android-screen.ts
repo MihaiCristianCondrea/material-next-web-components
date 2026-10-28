@@ -13,6 +13,7 @@ import {keyed} from 'lit/directives/keyed.js';
 import type {WindowSpec} from '../domain/windows.js';
 import {
   iconOf,
+  logoOf,
   previewChrome,
   type PreviewApp,
   type PreviewChrome,
@@ -470,7 +471,8 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   /** ShellDrawerContent: the header, the tabs when nothing else shows them, the entries, the footer. */
   private renderDrawerContent(showTabs: boolean) {
-    const {name, logo, tabs, drawer = {}} = this.app!.config;
+    const {name, tabs, drawer = {}} = this.app!.config;
+    const logo = logoOf(this.app!);
     return html`
       <div class="drawer__header">
         ${logo ? html`<img src=${logo} alt="" />` : nothing}<span>${name}</span>

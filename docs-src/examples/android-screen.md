@@ -14,7 +14,8 @@ order: 145
 
 Apps built on App Toolkit share one shell: the app bar and its search, the navigation the window calls for, the system bars and the sheets and drawers over the content. The Android preview draws that shell once, for every marketing UI, from a declaration of the app:
 
-- `definePreviewApp(config)`: the app's name and mark, its tabs, its drawer entries and footer, its overflow menu. One per app.
+- `defineProductIdentity(config)`: the app's name, icons, fonts, palettes and destinations, declared once. `identity.app` is the shell declaration; `identity.product` is what the marketing hub shows. See [Product identity](#product-identity).
+- `definePreviewApp(config)`: the shell declaration alone (name, mark, tabs, drawer entries and footer, overflow menu), for a preview without a hub.
 - `previewScreen(app, state, destination)`: what a screen renders. The destination gives its tab, title, app bar, content, FAB and overlay; nothing else.
 - `<mnw-android-screen>`: the element `previewScreen()` renders. Use it directly when you wire events yourself.
 
@@ -40,22 +41,34 @@ The overflow button appears on a tab's root when the app declares overflow entri
 ## Usage
 
 ```js
-import {definePreviewApp, previewScreen} from 'material-next-web-components/marketing.js';
+import {
+  defineProductIdentity,
+  previewScreen,
+  supportUs,
+  toolkitFooter,
+} from 'material-next-web-components/marketing.js';
 
-export const APP = definePreviewApp({
+// src/config/identity.js: toolkitGraph(appTitle, appIcon) { tab(...); drawer { toolkitFooter() }; overflow { supportUs() } }
+export const IDENTITY = defineProductIdentity({
+  id: 'app-toolkit',
   name: 'App Toolkit',
-  logo: '/logos/app_logo.svg',
-  tabs: [
-    {id: 'quick-tools', label: 'Quick Tools', icon: {name: 'grid_view', rounded: true}},
-    {id: 'numbers', label: 'Measure', icon: 'straighten'},
-    {id: 'apps', label: 'Apps', icon: 'apps'},
-  ],
-  drawer: {footer: [{id: 'settings', label: 'Settings', icon: 'settings'}]},
+  icons: {app: '/logos/icon.svg', logo: '/logos/app_logo.svg'},
+  fonts: {brand: {family: 'Google Sans Flex', src: 'fonts/GoogleSansFlex.ttf', weight: '1 1000', stretch: '25% 151%'}},
+  colors: {palettes: ['captured', 'dynamic', 'blue'], defaultPalette: 'captured'},
+  destinations: {
+    tabs: [
+      {id: 'quick-tools', label: 'Quick Tools', icon: {name: 'grid_view', rounded: true}},
+      {id: 'numbers', label: 'Measure', icon: 'straighten'},
+      {id: 'apps', label: 'Apps', icon: 'apps'},
+    ],
+    drawer: {footer: toolkitFooter()},
+    overflow: [supportUs()],
+  },
 });
 
 // In a MarketingScreen:
 render(s) {
-  return previewScreen(APP, s, {
+  return previewScreen(IDENTITY.app, s, {
     tab: 'numbers',
     title: 'Measure',
     content: html`...`,
@@ -67,6 +80,26 @@ render(s) {
 Icons are Material Symbols names. `{name, rounded: true}` draws one from Material Symbols Rounded, which the page must load (`material-symbols/rounded.css`) as it loads Outlined.
 
 The drawer, rail and menu state lives in the screen's own state as `drawerOpen`, `railExpanded`, `railOpen` and `overflowOpen`, so a preset or a URL (`state={"drawerOpen":true}`) can open them. A tab opens its `screen` (default: its id) with `go()`. An entry without `screen` is a page the preview does not draw: it is drawn like the app draws it, carries `data-preview-only` and the title "Not part of this preview", and only closes the navigation.
+
+## Product identity
+
+`defineProductIdentity()` is the one place an app names itself. Everything that draws the app reads it, so the app bar, the rail, the drawers, the previews and the marketing hub cannot disagree:
+
+| Field          | What reads it                                                                                                                                                                                                                                                                            |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`           | The hub, to keep each app's saved preview settings apart.                                                                                                                                                                                                                                |
+| `name`         | The app bar on a tab's root, the expanded rail, the drawer header, the hub's top app bar and drawer.                                                                                                                                                                                     |
+| `icons`        | `app` is the square launcher icon: the hub. `logo` is the mark beside the name inside the app (`ShellGraph.appIcon`): the drawer header; it defaults to `app`. `monochrome` is the one-colour variant for artwork that needs it.                                                         |
+| `fonts`        | `brand` and `plain` become `--md-ref-typeface-brand` and `--md-ref-typeface-plain`, which the shell, Material Web and the app's type scale read. With `src`, `loadProductFonts()` registers the face from the app's assets. `symbols` lists the icon fonts to wait for before a capture. |
+| `colors`       | `palettes` lists the app's `data-palette` values in picker order (`captured` keeps the page's own tokens); `defaultPalette` is where previews start; `seed` is the brand colour for anything outside the app.                                                                            |
+| `destinations` | `tabs`, `drawer` and `overflow`, as in `definePreviewApp()`.                                                                                                                                                                                                                             |
+| `links`        | `privacy` and `codeOfConduct` in the hub's drawer; `repository` for the app's own pages.                                                                                                                                                                                                 |
+
+Assets stay in the app. The identity holds their paths and resolves them through `identity.asset(path)` against a base the host can move with `identity.setAssetBase()`, as a Remotion composition does for `staticFile()`; the drawer's mark is resolved when it is drawn, so a base set after the identity loads still applies.
+
+### App Toolkit presets
+
+`toolkitFooter({updates?, screens?})` and `supportUs({screen?})` are the App Toolkit library's own entries, as `ToolkitDrawer.kt` and `overflow { supportUs() }` declare them: Settings, Help & feedback, Updates (omit with `updates: false` when the app has no changelog) and Share, and Support the app. An app on App Toolkit declares only its tabs and its own entries; their pages are the library's, so they close the navigation unless the app maps one to a screen it draws.
 
 ## Overlays
 

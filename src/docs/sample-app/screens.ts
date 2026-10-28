@@ -11,6 +11,7 @@ import '@material/web/iconbutton/icon-button.js';
 import '@material/web/switch/switch.js';
 import {html, nothing, svg, type TemplateResult} from 'lit';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {IDENTITY} from './product.js';
 import {
   shellLayout,
   type MarketingScreen,
@@ -83,10 +84,8 @@ const systemNav = (ctx: Ctx, onBar = true) =>
         <span></span>
       </div>`;
 
-const TABS = [
-  {id: 'notes', label: 'Notes', icon: 'sticky_note_2'},
-  {id: 'focus', label: 'Focus', icon: 'timer'},
-] as const;
+// The tabs come from the app's identity, like its name and icon in the hub.
+const TABS = IDENTITY.app.config.tabs;
 
 const navItems = (ctx: Ctx, current: string) =>
   TABS.map(

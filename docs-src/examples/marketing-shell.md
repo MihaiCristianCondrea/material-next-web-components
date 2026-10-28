@@ -96,7 +96,7 @@ in light DOM, so your page's styles apply. Give icon-only actions an
 
 ## Product
 
-`product` is a `MarketingProduct`:
+`product` is a `MarketingProduct`. An app with a product identity passes `IDENTITY.product`, which resolves the icon against the identity's asset base:
 
 | Field              | Type     |                                                      |
 | ------------------ | -------- | ---------------------------------------------------- |
