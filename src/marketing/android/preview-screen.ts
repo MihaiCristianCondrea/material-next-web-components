@@ -44,6 +44,12 @@ export interface PreviewDestination {
   bottom?: unknown;
   /** How far a large app bar has collapsed (0 to 1), when the screen scrolls from its state. */
   collapse?: number;
+  /** A large title's lines before it ellipsises. */
+  titleLines?: number;
+  /** Where the content starts scrolled to, in dp (a capture of a scrolled screen). */
+  scrollPosition?: number;
+  /** The navigation bar has hidden on scroll (HideOnScrollBottomBar). */
+  hideNavigationBar?: boolean;
   /** Replaces the app bar. */
   top?: unknown;
   /** What is open over the destination, if anything. */
@@ -104,6 +110,9 @@ export const previewScreen = (
     .overlay=${d.overlay ? {presentation: d.overlay.presentation, label: d.overlay.label, handle: d.overlay.handle, flush: d.overlay.flush} : null}
     ?scrolled=${Boolean(d.scrolled)}
     .collapse=${d.collapse}
+    .titleLines=${d.titleLines ?? 1}
+    .scrollPosition=${d.scrollPosition}
+    ?hide-navigation-bar=${Boolean(d.hideNavigationBar)}
     ?interactive=${Boolean(state.set)}
     @preview-navigation=${(e: CustomEvent<{patch: PreviewNavigationState}>) => state.set?.({...e.detail.patch})}
     @preview-tab=${(e: CustomEvent<{tab: PreviewTab}>) => open(e.detail.tab)}

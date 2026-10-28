@@ -111,12 +111,19 @@ button {
 }
 .large-title {
   overflow: hidden;
-  height: calc((1 - var(--_collapse, 0)) * 88px);
+  height: calc((1 - var(--_collapse, 0)) * (52px + var(--_title-lines, 1) * 36px));
   display: flex;
   align-items: flex-end;
   padding: 0 16px 16px;
   font: 400 28px/36px var(--_font);
   opacity: calc(1 - var(--_title-opacity, 0));
+}
+// Wraps to its lines, then ellipsises.
+.large-title__text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--_title-lines, 1);
+  overflow: hidden;
 }
 // TabSearch: a 48 dp full-radius field between the menu and overflow buttons.
 .search {
@@ -479,9 +486,25 @@ button {
   outline: 2px solid var(--md-sys-color-secondary);
   outline-offset: -2px;
 }
+// Material 3 Badge with a count: 16 dp tall, error colours, label-small.
 .badge {
   margin-inline-start: auto;
-  font: 500 12px/16px var(--_font);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--md-sys-color-error);
+  color: var(--md-sys-color-on-error);
+  font: 500 11px/16px var(--_font);
+}
+// An empty badge is the 6 dp dot.
+.badge:empty {
+  min-width: 6px;
+  height: 6px;
+  padding: 0;
+  border-radius: 3px;
 }
 
 // ---- Overlays: drawn inside the screen, clipped by it, never in the top layer ----
@@ -530,8 +553,18 @@ button {
   color: var(--md-sys-color-on-surface);
   border-radius: 28px 28px 0 0;
 }
+// Flush content lays itself out as a column, so its own scroll area scrolls and its footer stays pinned.
 .sheet.flush {
   padding: 0 0 var(--_system-nav);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet.flush ::slotted(*) {
+  flex: 0 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 // BottomSheetDefaults.DragHandle: 32 x 4 dp, 22 dp above and below.
 .sheet__handle {
@@ -545,7 +578,7 @@ button {
 .sheet.flush .sheet__handle {
   margin-top: 22px;
 }
-// AlertDialog: 28 dp corners on surface-container-high, 280 to 560 dp wide, 24 dp padding.
+// AlertDialog: 28 dp corners on surface-container-high, 280 to 560 dp wide by its content, 24 dp padding.
 .overlay--dialog {
   align-items: center;
   justify-content: center;
@@ -554,7 +587,8 @@ button {
 .dialog {
   position: relative;
   z-index: 1;
-  width: min(560px, 100%);
+  // widthIn(280.dp, 560.dp): as wide as its content needs, within the window's padding.
+  max-width: min(560px, 100%);
   min-width: min(280px, 100%);
   max-height: 100%;
   overflow-y: auto;

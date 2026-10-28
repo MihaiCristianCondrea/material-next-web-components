@@ -70,6 +70,12 @@ suite('defineProductIdentity', () => {
     assert.equal(id.asset('data:image/svg+xml,x'), 'data:image/svg+xml,x');
   });
 
+  test('the app can name itself apart from its store name', () => {
+    const id = defineProductIdentity({...CONFIG, name: 'Smart Sample', label: 'Sample'});
+    assert.equal(id.app.config.name, 'Sample');
+    assert.equal(id.product.name, 'Smart Sample');
+  });
+
   test('the logo defaults to the launcher icon; the palettes to the captured tokens', () => {
     const id = defineProductIdentity({
       ...CONFIG,
@@ -266,5 +272,33 @@ suite('Overlay presentations', () => {
     const sheet = el.shadowRoot!.querySelector<HTMLElement>('.sheet')!;
     assert.ok(sheet.querySelector('.sheet__handle'));
     assert.equal(getComputedStyle(sheet).paddingLeft, '0px');
+  });
+});
+
+suite('Scrolling screens', () => {
+  const app = defineProductIdentity(CONFIG).app;
+
+  test('the content starts where scrollPosition puts it, and the large bar follows', async () => {
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen .app=${app} tab="home" kind="page" top-bar="large" heading="A long article title"
+        .titleLines=${2} .scrollPosition=${200}
+        ><div style="height:3000px"></div></mnw-android-screen
+      >`
+    );
+    await el.updateComplete;
+    const content = el.shadowRoot!.querySelector('.content')!;
+    assert.equal(content.scrollTop, 200);
+    assert.equal(el.style.getPropertyValue('--_title-lines'), '2');
+    assert.equal(el.style.getPropertyValue('--_collapse'), '1.000');
+    assert.isTrue(el.hasAttribute('data-scrolled'));
+  });
+
+  test('a navigation bar hidden on scroll gives its inset back', async () => {
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen .app=${app} tab="home" hide-navigation-bar></mnw-android-screen>`
+    );
+    await el.updateComplete;
+    assert.notOk(el.shadowRoot!.querySelector('.navbar'));
+    assert.equal(el.style.getPropertyValue('--_bottom-bar'), '0px');
   });
 });

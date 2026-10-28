@@ -137,6 +137,19 @@ export class MaterialNextAndroidScreen extends LitElement {
    */
   @property({type: Number}) collapse?: number;
 
+  /** A large title's lines before it ellipsises (an article's title wraps to two). */
+  @property({type: Number, attribute: 'title-lines'}) titleLines = 1;
+
+  /**
+   * Where the content is scrolled to, for screens and captures that start scrolled. Applied when it changes; the
+   * person can scroll on from there.
+   */
+  @property({type: Number, attribute: 'scroll-position'}) scrollPosition?: number;
+
+  /** The navigation bar has hidden on scroll (HideOnScrollBottomBar): the content takes its place. */
+  @property({type: Boolean, attribute: 'hide-navigation-bar'})
+  hideNavigationBar = false;
+
   /** Live preview: reacts to input and animates overlays in. Off in videos and captures. */
   @property({type: Boolean, reflect: true}) interactive = false;
 
@@ -208,6 +221,11 @@ export class MaterialNextAndroidScreen extends LitElement {
     if (!this.dismissTop() && this.kind !== 'root') this.emit('preview-back');
   };
 
+  /** The expanded large title's height: 36 dp per line and 52 dp around them. */
+  private get largeTitleHeight() {
+    return 52 + 36 * Math.max(1, this.titleLines);
+  }
+
   private setCollapse(collapse: number) {
     this.style.setProperty('--_collapse', collapse.toFixed(3));
     this.style.setProperty(
@@ -225,7 +243,7 @@ export class MaterialNextAndroidScreen extends LitElement {
       this.scrolled || top > 4 || (this.collapse ?? 0) > 0
     );
     if (this.collapse === undefined)
-      this.setCollapse(Math.min(1, Math.max(0, top / 88)));
+      this.setCollapse(Math.min(1, Math.max(0, top / this.largeTitleHeight)));
   };
 
   override willUpdate() {
@@ -238,6 +256,8 @@ export class MaterialNextAndroidScreen extends LitElement {
       navigation: this.navigation,
       tab: this.tab,
     });
+    if (this.hideNavigationBar && this.chrome.bottomBar)
+      this.chrome = {...this.chrome, bottomBar: 0};
     // Tab navigation can remount an already-expanded shell. Reveal labels only
     // when this mounted rail actually opens, not when it starts expanded.
     if (!this.chrome.railExpanded) this.removeAttribute('data-rail-opening');
@@ -255,6 +275,14 @@ export class MaterialNextAndroidScreen extends LitElement {
     this.style.setProperty('--_status-bar', `${layout.statusBar}px`);
     this.style.setProperty('--_system-nav', `${c.systemNav}px`);
     this.style.setProperty('--_bottom-bar', `${c.bottomBar}px`);
+    this.style.setProperty('--_title-lines', String(Math.max(1, this.titleLines)));
+    if (changed.has('scrollPosition') && this.scrollPosition !== undefined) {
+      const el = this.content;
+      if (el) {
+        el.scrollTop = this.scrollPosition;
+        this.onScroll();
+      }
+    }
     this.toggleAttribute('data-framed', layout.framed);
     this.toggleAttribute(
       'data-scrolled',
@@ -375,7 +403,7 @@ export class MaterialNextAndroidScreen extends LitElement {
           <h1 class="title">${title}</h1>
           ${actions}
         </div>
-        <div class="large-title" aria-hidden="true">${title}</div>
+        <div class="large-title" aria-hidden="true"><span class="large-title__text">${title}</span></div>
       </div>`;
     }
     return html`<div class=${barClass}>
@@ -394,7 +422,8 @@ export class MaterialNextAndroidScreen extends LitElement {
   /** ShellNavigationBar (Compose NavigationBar): 80 dp, a 56 x 32 dp pill behind the selected icon. */
   private renderNavigationBar() {
     const c = this.chrome;
-    if (c.mode !== 'bottomBar' || this.kind === 'page') return nothing;
+    if (c.mode !== 'bottomBar' || this.kind === 'page' || this.hideNavigationBar)
+      return nothing;
     // Under a child no tab is marked (`highlightedTab`).
     return html`<nav class="navbar" aria-label="Tabs">
       ${this.app!.config.tabs.map((t) => {

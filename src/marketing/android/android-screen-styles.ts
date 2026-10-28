@@ -135,12 +135,21 @@ export const styles = css`
 
   .large-title {
     overflow: hidden;
-    height: calc((1 - var(--_collapse, 0)) * 88px);
+    height: calc(
+      (1 - var(--_collapse, 0)) * (52px + var(--_title-lines, 1) * 36px)
+    );
     display: flex;
     align-items: flex-end;
     padding: 0 16px 16px;
     font: 400 28px/36px var(--_font);
     opacity: calc(1 - var(--_title-opacity, 0));
+  }
+
+  .large-title__text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--_title-lines, 1);
+    overflow: hidden;
   }
 
   .search {
@@ -547,7 +556,22 @@ export const styles = css`
 
   .badge {
     margin-inline-start: auto;
-    font: 500 12px/16px var(--_font);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error);
+    font: 500 11px/16px var(--_font);
+  }
+
+  .badge:empty {
+    min-width: 6px;
+    height: 6px;
+    padding: 0;
+    border-radius: 3px;
   }
 
   .overlay {
@@ -602,6 +626,16 @@ export const styles = css`
 
   .sheet.flush {
     padding: 0 0 var(--_system-nav);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sheet.flush ::slotted(*) {
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   .sheet__handle {
@@ -626,7 +660,7 @@ export const styles = css`
   .dialog {
     position: relative;
     z-index: 1;
-    width: min(560px, 100%);
+    max-width: min(560px, 100%);
     min-width: min(280px, 100%);
     max-height: 100%;
     overflow-y: auto;

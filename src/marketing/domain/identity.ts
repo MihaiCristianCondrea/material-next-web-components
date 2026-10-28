@@ -66,8 +66,13 @@ export interface IdentityDestinations {
 export interface ProductIdentityConfig {
   /** Stable id: namespaces stored preview settings. */
   id: string;
-  /** The name as the launcher and the store show it (`R.string.app_name`). */
+  /** The name the store and the marketing hub show. */
   name: string;
+  /**
+   * The name the app draws on itself (`R.string.app_name`): its app bar, expanded rail and drawer header, when it
+   * differs from the store name ("Cleaner" for "Smart Cleaner"). Defaults to `name`.
+   */
+  label?: string;
   icons: IdentityIcons;
   fonts?: {
     /** Display, headline and title type: `--md-ref-typeface-brand`. */
@@ -141,7 +146,7 @@ export const defineProductIdentity = (
       : base + (path.startsWith('/') ? path.slice(1) : path);
   const logo = config.icons.logo ?? config.icons.app;
   const app = definePreviewApp({
-    name: config.name,
+    name: config.label ?? config.name,
     // Resolved on every render, so a base set after the identity loads still applies.
     logo: () => asset(logo),
     ...config.destinations,
