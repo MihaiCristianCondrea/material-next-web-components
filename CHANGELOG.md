@@ -4,9 +4,11 @@ Last updated: October 28, 2026.
 
 ---
 
-# Unreleased
+# October 28, 2026
 
-**Version:** `0.0.8`
+**Version:** `0.0.9`
+
+The 0.0.8 release did not publish (its tag's package.json still said 0.0.7); 0.0.9 carries everything it would have.
 
 ### Added
 

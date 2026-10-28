@@ -2,7 +2,7 @@
 
 Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
 
-> Status: `0.0.6` is on npm; `0.0.7` is in progress (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
+> Status: `0.0.9` is the current release (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
 
 ## Links
 
