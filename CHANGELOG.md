@@ -4,7 +4,7 @@ Last updated: October 28, 2026.
 
 ---
 
-# Unreleased
+# October 28, 2026
 
 **Version:** `0.0.7`
 
