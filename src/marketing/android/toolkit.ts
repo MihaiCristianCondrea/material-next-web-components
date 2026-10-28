@@ -27,12 +27,20 @@ export const toolkitFooter = ({
 } = {}): PreviewEntry[] => {
   const entries: PreviewEntry[] = [
     // The library draws Settings and Share with its own rounded drawables (anim_settings, anim_share).
-    {id: 'settings', label: 'Settings', icon: {name: 'settings', rounded: true}},
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: {name: 'settings', rounded: true},
+    },
     {id: 'help', label: 'Help & feedback', icon: 'help_outline'},
   ];
   if (updates)
     entries.push({id: 'updates', label: 'Updates', icon: 'event_note'});
-  entries.push({id: 'share', label: 'Share', icon: {name: 'share', rounded: true}});
+  entries.push({
+    id: 'share',
+    label: 'Share',
+    icon: {name: 'share', rounded: true},
+  });
   return entries.map((entry) => {
     const screen = screens[entry.id as keyof typeof screens];
     return screen ? {...entry, screen} : entry;

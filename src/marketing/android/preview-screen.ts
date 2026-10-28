@@ -24,6 +24,8 @@ import './android-screen.js';
 export interface PreviewDestination {
   /** The tab the destination belongs to. */
   tab?: string;
+  /** A child drawn as the detail beside its tab's list (wide windows): the tab stays marked. */
+  besideList?: boolean;
   kind?: PreviewDestinationKind;
   /** The app bar title; defaults to the tab's label. */
   title?: string;
@@ -50,6 +52,13 @@ export interface PreviewDestination {
   scrollPosition?: number;
   /** The navigation bar has hidden on scroll (HideOnScrollBottomBar). */
   hideNavigationBar?: boolean;
+  /** The content scrolled: its position, for screens that follow it (reading progress). */
+  onScroll?: (detail: {
+    scrollTop: number;
+    scrollHeight: number;
+    clientHeight: number;
+    collapseHeight: number;
+  }) => void;
   /** Replaces the app bar. */
   top?: unknown;
   /** What is open over the destination, if anything. */
@@ -101,6 +110,7 @@ export const previewScreen = (
     nav-type=${state.navType ?? 'gesture'}
     tab=${ifDefined(d.tab)}
     kind=${d.kind ?? 'root'}
+    ?beside-list=${Boolean(d.besideList)}
     heading=${ifDefined(d.title)}
     top-bar=${topBar}
     search-placeholder=${d.search?.placeholder ?? 'Search'}
@@ -121,6 +131,7 @@ export const previewScreen = (
     @preview-action=${(e: CustomEvent<{id: string}>) => d.onAction?.(e.detail.id)}
     @preview-back=${() => d.onBack?.()}
     @preview-dismiss=${() => d.overlay?.onDismiss?.()}
+    @preview-scroll=${(e: CustomEvent) => d.onScroll?.(e.detail)}
   >
     ${d.content} ${d.fab ? html`<div slot="fab">${d.fab}</div>` : nothing}
     ${d.top ? html`<div slot="top">${d.top}</div>` : nothing}

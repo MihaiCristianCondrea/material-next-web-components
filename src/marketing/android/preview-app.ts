@@ -186,6 +186,7 @@ export const previewChrome = (
     navType = 'gesture',
     navigation = {},
     tab,
+    besideList = false,
   }: {
     window?: string | WindowSpec | null;
     kind?: PreviewDestinationKind;
@@ -193,6 +194,8 @@ export const previewChrome = (
     navigation?: PreviewNavigationState;
     /** The tab the destination belongs to. */
     tab?: string;
+    /** A child open as the detail beside its tab's list (PaneRole.Detail): its tab stays marked. */
+    besideList?: boolean;
   } = {}
 ): PreviewChrome => {
   const layout = shellLayout(window);
@@ -218,7 +221,11 @@ export const previewChrome = (
     railExpanded,
     drawerOpen: mode === 'bottomBar' && Boolean(navigation.drawerOpen),
     railOpen: mode === 'rail' && Boolean(navigation.railOpen),
-    selectedTab: root ? (app.tab(tab)?.id ?? null) : null,
+    // A tab reads as selected while its root shows: on its own, or as the list beside its child (highlightedTab).
+    selectedTab:
+      root || (kind === 'child' && besideList && layout.listDetail)
+        ? (app.tab(tab)?.id ?? null)
+        : null,
     titleSource: !root ? 'destination' : navigationNamesApp ? 'tab' : 'app',
     overflow,
     overflowOpen: overflow && Boolean(navigation.overflowOpen),

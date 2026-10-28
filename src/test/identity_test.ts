@@ -13,6 +13,7 @@ import {
   supportUs,
   toolkitFooter,
   type MaterialNextAndroidScreen,
+  type PreviewOverlay,
   type ProductIdentityConfig,
 } from '../marketing/index.js';
 
@@ -71,7 +72,11 @@ suite('defineProductIdentity', () => {
   });
 
   test('the app can name itself apart from its store name', () => {
-    const id = defineProductIdentity({...CONFIG, name: 'Smart Sample', label: 'Sample'});
+    const id = defineProductIdentity({
+      ...CONFIG,
+      name: 'Smart Sample',
+      label: 'Sample',
+    });
     assert.equal(id.app.config.name, 'Sample');
     assert.equal(id.product.name, 'Smart Sample');
   });
@@ -221,7 +226,8 @@ suite('Android preview additions', () => {
         top-bar="large"
         heading="Large files"
         .collapse=${1}
-        ><p>content</p><div slot="bottom">Clean</div></mnw-android-screen
+        ><p>content</p>
+        <div slot="bottom">Clean</div></mnw-android-screen
       >`
     );
     await el.updateComplete;
@@ -246,9 +252,13 @@ suite('Android preview additions', () => {
 
 suite('Overlay presentations', () => {
   const app = defineProductIdentity(CONFIG).app;
-  const mount = (overlay: object) =>
+  const mount = (overlay: PreviewOverlay) =>
     fixture<MaterialNextAndroidScreen>(
-      html`<mnw-android-screen .app=${app} tab="home" interactive .overlay=${overlay}
+      html`<mnw-android-screen
+        .app=${app}
+        tab="home"
+        interactive
+        .overlay=${overlay}
         ><div slot="overlay">Body</div></mnw-android-screen
       >`
     );
@@ -268,7 +278,12 @@ suite('Overlay presentations', () => {
   });
 
   test('a sheet can draw a drag handle and leave its padding to the content', async () => {
-    const el = await mount({presentation: 'sheet', label: 'Sort', handle: true, flush: true});
+    const el = await mount({
+      presentation: 'sheet',
+      label: 'Sort',
+      handle: true,
+      flush: true,
+    });
     const sheet = el.shadowRoot!.querySelector<HTMLElement>('.sheet')!;
     assert.ok(sheet.querySelector('.sheet__handle'));
     assert.equal(getComputedStyle(sheet).paddingLeft, '0px');
@@ -280,10 +295,16 @@ suite('Scrolling screens', () => {
 
   test('the content starts where scrollPosition puts it, and the large bar follows', async () => {
     const el = await fixture<MaterialNextAndroidScreen>(
-      html`<mnw-android-screen .app=${app} tab="home" kind="page" top-bar="large" heading="A long article title"
-        .titleLines=${2} .scrollPosition=${200}
-        ><div style="height:3000px"></div></mnw-android-screen
-      >`
+      html`<mnw-android-screen
+        .app=${app}
+        tab="home"
+        kind="page"
+        top-bar="large"
+        heading="A long article title"
+        .titleLines=${2}
+        .scrollPosition=${200}
+        ><div style="height:3000px"></div
+      ></mnw-android-screen>`
     );
     await el.updateComplete;
     const content = el.shadowRoot!.querySelector('.content')!;
@@ -291,11 +312,23 @@ suite('Scrolling screens', () => {
     assert.equal(el.style.getPropertyValue('--_title-lines'), '2');
     assert.equal(el.style.getPropertyValue('--_collapse'), '1.000');
     assert.isTrue(el.hasAttribute('data-scrolled'));
+    let reported: {scrollTop: number} | undefined;
+    el.addEventListener(
+      'preview-scroll',
+      (e) => (reported = (e as CustomEvent).detail)
+    );
+    content.scrollTop = 400;
+    content.dispatchEvent(new Event('scroll'));
+    assert.equal(reported?.scrollTop, 400);
   });
 
   test('a navigation bar hidden on scroll gives its inset back', async () => {
     const el = await fixture<MaterialNextAndroidScreen>(
-      html`<mnw-android-screen .app=${app} tab="home" hide-navigation-bar></mnw-android-screen>`
+      html`<mnw-android-screen
+        .app=${app}
+        tab="home"
+        hide-navigation-bar
+      ></mnw-android-screen>`
     );
     await el.updateComplete;
     assert.notOk(el.shadowRoot!.querySelector('.navbar'));

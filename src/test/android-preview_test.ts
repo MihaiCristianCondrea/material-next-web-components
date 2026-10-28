@@ -88,6 +88,24 @@ suite('previewChrome', () => {
       }
     }
     assert.equal(previewChrome(APP, {kind: 'child'}).bottomBar, 80);
+    // Beside its list on a wide window, a child's tab stays marked.
+    assert.equal(
+      previewChrome(APP, {
+        window: win(900),
+        kind: 'child',
+        tab: 'home',
+        besideList: true,
+      }).selectedTab,
+      'home'
+    );
+    assert.isNull(
+      previewChrome(APP, {
+        window: win(430),
+        kind: 'child',
+        tab: 'home',
+        besideList: true,
+      }).selectedTab
+    );
     assert.equal(previewChrome(APP, {kind: 'page'}).bottomBar, 0);
   });
 

@@ -103,11 +103,20 @@ Assets stay in the app. The identity holds their paths and resolves them through
 
 ## Overlays
 
-`overlay.presentation` is `sheet` (a `ModalBottomSheet` with no drag handle, opened straight to expanded over a 32% scrim) or `fullscreen` (a full-screen dialog over the status bar). The shell owns what every overlay needs:
+`overlay.presentation` is `sheet` (a `ModalBottomSheet`, opened straight to expanded over a 32% scrim), `dialog` (an `AlertDialog` centred over the scrim, 280 to 560 dp wide by its content) or `fullscreen` (a full-screen dialog over the status bar). `handle: true` gives a sheet its drag handle; `flush: true` leaves the padding to the content, and a flush sheet lays its content out as a column, so the content's own scroll area scrolls and its footer stays pinned. The shell owns what every overlay needs:
 
 - It is drawn inside the screen and clipped by it: no popover or top-layer content escapes the device frame.
 - The content behind it is `inert`; focus moves into it when it opens and back to what opened it when it closes.
 - Escape, the system Back button and the scrim close the topmost layer: the overflow menu, then the drawer or modal rail, then the overlay (`onDismiss`).
+
+## Scrolling, bottom bars and lists
+
+- `bottom` is the destination's own bottom bar (`Scaffold`'s `bottomBar`): an action row or a message field between the content and the navigation bar. Beside a rail it keeps clear of the system navigation.
+- `collapse` (0 to 1) drives a large app bar for a screen that scrolls from its state, so a capture of any position is deterministic. Without it the bar follows the content's own scrolling, and `onScroll` reports the position (`scrollTop`, `scrollHeight`, `clientHeight`, `collapseHeight`) for a screen that follows it, such as reading progress.
+- `scrollPosition` starts the content scrolled, for a capture of a scrolled screen. `titleLines` lets a large title wrap before it ellipsises.
+- `hideNavigationBar` hides the navigation bar on scroll (`HideOnScrollBottomBar`) and gives its inset back to the content.
+- A child drawn as the detail beside its tab's list on a wide window sets `besideList`, and its tab stays marked, as `highlightedTab` does.
+- Drawer entries take a `badge`: a count, or `''` for the dot. `preview.statusBar: 'blank'` on the identity leaves the status bar empty, for timeless captures.
 
 ## Captures and videos
 

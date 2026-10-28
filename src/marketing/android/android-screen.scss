@@ -111,7 +111,9 @@ button {
 }
 .large-title {
   overflow: hidden;
-  height: calc((1 - var(--_collapse, 0)) * (52px + var(--_title-lines, 1) * 36px));
+  height: calc(
+    (1 - var(--_collapse, 0)) * (52px + var(--_title-lines, 1) * 36px)
+  );
   display: flex;
   align-items: flex-end;
   padding: 0 16px 16px;

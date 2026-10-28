@@ -59,9 +59,11 @@ export class MaterialNextDocsVerticalTabs extends DocsNavigationList {
             )}
             @click=${(event: MouseEvent) => this.select(event, index)}
           >
-            ${item.icon
-              ? html`<md-icon slot="start">${item.icon}</md-icon>`
-              : nothing}
+            ${
+              item.icon
+                ? html`<md-icon slot="start">${item.icon}</md-icon>`
+                : nothing
+            }
             <span>${item.label}</span>
           </md-list-item>
         `

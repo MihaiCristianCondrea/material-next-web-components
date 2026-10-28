@@ -6,6 +6,26 @@ Last updated: October 28, 2026.
 
 # October 28, 2026
 
+**Version:** `0.0.10`
+
+### Added
+
+- Overlays for every app on the shell: `presentation: 'dialog'` (an AlertDialog centred over the scrim, sized by its content between 280 and 560 dp), a sheet's drag handle (`handle`), and `flush` for content that lays itself out, with its footer pinned.
+- A `bottom` slot for the destination's own bottom bar (an action row, a message field), above the navigation bar.
+- State-driven scrolling for captures: `collapse` drives a large app bar, `scrollPosition` starts the content scrolled, and `onScroll` (the `preview-scroll` event) reports the position to a screen that follows it.
+- `titleLines` for a large title that wraps (an article's), and `hideNavigationBar` for the bar that hides on scroll.
+- A child beside its tab's list on a wide window keeps its tab marked (`besideList`).
+- `label` on the identity: the name the app draws on itself when it differs from the store name.
+- Drawer entries take a `badge`, drawn as a Material 3 Badge; `preview.statusBar: 'blank'` leaves the status bar empty.
+
+### Changed
+
+- `toolkitFooter()` draws Settings and Share with rounded icons, as the library does.
+
+---
+
+# October 28, 2026
+
 **Version:** `0.0.9`
 
 The 0.0.8 release did not publish (its tag's package.json still said 0.0.7); 0.0.9 carries everything it would have.

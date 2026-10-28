@@ -86,6 +86,7 @@ const deepActive = () => {
  * @fires preview-search - `{value}`: the tab's search text changed.
  * @fires preview-action - `{id}`: an app bar action was pressed.
  * @fires preview-dismiss - The overlay was dismissed: scrim, Escape or Back.
+ * @fires preview-scroll - `{scrollTop, scrollHeight, clientHeight, collapseHeight}`: the content scrolled.
  *
  * @slot - The destination's content.
  * @slot fab - A floating action button, placed above the navigation bar and the system bars.
@@ -109,6 +110,9 @@ export class MaterialNextAndroidScreen extends LitElement {
   @property() tab?: string;
 
   @property() kind: PreviewDestinationKind = 'root';
+
+  /** A child open as the detail beside its tab's list: its tab stays marked in the navigation. */
+  @property({type: Boolean, attribute: 'beside-list'}) besideList = false;
 
   /**
    * The app bar title, overriding the shell's: a tab's root names the app, or the tab once the
@@ -144,7 +148,8 @@ export class MaterialNextAndroidScreen extends LitElement {
    * Where the content is scrolled to, for screens and captures that start scrolled. Applied when it changes; the
    * person can scroll on from there.
    */
-  @property({type: Number, attribute: 'scroll-position'}) scrollPosition?: number;
+  @property({type: Number, attribute: 'scroll-position'})
+  scrollPosition?: number;
 
   /** The navigation bar has hidden on scroll (HideOnScrollBottomBar): the content takes its place. */
   @property({type: Boolean, attribute: 'hide-navigation-bar'})
@@ -244,6 +249,18 @@ export class MaterialNextAndroidScreen extends LitElement {
     );
     if (this.collapse === undefined)
       this.setCollapse(Math.min(1, Math.max(0, top / this.largeTitleHeight)));
+    // The content scrolls in this shadow root, where its scroll events stay: screens that read the position (reading
+    // progress) get it here.
+    this.dispatchEvent(
+      new CustomEvent('preview-scroll', {
+        detail: {
+          scrollTop: top,
+          scrollHeight: el.scrollHeight,
+          clientHeight: el.clientHeight,
+          collapseHeight: this.largeTitleHeight,
+        },
+      })
+    );
   };
 
   override willUpdate() {
@@ -255,6 +272,7 @@ export class MaterialNextAndroidScreen extends LitElement {
       navType: this.navType,
       navigation: this.navigation,
       tab: this.tab,
+      besideList: this.besideList,
     });
     if (this.hideNavigationBar && this.chrome.bottomBar)
       this.chrome = {...this.chrome, bottomBar: 0};
@@ -275,7 +293,10 @@ export class MaterialNextAndroidScreen extends LitElement {
     this.style.setProperty('--_status-bar', `${layout.statusBar}px`);
     this.style.setProperty('--_system-nav', `${c.systemNav}px`);
     this.style.setProperty('--_bottom-bar', `${c.bottomBar}px`);
-    this.style.setProperty('--_title-lines', String(Math.max(1, this.titleLines)));
+    this.style.setProperty(
+      '--_title-lines',
+      String(Math.max(1, this.titleLines))
+    );
     if (changed.has('scrollPosition') && this.scrollPosition !== undefined) {
       const el = this.content;
       if (el) {
@@ -403,7 +424,9 @@ export class MaterialNextAndroidScreen extends LitElement {
           <h1 class="title">${title}</h1>
           ${actions}
         </div>
-        <div class="large-title" aria-hidden="true"><span class="large-title__text">${title}</span></div>
+        <div class="large-title" aria-hidden="true">
+          <span class="large-title__text">${title}</span>
+        </div>
       </div>`;
     }
     return html`<div class=${barClass}>
@@ -422,7 +445,11 @@ export class MaterialNextAndroidScreen extends LitElement {
   /** ShellNavigationBar (Compose NavigationBar): 80 dp, a 56 x 32 dp pill behind the selected icon. */
   private renderNavigationBar() {
     const c = this.chrome;
-    if (c.mode !== 'bottomBar' || this.kind === 'page' || this.hideNavigationBar)
+    if (
+      c.mode !== 'bottomBar' ||
+      this.kind === 'page' ||
+      this.hideNavigationBar
+    )
       return nothing;
     // Under a child no tab is marked (`highlightedTab`).
     return html`<nav class="navbar" aria-label="Tabs">
