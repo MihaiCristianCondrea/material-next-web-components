@@ -179,3 +179,92 @@ suite('App Toolkit presets', () => {
     assert.equal(supportUs({screen: 'support'}).screen, 'support');
   });
 });
+
+suite('Android preview additions', () => {
+  const app = defineProductIdentity({
+    ...CONFIG,
+    destinations: {
+      ...CONFIG.destinations,
+      drawer: {
+        entries: [{id: 'trash', label: 'Trash', icon: 'delete', badge: '1'}],
+        footer: toolkitFooter(),
+      },
+    },
+    preview: {statusBar: 'blank'},
+  }).app;
+
+  test('a drawer entry shows its badge; the status bar can stay blank', async () => {
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen
+        .app=${app}
+        tab="home"
+        .navigation=${{drawerOpen: true}}
+      ></mnw-android-screen>`
+    );
+    const root = el.shadowRoot!;
+    assert.equal(root.querySelector('.modal-drawer .badge')!.textContent, '1');
+    assert.equal(root.querySelector('.status')!.textContent!.trim(), '');
+  });
+
+  test('the bottom slot sits under the content; collapse drives a large bar', async () => {
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen
+        .app=${app}
+        tab="home"
+        kind="page"
+        top-bar="large"
+        heading="Large files"
+        .collapse=${1}
+        ><p>content</p><div slot="bottom">Clean</div></mnw-android-screen
+      >`
+    );
+    await el.updateComplete;
+    await new Promise((r) => requestAnimationFrame(r));
+    assert.isTrue(el.hasAttribute('data-bottom'));
+    assert.isTrue(el.hasAttribute('data-scrolled'));
+    assert.equal(el.style.getPropertyValue('--_collapse'), '1.000');
+    const bottom = el.shadowRoot!.querySelector('.bottom')!;
+    const content = el.shadowRoot!.querySelector('.content')!;
+    assert.isAtLeast(
+      bottom.getBoundingClientRect().top,
+      content.getBoundingClientRect().bottom - 1
+    );
+  });
+
+  test('the Toolkit footer draws Settings and Share rounded, as the library does', () => {
+    const [settings, , , share] = toolkitFooter();
+    assert.deepEqual(settings.icon, {name: 'settings', rounded: true});
+    assert.deepEqual(share.icon, {name: 'share', rounded: true});
+  });
+});
+
+suite('Overlay presentations', () => {
+  const app = defineProductIdentity(CONFIG).app;
+  const mount = (overlay: object) =>
+    fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen .app=${app} tab="home" interactive .overlay=${overlay}
+        ><div slot="overlay">Body</div></mnw-android-screen
+      >`
+    );
+
+  test('a dialog is centred over a scrim and dismissed by it', async () => {
+    const el = await mount({presentation: 'dialog', label: 'Delete files?'});
+    let dismissed = 0;
+    el.addEventListener('preview-dismiss', () => dismissed++);
+    const root = el.shadowRoot!;
+    const dialog = root.querySelector<HTMLElement>('.dialog')!;
+    assert.equal(dialog.getAttribute('role'), 'alertdialog');
+    const box = dialog.getBoundingClientRect();
+    const host = el.getBoundingClientRect();
+    assert.closeTo(box.left - host.left, host.right - box.right, 1);
+    root.querySelector<HTMLElement>('.scrim')!.click();
+    assert.equal(dismissed, 1);
+  });
+
+  test('a sheet can draw a drag handle and leave its padding to the content', async () => {
+    const el = await mount({presentation: 'sheet', label: 'Sort', handle: true, flush: true});
+    const sheet = el.shadowRoot!.querySelector<HTMLElement>('.sheet')!;
+    assert.ok(sheet.querySelector('.sheet__handle'));
+    assert.equal(getComputedStyle(sheet).paddingLeft, '0px');
+  });
+});

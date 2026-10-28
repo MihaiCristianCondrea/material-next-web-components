@@ -40,6 +40,10 @@ export interface PreviewDestination {
   onBack?: () => void;
   content: unknown;
   fab?: unknown;
+  /** The destination's own bottom bar: an action row or a message field above the navigation. */
+  bottom?: unknown;
+  /** How far a large app bar has collapsed (0 to 1), when the screen scrolls from its state. */
+  collapse?: number;
   /** Replaces the app bar. */
   top?: unknown;
   /** What is open over the destination, if anything. */
@@ -97,8 +101,9 @@ export const previewScreen = (
     search-value=${d.search?.value ?? ''}
     .actions=${d.actions ?? []}
     .navigation=${navigation}
-    .overlay=${d.overlay ? {presentation: d.overlay.presentation, label: d.overlay.label} : null}
+    .overlay=${d.overlay ? {presentation: d.overlay.presentation, label: d.overlay.label, handle: d.overlay.handle, flush: d.overlay.flush} : null}
     ?scrolled=${Boolean(d.scrolled)}
+    .collapse=${d.collapse}
     ?interactive=${Boolean(state.set)}
     @preview-navigation=${(e: CustomEvent<{patch: PreviewNavigationState}>) => state.set?.({...e.detail.patch})}
     @preview-tab=${(e: CustomEvent<{tab: PreviewTab}>) => open(e.detail.tab)}
@@ -110,6 +115,7 @@ export const previewScreen = (
   >
     ${d.content} ${d.fab ? html`<div slot="fab">${d.fab}</div>` : nothing}
     ${d.top ? html`<div slot="top">${d.top}</div>` : nothing}
+    ${d.bottom ? html`<div slot="bottom">${d.bottom}</div>` : nothing}
     ${d.overlay ? html`<div slot="overlay">${d.overlay.content}</div>` : nothing}
   </mnw-android-screen>`;
 };

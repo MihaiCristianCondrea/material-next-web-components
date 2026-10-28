@@ -80,6 +80,8 @@ export interface ProductIdentityConfig {
   colors?: IdentityColors;
   destinations: IdentityDestinations;
   links?: {repository?: string; privacy?: string; codeOfConduct?: string};
+  /** How the Android preview draws the system around the app. */
+  preview?: {statusBar?: 'clock' | 'blank'};
 }
 
 export interface ProductIdentity {
@@ -143,6 +145,7 @@ export const defineProductIdentity = (
     // Resolved on every render, so a base set after the identity loads still applies.
     logo: () => asset(logo),
     ...config.destinations,
+    statusBar: config.preview?.statusBar,
   });
   const brand = config.fonts?.brand;
   const plain = config.fonts?.plain ?? brand;

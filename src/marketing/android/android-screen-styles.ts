@@ -193,6 +193,10 @@ export const styles = css`
     bottom: calc(16px + var(--_system-nav));
   }
 
+  .bottom {
+    flex-shrink: 0;
+  }
+
   .body {
     flex: 1;
     min-height: 0;
@@ -333,6 +337,14 @@ export const styles = css`
   }
 
   :host([data-framed]) .content {
+    padding-bottom: var(--_system-nav);
+  }
+
+  :host([data-framed][data-bottom]) .content {
+    padding-bottom: 0;
+  }
+
+  :host([data-framed][data-bottom]) .bottom {
     padding-bottom: var(--_system-nav);
   }
 
@@ -588,6 +600,47 @@ export const styles = css`
     border-radius: 28px 28px 0 0;
   }
 
+  .sheet.flush {
+    padding: 0 0 var(--_system-nav);
+  }
+
+  .sheet__handle {
+    width: 32px;
+    height: 4px;
+    margin: 6px auto 22px;
+    border-radius: 2px;
+    background: var(--md-sys-color-on-surface-variant);
+    opacity: 0.4;
+  }
+
+  .sheet.flush .sheet__handle {
+    margin-top: 22px;
+  }
+
+  .overlay--dialog {
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .dialog {
+    position: relative;
+    z-index: 1;
+    width: min(560px, 100%);
+    min-width: min(280px, 100%);
+    max-height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 24px;
+    background: var(--md-sys-color-surface-container-high);
+    color: var(--md-sys-color-on-surface);
+    border-radius: 28px;
+  }
+
+  .dialog.flush {
+    padding: 0;
+  }
+
   .fullscreen {
     position: relative;
     z-index: 1;
@@ -598,6 +651,7 @@ export const styles = css`
   }
 
   .sheet:focus,
+  .dialog:focus,
   .fullscreen:focus,
   .modal-drawer:focus,
   .modal-rail:focus,
@@ -658,6 +712,16 @@ export const styles = css`
     animation: fade-in 200ms linear both;
   }
 
+  :host([interactive]) .dialog {
+    animation: dialog-in 250ms cubic-bezier(0.05, 0.7, 0.1, 1) both;
+  }
+
+  @keyframes dialog-in {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+  }
   :host([interactive][data-rail-opening]) .rail--expanded .rail__title,
   :host([interactive][data-rail-opening]) .rail--expanded .rail__label {
     animation: rail-label-in 300ms linear both;
@@ -694,6 +758,7 @@ export const styles = css`
     :host([interactive]) .modal-drawer,
     :host([interactive]) .modal-rail,
     :host([interactive]) .fullscreen,
+    :host([interactive]) .dialog,
     :host([interactive]) .rail--expanded .rail__title,
     :host([interactive]) .rail--expanded .rail__label,
     :host([interactive]) .title__text {

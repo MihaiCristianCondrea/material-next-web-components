@@ -48,6 +48,8 @@ export interface PreviewEntry {
   /** A marketing screen the entry opens. */
   screen?: string;
   screenState?: Record<string, unknown>;
+  /** A count beside the label in the drawer, such as items waiting in the trash. */
+  badge?: string;
 }
 
 /** The app's preview declaration: one per app, shared by every screen. */
@@ -68,6 +70,8 @@ export interface PreviewAppConfig {
   };
   /** The app bar's overflow menu on tab roots. No entries: no overflow button. */
   overflow?: PreviewEntry[];
+  /** `clock` draws 12:00 and the system icons; `blank` leaves the status bar empty, for timeless captures. */
+  statusBar?: 'clock' | 'blank';
 }
 
 export interface PreviewApp {

@@ -26,12 +26,13 @@ export const toolkitFooter = ({
   screens?: Partial<Record<'settings' | 'help' | 'updates' | 'share', string>>;
 } = {}): PreviewEntry[] => {
   const entries: PreviewEntry[] = [
-    {id: 'settings', label: 'Settings', icon: 'settings'},
+    // The library draws Settings and Share with its own rounded drawables (anim_settings, anim_share).
+    {id: 'settings', label: 'Settings', icon: {name: 'settings', rounded: true}},
     {id: 'help', label: 'Help & feedback', icon: 'help_outline'},
   ];
   if (updates)
     entries.push({id: 'updates', label: 'Updates', icon: 'event_note'});
-  entries.push({id: 'share', label: 'Share', icon: 'share'});
+  entries.push({id: 'share', label: 'Share', icon: {name: 'share', rounded: true}});
   return entries.map((entry) => {
     const screen = screens[entry.id as keyof typeof screens];
     return screen ? {...entry, screen} : entry;

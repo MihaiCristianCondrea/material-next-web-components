@@ -38,10 +38,17 @@ export type PreviewTopBar = 'small' | 'center' | 'large' | 'search' | 'none';
 
 /** Something the shell draws over the destination, with its content in the `overlay` slot. */
 export interface PreviewOverlay {
-  /** `sheet` is a ModalBottomSheet; `fullscreen` a full-screen dialog over the status bar. */
-  presentation: 'sheet' | 'fullscreen';
+  /**
+   * `sheet` is a ModalBottomSheet; `dialog` an AlertDialog centred over a scrim; `fullscreen` a full-screen dialog
+   * over the status bar.
+   */
+  presentation: 'sheet' | 'dialog' | 'fullscreen';
   /** The dialog's accessible name. */
   label: string;
+  /** A sheet's drag handle (BottomSheetDefaults.DragHandle). */
+  handle?: boolean;
+  /** No padding around the content, which lays itself out (a sheet still keeps clear of the system navigation). */
+  flush?: boolean;
 }
 
 const icon = (input: PreviewIconInput, {filled = false} = {}) => {
@@ -82,6 +89,8 @@ const deepActive = () => {
  *
  * @slot - The destination's content.
  * @slot fab - A floating action button, placed above the navigation bar and the system bars.
+ * @slot bottom - The destination's own bottom bar (Scaffold's `bottomBar`): an action row or a message field,
+ *   between the content and the navigation bar.
  * @slot top - Replaces the app bar, for a destination with its own (an article's).
  * @slot overlay - The overlay's content (see `overlay`).
  */
@@ -121,6 +130,12 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   /** The app bar and status bar take the scrolled colour. */
   @property({type: Boolean}) scrolled = false;
+
+  /**
+   * How far a large app bar has collapsed, 0 to 1, for screens that scroll from their state (captures).
+   * Unset, the bar follows the content's own scrolling.
+   */
+  @property({type: Number}) collapse?: number;
 
   /** Live preview: reacts to input and animates overlays in. Off in videos and captures. */
   @property({type: Boolean, reflect: true}) interactive = false;
@@ -193,17 +208,24 @@ export class MaterialNextAndroidScreen extends LitElement {
     if (!this.dismissTop() && this.kind !== 'root') this.emit('preview-back');
   };
 
-  private onScroll = () => {
-    const el = this.content;
-    if (!el) return;
-    const top = el.scrollTop;
-    this.toggleAttribute('data-scrolled', this.scrolled || top > 4);
-    const collapse = Math.min(1, Math.max(0, top / 88));
+  private setCollapse(collapse: number) {
     this.style.setProperty('--_collapse', collapse.toFixed(3));
     this.style.setProperty(
       '--_title-opacity',
       collapse > 0.75 ? ((collapse - 0.75) / 0.25).toFixed(3) : '0'
     );
+  }
+
+  private onScroll = () => {
+    const el = this.content;
+    if (!el) return;
+    const top = el.scrollTop;
+    this.toggleAttribute(
+      'data-scrolled',
+      this.scrolled || top > 4 || (this.collapse ?? 0) > 0
+    );
+    if (this.collapse === undefined)
+      this.setCollapse(Math.min(1, Math.max(0, top / 88)));
   };
 
   override willUpdate() {
@@ -236,8 +258,12 @@ export class MaterialNextAndroidScreen extends LitElement {
     this.toggleAttribute('data-framed', layout.framed);
     this.toggleAttribute(
       'data-scrolled',
-      this.scrolled || (this.content?.scrollTop ?? 0) > 4
+      this.scrolled ||
+        (this.content?.scrollTop ?? 0) > 4 ||
+        (this.collapse ?? 0) > 0
     );
+    if (this.collapse !== undefined)
+      this.setCollapse(Math.min(1, Math.max(0, this.collapse)));
     // Focus moves into what opened and back to what opened it, as Compose's dialogs do.
     const open = this.covered;
     if (this.interactive && open && !this.wasOpen) {
@@ -255,6 +281,9 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   private renderStatusBar() {
     if (!this.chrome.layout.statusBar) return nothing;
+    // A blank status bar keeps captures timeless: no clock, no system icons.
+    if (this.app!.config.statusBar === 'blank')
+      return html`<div class="status" aria-hidden="true"></div>`;
     return html`<div class="status" aria-hidden="true">
       <span>12:00</span>
       <span class="status__icons"
@@ -406,7 +435,7 @@ export class MaterialNextAndroidScreen extends LitElement {
       title=${ifDefined(previewOnly ? 'Not part of this preview' : undefined)}
       @click=${() => this.chooseEntry(entry)}
     >
-      ${cls === 'rail' ? html`<span class="rail__indicator">${icon(entry.icon)}</span><span class="rail__label">${entry.label}</span>` : html`${icon(entry.icon)}<span>${entry.label}</span>`}
+      ${cls === 'rail' ? html`<span class="rail__indicator">${icon(entry.icon)}</span><span class="rail__label">${entry.label}</span>` : html`${icon(entry.icon)}<span>${entry.label}</span>${entry.badge !== undefined ? html`<span class="badge">${entry.badge}</span>` : nothing}`}
     </button>`;
   }
 
@@ -549,15 +578,16 @@ export class MaterialNextAndroidScreen extends LitElement {
       ${
         this.overlay
           ? html`<div class="overlay overlay--${this.overlay.presentation}">
-              ${this.overlay.presentation === 'sheet' ? scrim(() => this.emit('preview-dismiss')) : nothing}
+              ${this.overlay.presentation !== 'fullscreen' ? scrim(() => this.emit('preview-dismiss')) : nothing}
               <div
-                class=${this.overlay.presentation === 'sheet' ? 'sheet' : 'fullscreen'}
-                role="dialog"
+                class="${this.overlay.presentation} ${this.overlay.flush ? 'flush' : ''}"
+                role=${this.overlay.presentation === 'dialog' ? 'alertdialog' : 'dialog'}
                 aria-modal="true"
                 aria-label=${this.overlay.label}
                 tabindex="-1"
                 data-surface
               >
+                ${this.overlay.presentation === 'sheet' && this.overlay.handle ? html`<div class="sheet__handle" aria-hidden="true"></div>` : nothing}
                 <slot name="overlay"></slot>
               </div>
             </div>`
@@ -636,6 +666,16 @@ export class MaterialNextAndroidScreen extends LitElement {
     const top = html`<slot name="top">${this.renderTopBar()}</slot>`;
     const content = html`<div class="content" @scroll=${this.onScroll}>
         <slot></slot>
+      </div>
+      <div class="bottom">
+        <slot
+          name="bottom"
+          @slotchange=${(e: Event) =>
+            this.toggleAttribute(
+              'data-bottom',
+              (e.target as HTMLSlotElement).assignedElements().length > 0
+            )}
+        ></slot>
       </div>
       <div class="fab"><slot name="fab"></slot></div>`;
     if (c.layout.framed) {
