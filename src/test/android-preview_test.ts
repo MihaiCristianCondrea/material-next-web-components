@@ -7,6 +7,7 @@ import {assert, fixture} from '@open-wc/testing';
 import {html, render} from 'lit';
 import {
   createMarketingEmbed,
+  ScreenHost,
   definePreviewApp,
   previewChrome,
   previewScreen,
@@ -99,7 +100,10 @@ suite('previewChrome', () => {
     assert.equal(source(900), 'app');
     assert.equal(source(900, true), 'tab');
     assert.equal(source(1200), 'tab');
-    assert.equal(previewChrome(APP, {kind: 'child'}).titleSource, 'destination');
+    assert.equal(
+      previewChrome(APP, {kind: 'child'}).titleSource,
+      'destination'
+    );
   });
 
   test('the rail button expands, collapses, or is absent', () => {
@@ -405,6 +409,64 @@ suite('previewScreen', () => {
     await el.updateComplete;
     shadow(el).querySelectorAll<HTMLElement>('.rail__item')[1].click();
     assert.deepEqual(calls, [['tools-screen', {railExpanded: true}]]);
+  });
+
+  test('tab switches do not replay the expanded rail label entrance', async () => {
+    const target = document.createElement('div');
+    document.body.append(target);
+    const screens: MarketingScreen[] = ['home', 'tools-screen'].map((id) => ({
+      id,
+      title: id,
+      description: id,
+      defaults: {railExpanded: true},
+      render: (s) =>
+        previewScreen(APP, s as PreviewScreenState, {
+          tab: id === 'home' ? 'home' : 'tools',
+          content: html`<p>${id}</p>`,
+        }),
+    }));
+    const screenHost = new ScreenHost(target, {
+      registry: {
+        screens,
+        byId: (id) => screens.find((s) => s.id === id),
+        categories: () => [],
+      },
+      id: 'home',
+      window: 'fold',
+    });
+    try {
+      for (const id of ['tools-screen', 'home', 'tools-screen']) {
+        screenHost.go(id, {railExpanded: true});
+        const el = target.querySelector('mnw-android-screen')!;
+        await el.updateComplete;
+        assert.ok(shadow(el).querySelector('.rail--expanded'));
+        const labels = [
+          ...shadow(el).querySelectorAll('.rail__title, .rail__label'),
+        ];
+        assert.isAbove(labels.length, 0);
+        for (const label of labels) {
+          assert.notInclude(
+            getComputedStyle(label).animationName,
+            'rail-label-in'
+          );
+          assert.equal(getComputedStyle(label).opacity, '1');
+        }
+      }
+      const el = target.querySelector('mnw-android-screen')!;
+      el.navigation = {railExpanded: false};
+      await el.updateComplete;
+      el.navigation = {railExpanded: true};
+      await el.updateComplete;
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches)
+        assert.include(
+          getComputedStyle(shadow(el).querySelector('.rail__title')!)
+            .animationName,
+          'rail-label-in'
+        );
+    } finally {
+      screenHost.destroy();
+      target.remove();
+    }
   });
 
   test('a static embed renders the shell without set() and settles its parts', async () => {

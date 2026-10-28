@@ -658,8 +658,8 @@ export const styles = css`
     animation: fade-in 200ms linear both;
   }
 
-  :host([interactive]) .rail--expanded .rail__title,
-  :host([interactive]) .rail--expanded .rail__label {
+  :host([interactive][data-rail-opening]) .rail--expanded .rail__title,
+  :host([interactive][data-rail-opening]) .rail--expanded .rail__label {
     animation: rail-label-in 300ms linear both;
   }
 

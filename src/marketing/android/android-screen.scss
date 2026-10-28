@@ -585,8 +585,8 @@ button {
 }
 // The rail's name and labels wait for the rail to open, rather than ellipsising as it grows, and
 // a new app bar title fades in where the old one stood.
-:host([interactive]) .rail--expanded .rail__title,
-:host([interactive]) .rail--expanded .rail__label {
+:host([interactive][data-rail-opening]) .rail--expanded .rail__title,
+:host([interactive][data-rail-opening]) .rail--expanded .rail__label {
   animation: rail-label-in 300ms linear both;
 }
 :host([interactive]) .title__text {

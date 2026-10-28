@@ -17,6 +17,8 @@ Last updated: October 28, 2026.
 
 ### Fixed
 
+- Switching tabs with the fold rail expanded no longer replays its label entrance animation. Labels stay visible during navigation; opening the rail still reveals them after it widens.
+
 - The docs footer keeps its own light and dark surface colours: the page no longer paints another background and divider around it.
 
 ### Changed

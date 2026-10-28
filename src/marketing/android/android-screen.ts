@@ -207,6 +207,7 @@ export class MaterialNextAndroidScreen extends LitElement {
 
   override willUpdate() {
     if (!this.app) return;
+    const wasExpanded = this.chrome?.railExpanded;
     this.chrome = previewChrome(this.app, {
       window: this.window,
       kind: this.kind,
@@ -214,6 +215,11 @@ export class MaterialNextAndroidScreen extends LitElement {
       navigation: this.navigation,
       tab: this.tab,
     });
+    // Tab navigation can remount an already-expanded shell. Reveal labels only
+    // when this mounted rail actually opens, not when it starts expanded.
+    if (!this.chrome.railExpanded) this.removeAttribute('data-rail-opening');
+    else if (this.hasUpdated && wasExpanded === false)
+      this.setAttribute('data-rail-opening', '');
   }
 
   protected override updated(changed: PropertyValues<this>) {
@@ -479,7 +485,9 @@ export class MaterialNextAndroidScreen extends LitElement {
                     aria-current=${ifDefined(t.id === this.chrome.selectedTab ? 'page' : undefined)}
                     @click=${() => this.chooseTab(t)}
                   >
-                    ${this.tabIcon(t, t.id === this.chrome.selectedTab)}<span>${t.label}</span>
+                    ${this.tabIcon(t, t.id === this.chrome.selectedTab)}<span
+                      >${t.label}</span
+                    >
                     ${t.badge !== undefined ? html`<span class="badge">${t.badge}</span>` : nothing}
                   </button>`
               )
