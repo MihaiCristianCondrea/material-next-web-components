@@ -155,11 +155,16 @@ button {
 .content::-webkit-scrollbar {
   display: none;
 }
+// 16 dp from the content's bottom-end corner: above the navigation bar, or, beside a rail or drawer (where the
+// card reaches the window's edge under the system navigation), above the system navigation.
 .fab {
   position: absolute;
   inset-inline-end: 16px;
-  bottom: calc(16px + var(--_system-nav) + var(--_bottom-bar));
+  bottom: calc(16px + var(--_bottom-bar));
   z-index: 3;
+}
+:host([data-framed]) .fab {
+  bottom: calc(16px + var(--_system-nav));
 }
 .body {
   flex: 1;

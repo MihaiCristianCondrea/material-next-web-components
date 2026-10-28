@@ -185,8 +185,12 @@ export const styles = css`
   .fab {
     position: absolute;
     inset-inline-end: 16px;
-    bottom: calc(16px + var(--_system-nav) + var(--_bottom-bar));
+    bottom: calc(16px + var(--_bottom-bar));
     z-index: 3;
+  }
+
+  :host([data-framed]) .fab {
+    bottom: calc(16px + var(--_system-nav));
   }
 
   .body {
