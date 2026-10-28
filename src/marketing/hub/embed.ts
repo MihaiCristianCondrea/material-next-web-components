@@ -32,10 +32,16 @@ export interface EmbedOptions<P> {
   parts?: P;
 }
 
-/** Waits until every Lit and Material Web element under `root` has rendered. */
+/** Every element under `root`, through open shadow roots (the Android shell draws its parts there). */
+const descendants = (root: Element | ShadowRoot): Element[] =>
+  [...root.querySelectorAll('*')].flatMap((e) =>
+    e.shadowRoot ? [e, ...descendants(e.shadowRoot)] : [e]
+  );
+
+/** Waits until every Lit and Material Web element under `root` has rendered, shadow roots included. */
 export const settle = async (root: Element) => {
   for (let i = 0; i < 3; i++) {
-    const pending = [...root.querySelectorAll('*')]
+    const pending = descendants(root)
       .map(
         (e) =>
           (e as Element & {updateComplete?: Promise<unknown>}).updateComplete

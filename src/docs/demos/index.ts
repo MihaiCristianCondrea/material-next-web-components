@@ -8,6 +8,7 @@
 // code sample shown under it. A module may return a cleanup function, called
 // before the next page replaces the demo.
 import appShellFrame from './app-shell-frame.js';
+import androidScreen from './android-screen.js';
 import appShellModal from './app-shell-modal.js';
 import marketingGalleryFrame from './marketing-gallery-frame.js';
 import marketingGalleryModal from './marketing-gallery-modal.js';
@@ -27,6 +28,7 @@ import themeControls from './theme-controls.js';
 type Demo = (root: HTMLElement) => void | (() => void);
 
 const demos: Record<string, Demo> = {
+  'android-screen': androidScreen,
   'app-shell-frame': appShellFrame,
   'app-shell-modal': appShellModal,
   'app-showcase': appShowcase,
