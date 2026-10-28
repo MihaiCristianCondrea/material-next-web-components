@@ -2,8 +2,6 @@
 
 Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
 
-> Status: `0.0.9` is the current release (see [`CHANGELOG.md`](./CHANGELOG.md)). Releases publish from GitHub releases (see [Releasing](#releasing)); experimental APIs can still change.
-
 ## Links
 
 - Documentation, with live demos: <https://mihaicristiancondrea.github.io/material-next-web-components/>
