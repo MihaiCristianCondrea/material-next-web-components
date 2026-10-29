@@ -1,12 +1,14 @@
 # Changelog
 
-Last updated: October 28, 2026.
+Last updated: October 29, 2026.
 
 ---
 
-# October 28, 2026
+# October 29, 2026
 
-**Version:** `0.0.10`
+**Version:** `0.1.0`
+
+0.0.10 was never published; 0.1.0 carries everything it would have, and is the first release the App Toolkit, Smart Cleaner and Android Insider marketing sites all build on.
 
 ### Added
 
@@ -21,6 +23,10 @@ Last updated: October 28, 2026.
 ### Changed
 
 - `toolkitFooter()` draws Settings and Share with rounded icons, as the library does.
+
+### Fixed
+
+- The shell's status bar, app bars, bottom bar, navigation bar, rail and permanent drawer stack above the content, so a scrolled card (one with `contain: paint`, which Chromium hit-tests outside its scroller's clip) no longer catches the taps meant for a tab.
 
 ---
 

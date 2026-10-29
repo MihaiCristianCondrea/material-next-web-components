@@ -191,6 +191,17 @@ export const styles = css`
     display: none;
   }
 
+  .status,
+  .topbar,
+  ::slotted([slot='top']),
+  .bottom,
+  .navbar,
+  .rail,
+  .drawer--permanent {
+    position: relative;
+    z-index: 1;
+  }
+
   .fab {
     position: absolute;
     inset-inline-end: 16px;

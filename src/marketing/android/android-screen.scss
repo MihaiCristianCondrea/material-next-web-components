@@ -164,6 +164,18 @@ button {
 .content::-webkit-scrollbar {
   display: none;
 }
+// The shell's own bars stack above the content. Chromium hit-tests a `contain: paint` descendant of the scrolling
+// content outside the content's clip, so a scrolled card would otherwise catch the taps meant for a tab.
+.status,
+.topbar,
+::slotted([slot='top']),
+.bottom,
+.navbar,
+.rail,
+.drawer--permanent {
+  position: relative;
+  z-index: 1;
+}
 // 16 dp from the content's bottom-end corner: above the navigation bar, or, beside a rail or drawer (where the
 // card reaches the window's edge under the system navigation), above the system navigation.
 .fab {

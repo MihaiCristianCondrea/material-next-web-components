@@ -322,6 +322,25 @@ suite('Scrolling screens', () => {
     assert.equal(reported?.scrollTop, 400);
   });
 
+  test("the shell's bars stack above the scrolling content", async () => {
+    // Chromium hit-tests a `contain: paint` card outside its scroller's clip (App Toolkit's Quick
+    // Tools, scrolled, caught the Play & Decide tab): the bars must sit above the content.
+    const el = await fixture<MaterialNextAndroidScreen>(
+      html`<mnw-android-screen .app=${app} tab="home"></mnw-android-screen>`
+    );
+    await el.updateComplete;
+    const root = el.shadowRoot!;
+    assert.equal(
+      getComputedStyle(root.querySelector('.content')!).zIndex,
+      'auto'
+    );
+    for (const bar of ['.status', '.topbar', '.navbar']) {
+      const style = getComputedStyle(root.querySelector(bar)!);
+      assert.equal(style.position, 'relative', bar);
+      assert.equal(style.zIndex, '1', bar);
+    }
+  });
+
   test('a navigation bar hidden on scroll gives its inset back', async () => {
     const el = await fixture<MaterialNextAndroidScreen>(
       html`<mnw-android-screen
