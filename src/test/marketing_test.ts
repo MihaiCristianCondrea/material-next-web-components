@@ -562,6 +562,9 @@ suite('a moving phone', () => {
       html`<mnw-device-frame><div></div></mnw-device-frame>`
     );
     await el.updateComplete;
+    // Without WebGL (some CI browsers) the phone keeps its CSS outline and
+    // never moves: nothing to check.
+    if (!el.shadowRoot!.querySelector('img.phone')) return;
     for (const yaw of [4, 8, 12]) {
       el.yaw = yaw;
       await el.updateComplete;
