@@ -4,7 +4,9 @@ Last updated: November 7, 2026.
 
 ---
 
-# Unreleased
+# November 7, 2026
+
+**Version:** `0.2.0`
 
 ### Added
 
@@ -23,7 +25,7 @@ Last updated: November 7, 2026.
 ### Removed
 
 - The Pixel 9 Pro XL device art images (`device-frames/pixel_9_pro_xl`), replaced by the 3D phone.
-- `PROJECT_LAUNCHER_CATALOG`, `PROJECT_LAUNCHER_ITEMS` and `migrateLegacyLauncherId`: use `DEFAULT_LAUNCHER_CATALOG`, or your own catalog with its `migrate`. The Android Insider and Apps Metadata launcher icons are gone with them.
+- `PROJECT_LAUNCHER_CATALOG`, `PROJECT_LAUNCHER_ITEMS` and `migrateLegacyLauncherId`: use `DEFAULT_LAUNCHER_CATALOG`, or your own catalog with its `migrate`. The Android Insider and Apps Metadata icons still ship in `assets/marketing/launcher/` for the apps that list them.
 - The product launcher in this site's top app bar. The launcher's own page still demonstrates it.
 
 ---

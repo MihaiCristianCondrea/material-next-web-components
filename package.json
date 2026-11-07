@@ -1,6 +1,6 @@
 {
   "name": "material-next-web-components",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Material Design web components for product pages, documentation and Android app marketing hubs, built with Lit and Material Web.",
   "main": "dist/material-next-home.js",
   "module": "dist/material-next-home.js",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^3.1.7",
     "@custom-elements-manifest/analyzer": "^0.11.0",
-    "@fortawesome/fontawesome-free": "^6.5.1",
+    "@fortawesome/fontawesome-free": "^7.3.1",
     "@material/web": "^2.5.0",
     "@open-wc/testing": "^5.0.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -64,7 +64,7 @@
     "@web/test-runner": "^1.0.0",
     "@web/test-runner-playwright": "^1.0.0",
     "@webcomponents/webcomponentsjs": "^2.8.0",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "lit": "^3.3.3",
     "lit-analyzer": "^2.0.3",
     "prettier": "^3.9.10",

@@ -51,7 +51,7 @@ Import the module and place the element in an app bar's trailing area:
 ></mnw-product-launcher>
 ```
 
-The icons for the default entries (Material Next, Google Play, GitHub, Play Console, Firebase, AdMob, Cloudflare) ship in `assets/marketing/launcher/`; your own products bring their own `image` URLs. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
+The icons for the default entries (Material Next, Google Play, GitHub, Play Console, Firebase, AdMob, Cloudflare) ship in `assets/marketing/launcher/`, with the Android Insider and Apps Metadata icons (`asset:launcher/android-insider.svg`, `asset:launcher/apps-metadata.svg`) for the catalogs that list them; other products bring their own `image` URLs. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
 
 ### Dark mode
 
