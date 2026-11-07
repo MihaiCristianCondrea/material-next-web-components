@@ -19,7 +19,7 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher's favorites are the Android Insider and Apps Metadata admin consoles, GitHub, the developer’s Google Play account and Material Next, alongside the admin redirects from [android-apps-metadata-backend](https://android-apps-metadata-backend.mihaicristiancondrea.workers.dev/admin). This site's app bar uses it, with `current-product="web:material-next"`.
+Without a `catalog`, the launcher shows a neutral starting set: Material Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, each at its public address. It names no one's own products. An app passes its own catalog with its products, admin consoles and links; see [Your own catalog](#your-own-catalog).
 
 ## Live demo
 
@@ -37,10 +37,6 @@ color roles instead. It is off by default.
 <mnw-product-launcher follow-color-palette></mnw-product-launcher>
 ```
 
-There is one Android Insider destination, the [admin console](https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/).
-The Google Play icon opens [the developer account](https://play.google.com/store/apps/dev?id=5390214922640123642), rather than an individual app listing.
-Existing favorites pointing at the old Android Insider app entry migrate to this developer link.
-
 ## Usage
 
 Import the module and place the element in an app bar's trailing area:
@@ -55,7 +51,7 @@ Import the module and place the element in an app bar's trailing area:
 ></mnw-product-launcher>
 ```
 
-The project icons ship in `assets/marketing/launcher/`. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
+The icons for the default entries (Material Next, Google Play, GitHub, Play Console, Firebase, AdMob, Cloudflare) ship in `assets/marketing/launcher/`; your own products bring their own `image` URLs. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
 
 ### Dark mode
 
@@ -120,8 +116,12 @@ launcher.catalog = createLauncherCatalog({
   ],
   defaultFavorites: ['android-app:pocket-notes'],
   redirects: ['console:play-console'],
+  // Optional: rename ids stored by an earlier version of your catalog.
+  migrate: (id) => ({'notes-app': 'android-app:pocket-notes'})[id],
 });
 ```
+
+To keep the default consoles and add your own entries, spread `DEFAULT_LAUNCHER_ITEMS` into `items`. To point an entry somewhere else, for example Google Play at your developer page, give an entry with the same `kind` and `key` first: the first entry with an id wins.
 
 `createLauncherCatalog()` deduplicates: a second entry with the same id or the same URL (ignoring query, hash and a trailing slash) is dropped, and the first one wins. Default favorites and redirects that name no entry are dropped too.
 
@@ -143,7 +143,7 @@ Reset to defaults also stays temporary until Done.
 
 ### Storage
 
-`createLauncherPreferenceStore()` keeps `{"version": 1, "favoriteIds": [...]}` under `storage-key` (default `mnw-launcher:favorites`). It also reads a bare list and the older `{favoriteIds}` shape, turns the backend launcher's ids (`github-profile`) into this catalog's (`shortcut:github`), and keeps working in memory when storage is full, blocked or corrupt. Another tab's change updates the open launcher outside edit mode. Cancel reloads the latest saved list; Done saves the current draft. To keep favorites somewhere else, for example in an account, pass your own `store` with the same four methods.
+`createLauncherPreferenceStore()` keeps `{"version": 1, "favoriteIds": [...]}` under `storage-key` (default `mnw-launcher:favorites`). It also reads a bare list and the older `{favoriteIds}` shape, renames stored ids through the catalog's `migrate`, and keeps working in memory when storage is full, blocked or corrupt. Another tab's change updates the open launcher outside edit mode. Cancel reloads the latest saved list; Done saves the current draft. To keep favorites somewhere else, for example in an account, pass your own `store` with the same four methods.
 
 ## API
 
@@ -161,12 +161,12 @@ Everything below comes from `material-next-web-components/launcher.js`; `launche
 | Domain: catalog   | `createLauncherCatalog`, `findLauncherItem`, `normalizeFavoriteIds`, `MAX_FAVORITES` (48), type `LauncherCatalog`                                                                                |
 | Domain: favorites | `resolveLauncher` (visible favorites, redirects, available entries, hidden favorite ids), `isExcluded`, `addFavorite`, `removeFavorite`, `moveFavorite`, types `LauncherContext`, `LauncherView` |
 | Data              | `createLauncherPreferenceStore`, `DEFAULT_LAUNCHER_STORAGE_KEY`, types `LauncherPreferenceStore`, `KeyValueStorage`                                                                              |
-| Catalog           | `PROJECT_LAUNCHER_CATALOG`, `PROJECT_LAUNCHER_ITEMS`, `migrateLegacyLauncherId`                                                                                                                  |
+| Catalog           | `DEFAULT_LAUNCHER_CATALOG`, `DEFAULT_LAUNCHER_ITEMS`                                                                                                                                             |
 | UI                | `MaterialNextProductLauncher` (`<mnw-product-launcher>`), event types `LauncherChangeEvent`, `LauncherToggleEvent`                                                                               |
 
 The domain functions are pure, so a server-rendered page or a test can work out what a launcher shows without a browser.
 
-The former Tutorials admin entry is named **Android Insider Admin Console**, preserving its saved ID. The built-in catalog does not offer Codex or Smart Cleaner. Existing stored IDs are preserved for compatibility with other catalogs but do not appear here. Hover highlights the tile surface without reshaping the icon. Edit mode uses a still grid with Cancel and Done above the apps.
+Stored ids the catalog does not have are kept for the pages whose catalogs do, but do not appear. Hover highlights the tile surface without reshaping the icon. Edit mode uses a still grid with Cancel and Done above the apps.
 
 The panel follows the Google apps launcher: a single rounded favorites surface, a plain shortcuts grid underneath, and no favorites/redirects counts. `redirects-heading` is empty by default; set it to show an optional section label.
 

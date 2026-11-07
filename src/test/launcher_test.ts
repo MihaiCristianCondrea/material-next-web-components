@@ -16,14 +16,21 @@ import {
   normalizeFavoriteIds,
   removeFavorite,
   resolveLauncher,
-  migrateLegacyLauncherId,
-  PROJECT_LAUNCHER_CATALOG,
+  DEFAULT_LAUNCHER_CATALOG,
   type KeyValueStorage,
   type LauncherItemId,
   type MaterialNextProductLauncher,
 } from '../launcher/index.js';
 
 configureMarketingAssets({base: '/assets/marketing/'});
+
+/** How an app's catalog renames ids it stored before. */
+const legacyIds = (id: string): string | undefined =>
+  ({
+    'github-profile': 'shortcut:github',
+    'play-store': 'shortcut:google-play',
+    admob: 'console:admob',
+  })[id];
 
 const memoryStorage = (): KeyValueStorage & {data: Map<string, string>} => {
   const data = new Map<string, string>();
@@ -135,24 +142,25 @@ suite('launcher domain', () => {
       ],
     });
     assert.lengthOf(apps.items, 2);
-    assert.lengthOf(PROJECT_LAUNCHER_CATALOG.items, 9);
+    assert.lengthOf(DEFAULT_LAUNCHER_CATALOG.items, 7);
   });
 
-  test('the default catalog favors both admin consoles and drops App Toolkit', () => {
-    assert.deepEqual(PROJECT_LAUNCHER_CATALOG.defaultFavorites.slice(0, 2), [
-      'console:tutorials-admin',
-      'console:apps-metadata',
-    ]);
-    const metadata = PROJECT_LAUNCHER_CATALOG.items.find(
-      (item) => item.id === 'console:apps-metadata'
-    )!;
-    assert.equal(metadata.title, 'Apps Metadata Admin Console');
-    assert.equal(metadata.image, 'asset:launcher/apps-metadata.svg');
-    assert.notExists(
-      PROJECT_LAUNCHER_CATALOG.items.find(
-        (item) => item.id === 'web:app-toolkit'
-      )
+  test("the default catalog names no one's own products", () => {
+    assert.deepEqual(
+      [...DEFAULT_LAUNCHER_CATALOG.defaultFavorites],
+      ['web:material-next', 'shortcut:google-play', 'shortcut:github']
     );
+    for (const item of DEFAULT_LAUNCHER_CATALOG.items) {
+      assert.notInclude(item.href, 'workers.dev', item.id);
+      assert.notInclude(item.href, 'dev?id=', item.id);
+    }
+    assert.equal(
+      DEFAULT_LAUNCHER_CATALOG.items.find(
+        (item) => item.id === 'shortcut:github'
+      )?.href,
+      'https://github.com/'
+    );
+    assert.notExists(DEFAULT_LAUNCHER_CATALOG.migrate);
   });
 
   test('the current product, exclusions and the page URL hide entries', () => {
@@ -246,7 +254,7 @@ suite('launcher domain', () => {
       normalizeFavoriteIds(
         ['web:x', 'web:x', 3, 'bad', 'github-profile'],
         [],
-        migrateLegacyLauncherId
+        legacyIds
       ),
       ['web:x', 'shortcut:github']
     );
@@ -259,51 +267,9 @@ suite('launcher domain', () => {
     );
   });
 
-  test('the project catalog omits removed products and keeps admin redirects', () => {
-    assert.includeMembers(
-      [...PROJECT_LAUNCHER_CATALOG.defaultFavorites],
-      [
-        'console:tutorials-admin',
-        'shortcut:github',
-        'shortcut:google-play',
-        'web:material-next',
-      ]
-    );
-    for (const id of [
-      'shortcut:codex',
-      'android-app:smart-cleaner',
-      'android-app:android-insider',
-    ]) {
-      assert.notInclude(
-        PROJECT_LAUNCHER_CATALOG.items.map((item) => item.id),
-        id
-      );
-      assert.notInclude(PROJECT_LAUNCHER_CATALOG.defaultFavorites, id);
-    }
-    assert.equal(
-      PROJECT_LAUNCHER_CATALOG.items.find(
-        (item) => item.id === 'console:tutorials-admin'
-      )?.title,
-      'Android Insider Admin Console'
-    );
-    const insider = PROJECT_LAUNCHER_CATALOG.items.filter((item) =>
-      item.title.includes('Insider')
-    );
-    assert.lengthOf(insider, 1);
-    assert.equal(
-      insider[0].href,
-      'https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/'
-    );
-    const play = PROJECT_LAUNCHER_CATALOG.items.find(
-      (item) => item.id === 'shortcut:google-play'
-    )!;
-    assert.equal(
-      play.href,
-      'https://play.google.com/store/apps/dev?id=5390214922640123642'
-    );
-    assert.equal(play.image, 'asset:launcher/google-play.svg');
+  test('the default catalog keeps the public consoles as redirects', () => {
     assert.deepEqual(
-      [...PROJECT_LAUNCHER_CATALOG.redirects],
+      [...DEFAULT_LAUNCHER_CATALOG.redirects],
       [
         'console:play-console',
         'console:firebase',
@@ -311,6 +277,27 @@ suite('launcher domain', () => {
         'console:cloudflare',
       ]
     );
+    assert.equal(
+      DEFAULT_LAUNCHER_CATALOG.items.find(
+        (item) => item.id === 'console:play-console'
+      )?.image,
+      'asset:launcher/play-console.svg'
+    );
+  });
+
+  test('a catalog carries its own id migration', () => {
+    const renamed = createLauncherCatalog({
+      items: [
+        {
+          kind: 'shortcut',
+          key: 'github',
+          title: 'GitHub',
+          href: 'https://github.com/',
+        },
+      ],
+      migrate: legacyIds,
+    });
+    assert.equal(renamed.migrate?.('github-profile'), 'shortcut:github');
   });
 });
 
@@ -340,7 +327,7 @@ suite('launcher storage', () => {
       defaults: ['web:a'],
       key: 'k',
       storage,
-      migrate: migrateLegacyLauncherId,
+      migrate: legacyIds,
     });
     storage.data.set('k', JSON.stringify({favoriteIds: ['codex', 'admob']}));
     assert.deepEqual(store.load(), ['console:admob']);
@@ -723,45 +710,32 @@ suite('mnw-product-launcher', () => {
     assert.equal(getComputedStyle(done).color, 'rgb(31, 31, 31)');
   });
 
-  test('old stored favorites show the renamed admin and never retired products', async () => {
+  test('old stored favorites show under their new ids and never retired products', async () => {
     const storage = memoryStorage();
     storage.data.set(
       'legacy-projects',
       JSON.stringify({
         version: 1,
-        favoriteIds: [
-          'tutorials-admin',
-          'android-app:android-insider',
-          'shortcut:google-play',
-          'shortcut:codex',
-          'android-app:smart-cleaner',
-          'shortcut:github',
-        ],
+        favoriteIds: ['play-store', 'shortcut:codex', 'github-profile'],
       })
     );
     const store = createLauncherPreferenceStore({
       defaults: [],
       storage,
       key: 'legacy-projects',
-      migrate: migrateLegacyLauncherId,
+      migrate: legacyIds,
     });
     const el = await fixture<MaterialNextProductLauncher>(
       html`<mnw-product-launcher open .store=${store}></mnw-product-launcher>`
     );
-    assert.deepEqual(titles(el), [
-      'Android Insider Admin Console',
-      'Google Play',
-      'GitHub profile',
-    ]);
+    assert.deepEqual(titles(el), ['Google Play', 'GitHub']);
     assert.notExists(el.shadowRoot!.querySelector('.summary'));
     const edit = el.shadowRoot!.querySelector<
       HTMLElement & {selected: boolean}
     >('.edit')!;
     edit.click();
     await el.updateComplete;
-    const content = el.shadowRoot!.textContent!;
-    assert.notInclude(content, 'Codex');
-    assert.notInclude(content, 'Smart Cleaner');
+    assert.notInclude(el.shadowRoot!.textContent!, 'Codex');
   });
 
   test('a launcher moved in the DOM keeps its store', async () => {

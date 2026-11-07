@@ -23,6 +23,8 @@ import {
   type MaterialNextMarketingShell,
   type MaterialNextScreenCard,
   type MaterialNextMarketingTopAppBar,
+  type MaterialNextDeviceFrame,
+  PIXEL_FINISH_NAMES,
 } from '../marketing/index.js';
 
 // The test server serves the repository root, where the shipped assets live.
@@ -520,5 +522,36 @@ suite('marketing hub', () => {
       removeEventListener('unhandledrejection', onUnhandled);
       history.replaceState(null, '', start);
     }
+  });
+});
+
+suite('device frame', () => {
+  test('the phone turns its live screen and resolves once drawn', async () => {
+    const el = await fixture<MaterialNextDeviceFrame>(
+      html`<mnw-device-frame finish="hazel" yaw="-20" pitch="5"
+        ><div class="screen-under-test"></div
+      ></mnw-device-frame>`
+    );
+    await el.updateComplete;
+    const body = el.shadowRoot!.querySelector<HTMLElement>('.body')!;
+    assert.include(body.style.transform, 'rotateX(5deg) rotateY(-20deg)');
+    assert.exists(el.shadowRoot!.querySelector('.camera'));
+    // Drawn in 3D where WebGL exists; its outline in CSS elsewhere.
+    const picture = el.shadowRoot!.querySelector<HTMLImageElement>('img.phone');
+    assert.isTrue(!!picture || body.classList.contains('body--drawn'));
+    assert.equal(
+      el.querySelector('.screen-under-test')!.assignedSlot?.name ?? '',
+      ''
+    );
+  });
+
+  test('head on, the screen is not transformed', async () => {
+    const el = await fixture<MaterialNextDeviceFrame>(
+      html`<mnw-device-frame><div></div></mnw-device-frame>`
+    );
+    await el.updateComplete;
+    const screen = el.shadowRoot!.querySelector<HTMLElement>('.screen')!;
+    assert.equal(screen.style.transform, '');
+    assert.equal(PIXEL_FINISH_NAMES.length, 4);
   });
 });

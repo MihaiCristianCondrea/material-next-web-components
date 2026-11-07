@@ -9,7 +9,7 @@
  *
  *   domain/   what an entry is, which ones a page shows, favorite edits: pure
  *   data/     where favorites persist (localStorage, versioned)
- *   catalog/  Mihai-Cristian Condrea's projects, the default catalog
+ *   catalog/  the default catalog: Material Next and the public consoles
  *   ui/       <mnw-product-launcher>
  */
 
@@ -19,6 +19,6 @@ export * from './domain/launcher-favorites.js';
 
 export * from './data/launcher-preference-store.js';
 
-export * from './catalog/projects.js';
+export * from './catalog/defaults.js';
 
 export * from './ui/product-launcher.js';

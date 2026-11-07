@@ -410,9 +410,21 @@ await check(
 );
 await check('frame every device', 'examples/device-frame/', async (p) => {
   const frames = p.locator('[data-demo] mnw-device-frame');
-  if ((await frames.count()) !== 3) throw new Error('expected three frames');
-  for (let i = 0; i < 3; i++)
-    await frames.nth(i).locator('.pn-screen').waitFor();
+  if ((await frames.count()) !== 5) throw new Error('expected five frames');
+  for (let i = 0; i < 5; i++)
+    await frames.nth(i).locator('.pn-screen').waitFor({state: 'attached'});
+  // Every phone is drawn in 3D, not left as the CSS outline.
+  const drawn = await frames.evaluateAll(async (all) => {
+    await Promise.all(all.map((frame) => frame.updateComplete));
+    return all
+      .filter((frame) => frame.device === 'pixel_9_pro_xl')
+      .map((frame) => {
+        const img = frame.shadowRoot.querySelector('img.phone');
+        return !!img && img.complete && img.naturalWidth > 0;
+      });
+  });
+  if (drawn.length !== 3 || drawn.includes(false))
+    throw new Error(`a phone was not drawn in 3D: ${drawn.join(', ')}`);
 });
 await check('drive ScreenHost', 'guides/marketing-hub/', async (p) => {
   const root = '[data-demo="screen-host"]';
@@ -494,18 +506,11 @@ await check(
     await p.locator(`${launcher} .trigger`).click();
     await p.locator(`${launcher} .panel`).waitFor({state: 'visible'});
     const before = await launcherTitles(p, launcher);
-    if (
-      before.some((title) =>
-        ['Tutorials admin', 'Codex', 'Smart Cleaner', 'App Toolkit'].includes(
-          title
-        )
-      )
-    )
-      throw new Error('a removed product is still offered');
+    if (before.some((title) => /Admin|Insider|Metadata|profile/.test(title)))
+      throw new Error(`a personal entry is still offered: ${before.join(', ')}`);
     if (
       before.includes('Material Next') ||
-      before.length !== 4 ||
-      before[1] !== 'Apps Metadata Admin Console'
+      before.join() !== 'Google Play,GitHub'
     )
       throw new Error(`the current product shows: ${before.join(', ')}`);
     await p.locator(`${launcher} .edit`).click();
@@ -526,14 +531,14 @@ await check(
     await p.locator(`${launcher} .done`).click();
     await expectText(
       logOf(p),
-      /launcher-change .*"console:apps-metadata".*"console:tutorials-admin".*console:play-console"\]/
+      /launcher-change .*"shortcut:github".*"shortcut:google-play".*"console:play-console"\]/
     );
     await p.reload({waitUntil: 'networkidle'});
     await settle(p);
     await p.locator(`${launcher} .trigger`).click();
     const after = await launcherTitles(p, launcher);
     if (
-      after[0] !== 'Apps Metadata Admin Console' ||
+      after[0] !== 'GitHub' ||
       after.at(-1) !== 'Play Console'
     )
       throw new Error(`favorites did not persist: ${after.join(', ')}`);
@@ -572,14 +577,14 @@ await check(
     await p.locator(`${launcher} .done`).click();
   }
 );
-await check('the app bar launcher loads its icons', '', async (p) => {
-  const launcher = '.site-actions mnw-product-launcher';
+await check('the launcher loads its icons', 'examples/product-launcher/', async (p) => {
+  const launcher = '#projects-launcher';
   await p.locator(`${launcher} .trigger`).click();
   await p.locator(`${launcher} .panel`).waitFor({state: 'visible'});
   await p.waitForFunction(() =>
     [
       ...document
-        .querySelector('.site-actions mnw-product-launcher')
+        .querySelector('#projects-launcher')
         .shadowRoot.querySelectorAll('img'),
     ].every((img) => img.complete && img.naturalWidth > 0)
   );
@@ -589,7 +594,7 @@ await check('the app bar launcher loads its icons', '', async (p) => {
     );
   });
   const badge = p.locator(
-    `${launcher} a[href="https://play.google.com/store/apps/dev?id=5390214922640123642"] img`
+    `${launcher} a[href="https://play.google.com/store/apps"] img`
   );
   if (!(await badge.count()))
     throw new Error('the Google Play SVG icon did not load');
@@ -633,25 +638,14 @@ await check('the app bar launcher loads its icons', '', async (p) => {
       links.map((link) => ({title: link.title, href: link.href}))
     );
   if (
-    destinations.filter((link) => link.title.includes('Insider')).length !== 1
-  )
-    throw new Error('the launcher still has duplicate Insider destinations');
-  if (
+    destinations.some((link) => /workers\.dev|dev\?id=/.test(link.href)) ||
     !destinations.some(
-      (link) =>
-        link.href ===
-        'https://android-insider-backend.mihaicristiancondrea.workers.dev/admin/'
+      (link) => link.href === 'https://play.google.com/store/apps'
     )
   )
-    throw new Error('the new admin URL is missing');
-  if (
-    !destinations.some(
-      (link) =>
-        link.href ===
-        'https://play.google.com/store/apps/dev?id=5390214922640123642'
-    )
-  )
-    throw new Error('the developer Play account is missing');
+    throw new Error(
+      `the default favorites are not the public ones: ${destinations.map((link) => link.href).join(', ')}`
+    );
 
   if (
     Math.abs(beforeHover.width - afterHover.width) > 0.5 ||
@@ -1271,7 +1265,11 @@ await check(
         'dark'
       )
         throw new Error('the dark mode was not remembered');
-      const launcher = p.locator('.site-actions mnw-product-launcher');
+      await p.goto(`${base}examples/product-launcher/`, {
+        waitUntil: 'networkidle',
+      });
+      await settle(p);
+      const launcher = p.locator('#projects-launcher');
       await launcher.locator('.trigger').click();
       const darkPanel = await launcher
         .locator('.panel')
@@ -1382,9 +1380,9 @@ await short.close();
 const reduced = await browser.newPage({reducedMotion: 'reduce'});
 await check(
   'reduced motion disables launcher wobble and nav motion',
-  '',
+  'examples/product-launcher/',
   async (p) => {
-    const launcher = '.site-actions mnw-product-launcher';
+    const launcher = '#projects-launcher';
     await p.locator(`${launcher} .trigger`).click();
     await p.locator(`${launcher} .edit`).click();
     const animations = await p
@@ -1475,7 +1473,7 @@ await check(
   'the launcher is a bottom sheet on phones',
   'examples/product-launcher/',
   async (p) => {
-    const launcher = '.site-actions mnw-product-launcher';
+    const launcher = '#projects-launcher';
     await p.locator(`${launcher} .trigger`).tap();
     const panel = p.locator(`${launcher} .panel`);
     await panel.waitFor({state: 'visible'});

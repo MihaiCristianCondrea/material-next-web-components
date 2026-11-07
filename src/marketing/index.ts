@@ -21,6 +21,7 @@ export * from './domain/identity.js';
 export * from './domain/screen.js';
 export * from './domain/preview-settings.js';
 export * from './domain/windows.js';
+export * from './domain/pixel.js';
 
 export * from './data/preview-settings-store.js';
 export * from './data/prototype-url.js';

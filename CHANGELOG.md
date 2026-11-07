@@ -8,7 +8,23 @@ Last updated: November 7, 2026.
 
 ### Added
 
-- A Pixel 9 Pro XL built in three.js from Google's published measurements and product photos, with the studio light it is tuned under. It carries no logo unless the host passes one. It is not a package export yet; the 3D device component that will use it comes next. three.js is a development dependency for now.
+- `<mnw-device-frame>` draws the Pixel 9 Pro XL in 3D, built in three.js from Google's published measurements and product photos. `finish` picks Obsidian, Porcelain, Hazel or Rose Quartz; `yaw` and `pitch` turn the phone, the live screen turning with it; `logo` puts a mark on the back, none by default. Every frame on a page shares one WebGL context and one picture per pose. Until it is drawn, and without WebGL, the frame draws the phone's outline in CSS; `updateComplete` waits for the picture.
+- `PIXEL_9_PRO_XL`, `PIXEL_FINISHES`, `PIXEL_FINISH_NAMES` and `PixelFinish` in `marketing.js`: the phone's measurements and finishes as plain data.
+- The phone as a three.js object for your own scenes: `createPixelModel()` and `createStudio()` in `marketing/ui/pixel-model.js`.
+- A launcher catalog can carry `migrate`, to rename ids it stored before.
+
+### Changed
+
+- three.js is a dependency. It loads, as its own chunk, only when a phone is drawn.
+- The phone frame is 465.23 × 988.76 (was 469 × 992), with the display's rounder 49.8px corners and the camera where Google's device art has it, to match the 3D phone. The window is still 430 × 957.
+- The default launcher catalog names no one's own products: Material Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, at their public addresses. Apps pass their own catalog.
+- The prototype page's `data-ready`, which capture scripts wait for, also waits for the phone's picture.
+
+### Removed
+
+- The Pixel 9 Pro XL device art images (`device-frames/pixel_9_pro_xl`), replaced by the 3D phone.
+- `PROJECT_LAUNCHER_CATALOG`, `PROJECT_LAUNCHER_ITEMS` and `migrateLegacyLauncherId`: use `DEFAULT_LAUNCHER_CATALOG`, or your own catalog with its `migrate`. The Android Insider and Apps Metadata launcher icons are gone with them.
+- The product launcher in this site's top app bar. The launcher's own page still demonstrates it.
 
 ---
 

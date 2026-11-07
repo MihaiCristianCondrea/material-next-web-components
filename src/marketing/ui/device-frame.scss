@@ -1,16 +1,21 @@
-// Device art sized so its display is exactly the window in CSS px (1 dp = 1 px).
+// Devices sized so their display is exactly the window in CSS px (1 dp = 1 px).
 :host {
   position: relative;
   display: block;
   flex-shrink: 0;
-  // Pixel 9 Pro XL: a 1466 x 3101 frame around the 430 x 957 dp display.
-  width: 469px;
-  height: 992px;
-  --_screen-left: 18.24px;
-  --_screen-top: 17.92px;
+  // Pixel 9 Pro XL, drawn at 430 px for its 70.8 mm display: 76.6 x 162.8 mm,
+  // the display 2.6 mm in from every edge, its corners 8.2 mm round, and the
+  // front camera's centre 5.1 mm below its top edge, 3.6 mm across.
+  width: 465.23px;
+  height: 988.76px;
+  --_screen-left: 17.61px;
+  --_screen-top: 15.79px;
   --_screen-width: 430px;
   --_screen-height: 957px;
-  --_screen-radius: 34.5px;
+  --_screen-radius: 49.8px;
+  --_camera-top: 30.97px;
+  --_camera-size: 21.86px;
+  --_body-radius: 74.1px;
 }
 
 :host([device='pixel_9_pro_fold']) {
@@ -85,4 +90,48 @@
   width: var(--_screen-width) !important;
   height: var(--_screen-height) !important;
   border-radius: var(--_screen-radius);
+}
+
+// The Pixel: its picture, drawn by three.js, and the live screen over the display.
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.phone {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+.body {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--_body-radius);
+  transform-style: preserve-3d;
+}
+
+// Until the picture is ready, or without WebGL: the phone's outline, its frame
+// in the finish's colour around black glass.
+.body--drawn {
+  background: #050608;
+  box-shadow: inset 0 0 0 5px var(--_frame);
+}
+
+.body .screen {
+  backface-visibility: hidden;
+}
+
+.camera {
+  position: absolute;
+  z-index: 10;
+  top: calc(var(--_camera-top) - var(--_camera-size) / 2);
+  left: calc(50% - var(--_camera-size) / 2);
+  width: var(--_camera-size);
+  height: var(--_camera-size);
+  border-radius: 50%;
+  background: #020203;
+  box-shadow: 0 0 0 3.6px #0c0d10;
+  pointer-events: none;
 }

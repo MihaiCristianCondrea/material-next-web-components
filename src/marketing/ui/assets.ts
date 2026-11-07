@@ -15,6 +15,6 @@ export const configureMarketingAssets = ({base}: {base: string}) => {
   assetBase = base.endsWith('/') ? base : `${base}/`;
 };
 
-/** The URL of a shipped asset, for example `device-frames/pixel_9_pro_xl/back.webp`. */
+/** The URL of a shipped asset, for example `device-frames/pixel_9_pro_fold/back.webp`. */
 export const marketingAsset = (path: string) =>
   `${assetBase}${path.replace(/^\/+/, '')}`;

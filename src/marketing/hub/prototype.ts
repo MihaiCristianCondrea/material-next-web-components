@@ -27,6 +27,7 @@ import {installHubStyles, setHubTheme} from '../ui/hub-document.js';
 import {NAV_ICONS} from '../ui/options.js';
 import '../ui/prototype-layout.js';
 import '../ui/screen-inspector.js';
+import {settle} from './embed.js';
 import {ScreenHost, type ScreenHostOptions} from './screen-host.js';
 
 export interface PrototypeOptions {
@@ -109,6 +110,8 @@ export const mountScreenPrototype = ({
     Promise.all([
       document.fonts.ready,
       customElements.whenDefined('md-icon'),
+      // The device frame's picture of the phone, among the rest.
+      settle(root),
     ]).then(() =>
       requestAnimationFrame(() =>
         document.documentElement.setAttribute('data-ready', '')

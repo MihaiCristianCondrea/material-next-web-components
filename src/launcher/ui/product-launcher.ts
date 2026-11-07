@@ -14,10 +14,7 @@ import {repeat} from 'lit/directives/repeat.js';
 import {styleMap} from 'lit/directives/style-map.js';
 import {prefersReducedMotion} from '../../internal/environment.js';
 import {marketingAsset} from '../../marketing/ui/assets.js';
-import {
-  migrateLegacyLauncherId,
-  PROJECT_LAUNCHER_CATALOG,
-} from '../catalog/projects.js';
+import {DEFAULT_LAUNCHER_CATALOG} from '../catalog/defaults.js';
 import {
   createLauncherPreferenceStore,
   DEFAULT_LAUNCHER_STORAGE_KEY,
@@ -66,7 +63,8 @@ const listAttribute = {
  * The current product is never offered: entries matching `current-product`,
  * `exclude` or this page's URL are hidden, and a hidden favorite keeps its
  * place for the pages where it shows. Without a `catalog` the launcher lists
- * Mihai-Cristian Condrea's projects (PROJECT_LAUNCHER_CATALOG).
+ * Material Next and the public developer consoles (DEFAULT_LAUNCHER_CATALOG);
+ * an app passes its own catalog with its products and links.
  *
  * @fires launcher-change - `{favoriteIds}`: Done or reset committed favorites (hidden ones included).
  * @fires launcher-toggle - `{open}`: the panel opened or closed.
@@ -79,9 +77,9 @@ const listAttribute = {
 export class MaterialNextProductLauncher extends LitElement {
   static override styles = styles;
 
-  /** Everything the launcher can show. Defaults to PROJECT_LAUNCHER_CATALOG. */
+  /** Everything the launcher can show. Defaults to DEFAULT_LAUNCHER_CATALOG. */
   @property({attribute: false})
-  catalog: LauncherCatalog = PROJECT_LAUNCHER_CATALOG;
+  catalog: LauncherCatalog = DEFAULT_LAUNCHER_CATALOG;
 
   /** The product this page belongs to: an item id or a product name. */
   @property({attribute: 'current-product'})
@@ -186,7 +184,7 @@ export class MaterialNextProductLauncher extends LitElement {
       createLauncherPreferenceStore({
         defaults: this.catalog.defaultFavorites,
         key: this.storageKey,
-        migrate: migrateLegacyLauncherId,
+        migrate: this.catalog.migrate,
       });
     this.ids = this.activeStore.load();
     this.unsubscribe = this.activeStore.subscribe((ids) => {

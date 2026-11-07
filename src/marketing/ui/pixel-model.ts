@@ -29,57 +29,13 @@ import {
   Vector2,
 } from 'three';
 import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import {
+  PIXEL_9_PRO_XL,
+  PIXEL_FINISHES,
+  type PixelFinish,
+} from '../domain/pixel.js';
 
-/**
- * The Pixel 9 Pro XL's outside, in millimetres, from Google's published specifications and product
- * photos. Built from these numbers alone: no third-party model or mesh is used.
- */
-export const PIXEL_9_PRO_XL = {
-  width: 76.6,
-  height: 162.8,
-  depth: 8.5,
-  /** The rounded corners seen from the front, fitted to Google's product photos. */
-  cornerRadius: 12.2,
-  /** The soft edge where the flat frame meets the glass. */
-  edgeRadius: 0.8,
-  /** The lit panel: 6.8 inches across, 1344 by 2992 pixels. */
-  display: {width: 70.8, height: 157.6, cornerRadius: 8.2},
-  frontCamera: {fromTop: 8.6, diameter: 3.6, ring: 4.8},
-  /** The camera bar: a satin metal pill almost the phone's width, standing proud of the back. */
-  visor: {width: 69.6, height: 21.2, fromTop: 13.8, raise: 3.66, edge: 0.2},
-  /**
-   * The cameras, seen from the back: centres across from the phone's centre line (positive to the
-   * left) and up from the camera bar's centre line, sizes. The window is the black glass the lenses
-   * sit under, `depth` below the bar's top; the flash and the temperature sensor sit on the metal to
-   * its right.
-   */
-  cameras: {
-    window: {left: 33.7, right: -19.4, inset: 1.15, depth: 0.9},
-    ultrawide: {x: 24.6, barrel: 7.1, glass: 3.8},
-    main: {x: 8.45, halo: 13.3, barrel: 9.8, glass: 6.4},
-    telephoto: {x: -4.46, surround: [7.2, 9.8, 1.6], glass: [4.6, 6.2, 1.3]},
-    spectral: {x: -13.4, up: 0.2, size: 1.0},
-    microphone: {x: 17.8, up: 5.6, diameter: 0.7},
-    autofocus: {x: [20.0, 15.8], up: -6.8, diameter: 2.8},
-    flash: {x: -25.7, up: 4.3, diameter: 5.6, led: 1.2},
-    sensor: {x: -25.7, up: -4.2, diameter: 5.6},
-  },
-  /** The keys on the right edge, from the top. */
-  keys: {power: {fromTop: 40.4, length: 12.7}, volume: {fromTop: 61.9, length: 23.9}, proud: 0.5},
-} as const;
-
-/**
- * The finishes the Pixel 9 Pro XL ships in: a polished frame, a satin camera bar and a matte glass
- * back, each in the colourway's own tone.
- */
-export type PixelFinish = 'obsidian' | 'porcelain' | 'hazel' | 'rose-quartz';
-
-const FINISHES: Record<PixelFinish, {frame: number; bar: number; side: number; back: number}> = {
-  obsidian: {frame: 0x4a4c50, bar: 0x4e4e4f, side: 0x1c1d1f, back: 0x171719},
-  porcelain: {frame: 0xd6cfc3, bar: 0xcfc8bb, side: 0x9c968c, back: 0xe9e4da},
-  hazel: {frame: 0x7f8b80, bar: 0x929d91, side: 0x5c665d, back: 0x8e9a8e},
-  'rose-quartz': {frame: 0xdcb3aa, bar: 0xdcb6ad, side: 0xa88a84, back: 0xefd0ca},
-};
+export {PIXEL_9_PRO_XL, type PixelFinish};
 
 /** Options for {@link createPixelModel}. */
 export interface PixelModelOptions {
@@ -111,13 +67,20 @@ export interface BackDecal {
  * The display is a mesh named `Display` (dark glass), so a live screen can be laid over it.
  * Every geometry and material belongs to the group: dispose them with it.
  */
-export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOptions = {}): Group {
+export function createPixelModel({
+  finish = 'obsidian',
+  backDecal,
+}: PixelModelOptions = {}): Group {
   const spec = PIXEL_9_PRO_XL;
-  const colours = FINISHES[finish];
+  const colours = PIXEL_FINISHES[finish];
   const phone = new Group();
   phone.name = 'Pixel 9 Pro XL';
 
-  const metal = new MeshPhysicalMaterial({color: colours.frame, metalness: 1, roughness: 0.12});
+  const metal = new MeshPhysicalMaterial({
+    color: colours.frame,
+    metalness: 1,
+    roughness: 0.12,
+  });
   // The camera bar is bead-blasted: a fine grain that scatters the light evenly.
   const grain = satinGrain();
   const barMetal = new MeshPhysicalMaterial({
@@ -127,7 +90,11 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     roughnessMap: grain,
   });
   // Its side walls are polished and darker, so they read as a dark band around the bar.
-  const barSide = new MeshPhysicalMaterial({color: colours.side, metalness: 1, roughness: 0.3});
+  const barSide = new MeshPhysicalMaterial({
+    color: colours.side,
+    metalness: 1,
+    roughness: 0.3,
+  });
   const backGlass = new MeshPhysicalMaterial({
     color: colours.back,
     metalness: 0,
@@ -135,9 +102,23 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     clearcoat: 0.15,
     clearcoatRoughness: 0.7,
   });
-  const frontGlass = new MeshPhysicalMaterial({color: 0x050608, roughness: 0.06, clearcoat: 1});
-  const display = new MeshPhysicalMaterial({color: 0x07090d, roughness: 0.08, clearcoat: 1});
-  const darkGlass = new MeshPhysicalMaterial({color: 0x0c0d10, roughness: 0.1, clearcoat: 1});
+  // The bezel's glass: black, with a soft reflection, so it stays a dark rim around the screen
+  // at an angle instead of mirroring the studio's lights.
+  const frontGlass = new MeshPhysicalMaterial({
+    color: 0x050608,
+    roughness: 0.25,
+    specularIntensity: 0.12,
+  });
+  const display = new MeshPhysicalMaterial({
+    color: 0x07090d,
+    roughness: 0.08,
+    clearcoat: 1,
+  });
+  const darkGlass = new MeshPhysicalMaterial({
+    color: 0x0c0d10,
+    roughness: 0.1,
+    clearcoat: 1,
+  });
   // The cameras' window: deep, glossy black glass.
   const windowGlass = new MeshPhysicalMaterial({
     color: 0x070708,
@@ -145,11 +126,17 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     specularIntensity: 0.12,
   });
   // Inside the window, the parts behind the glass are only a shade lighter than it.
-  const shade = (color: number) => new MeshPhysicalMaterial({color, roughness: 0.35, specularIntensity: 0.12});
+  const shade = (color: number) =>
+    new MeshPhysicalMaterial({color, roughness: 0.35, specularIntensity: 0.12});
   const barrel = shade(0x08080a);
   const surround = shade(0x0f0f11);
   const faint = shade(0x0f0f11);
-  const rim = new MeshPhysicalMaterial({color: 0x101113, metalness: 1, roughness: 0.32, side: DoubleSide});
+  const rim = new MeshPhysicalMaterial({
+    color: 0x101113,
+    metalness: 1,
+    roughness: 0.32,
+    side: DoubleSide,
+  });
   // The cover glass over the whole window, reflecting the room over the parts beneath it.
   const cover = new MeshPhysicalMaterial({
     color: 0x000000,
@@ -181,14 +168,38 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     transparent: true,
     opacity: 0.15,
   });
-  const antenna = new MeshPhysicalMaterial({color: 0x1b1c1f, metalness: 0.4, roughness: 0.5});
+  const antenna = new MeshPhysicalMaterial({
+    color: 0x1b1c1f,
+    metalness: 0.4,
+    roughness: 0.5,
+  });
   const black = new MeshPhysicalMaterial({color: 0x020203, roughness: 0.7});
-  const diffuser = new MeshPhysicalMaterial({color: 0xf1f0ec, roughness: 0.3, clearcoat: 0.6});
-  const diffuserRing = new MeshPhysicalMaterial({color: 0xd9d7d0, roughness: 0.3, clearcoat: 0.6});
-  const led = new MeshPhysicalMaterial({color: 0xe6d49a, emissive: 0x3a3214, roughness: 0.4});
+  const diffuser = new MeshPhysicalMaterial({
+    color: 0xf1f0ec,
+    roughness: 0.3,
+    clearcoat: 0.6,
+  });
+  const diffuserRing = new MeshPhysicalMaterial({
+    color: 0xd9d7d0,
+    roughness: 0.3,
+    clearcoat: 0.6,
+  });
+  const led = new MeshPhysicalMaterial({
+    color: 0xe6d49a,
+    emissive: 0x3a3214,
+    roughness: 0.4,
+  });
   // The temperature sensor: a glossy black lens in a thin grey ring.
-  const sensorRim = new MeshPhysicalMaterial({color: 0x6a6b6e, metalness: 0.6, roughness: 0.35});
-  const sensorGlass = new MeshPhysicalMaterial({color: 0x343437, roughness: 0.35, clearcoat: 0.5});
+  const sensorRim = new MeshPhysicalMaterial({
+    color: 0x6a6b6e,
+    metalness: 0.6,
+    roughness: 0.35,
+  });
+  const sensorGlass = new MeshPhysicalMaterial({
+    color: 0x343437,
+    roughness: 0.35,
+    clearcoat: 0.5,
+  });
 
   const add = (name: string, geometry: BufferGeometry, material: Material) => {
     const mesh = new Mesh(geometry, material);
@@ -214,7 +225,11 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
   add('Frame', body, metal);
 
   // Glass front and back, on the flat faces inside the frame's soft edge.
-  const face = roundedRect(spec.width - 2 * e, spec.height - 2 * e, spec.cornerRadius - e);
+  const face = roundedRect(
+    spec.width - 2 * e,
+    spec.height - 2 * e,
+    spec.cornerRadius - e
+  );
   const front = new ShapeGeometry(face, 32);
   front.translate(0, 0, spec.depth / 2 + 0.05);
   add('Front glass', front, frontGlass);
@@ -243,14 +258,26 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
 
   // The display and its hole-punch camera.
   const panel = new ShapeGeometry(
-    roundedRect(spec.display.width, spec.display.height, spec.display.cornerRadius),
+    roundedRect(
+      spec.display.width,
+      spec.display.height,
+      spec.display.cornerRadius
+    ),
     32
   );
   panel.translate(0, 0, spec.depth / 2 + 0.1);
   add('Display', panel, display);
   const cameraY = spec.height / 2 - spec.frontCamera.fromTop;
-  add('Front camera ring', disc(spec.frontCamera.ring / 2, spec.depth / 2 + 0.12, 0, cameraY), darkGlass);
-  add('Front camera', disc(spec.frontCamera.diameter / 2, spec.depth / 2 + 0.15, 0, cameraY), black);
+  add(
+    'Front camera ring',
+    disc(spec.frontCamera.ring / 2, spec.depth / 2 + 0.12, 0, cameraY),
+    darkGlass
+  );
+  add(
+    'Front camera',
+    disc(spec.frontCamera.diameter / 2, spec.depth / 2 + 0.15, 0, cameraY),
+    black
+  );
 
   // The camera bar: satin metal with a flat top and a fine chamfer, holding the recessed window
   // with the three cameras, and the flash and the temperature sensor on the metal beside it.
@@ -263,7 +290,9 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
   // The bar is a ring of metal around the window: the hole is cut wider by the chamfer, which
   // narrows it back to the window's size. Turned to face the back, its x runs the other way.
   const barShape = stadium(v.width - 2 * v.edge, v.height - 2 * v.edge);
-  barShape.holes.push(stadiumPath(windowWidth + 2 * v.edge, windowHeight + 2 * v.edge, -windowX));
+  barShape.holes.push(
+    stadiumPath(windowWidth + 2 * v.edge, windowHeight + 2 * v.edge, -windowX)
+  );
   const visor = new ExtrudeGeometry(barShape, {
     depth: v.raise - 2 * v.edge,
     bevelEnabled: true,
@@ -275,7 +304,9 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
   visor.rotateY(Math.PI);
   visor.translate(0, visorY, -spec.depth / 2 - v.edge);
   // An extrusion's first group is its flat faces, the second its walls and chamfers.
-  phone.add(Object.assign(new Mesh(visor, [barMetal, barSide]), {name: 'Camera bar'}));
+  phone.add(
+    Object.assign(new Mesh(visor, [barMetal, barSide]), {name: 'Camera bar'})
+  );
 
   // The bar's soft shadow on the back glass, falling a little below it.
   const blur = 3.2;
@@ -295,46 +326,173 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
   // `lift` millimetres above the one under it; `inside` places it in the window, `lift` above the
   // window's floor.
   const top = -spec.depth / 2 - v.raise;
-  const at = (geometry: BufferGeometry, x: number, up: number, lift: number) => {
+  const at = (
+    geometry: BufferGeometry,
+    x: number,
+    up: number,
+    lift: number
+  ) => {
     geometry.rotateY(Math.PI);
     geometry.translate(x, visorY + up, top - lift);
     return geometry;
   };
-  const inside = (geometry: BufferGeometry, x: number, up: number, lift: number) =>
-    at(geometry, x, up, lift - c.window.depth);
+  const inside = (
+    geometry: BufferGeometry,
+    x: number,
+    up: number,
+    lift: number
+  ) => at(geometry, x, up, lift - c.window.depth);
   // The window's floor sits a little wider than the opening, under the metal, so no gap shows.
-  add('Camera window', inside(new ShapeGeometry(stadium(windowWidth + 0.6, windowHeight + 0.6), 64), windowX, 0, 0.02), windowGlass);
-  add('Camera window glass', inside(new ShapeGeometry(stadium(windowWidth, windowHeight), 64), windowX, 0, 0.6), cover);
+  add(
+    'Camera window',
+    inside(
+      new ShapeGeometry(stadium(windowWidth + 0.6, windowHeight + 0.6), 64),
+      windowX,
+      0,
+      0.02
+    ),
+    windowGlass
+  );
+  add(
+    'Camera window glass',
+    inside(
+      new ShapeGeometry(stadium(windowWidth, windowHeight), 64),
+      windowX,
+      0,
+      0.6
+    ),
+    cover
+  );
 
   // A lens: a dark barrel, a metal funnel rising from it to the glass, which catches the light
   // as a grey ring, and the coated glass under a clear dome.
-  const lens = (name: string, x: number, barrelSize: number, glassSize: number) => {
+  const lens = (
+    name: string,
+    x: number,
+    barrelSize: number,
+    glassSize: number
+  ) => {
     const inner = glassSize / 2 + 0.35;
     const outer = inner + (barrelSize / 2 - inner) * 0.95;
     add(`${name} barrel`, inside(circle(barrelSize / 2), x, 0, 0.06), barrel);
-    add(`${name} funnel`, inside(funnel(outer, 0.07, inner, LENS_RISE), x, 0, 0), rim);
-    add(name, inside(lensFace(roundedRect(glassSize, glassSize, glassSize / 2)), x, 0, LENS_RISE + 0.01), lensGlass);
-    add(`${name} cap`, inside(dome(glassSize / 2, 0.05), x, 0, LENS_RISE + 0.02), lensCap);
+    add(
+      `${name} funnel`,
+      inside(funnel(outer, 0.07, inner, LENS_RISE), x, 0, 0),
+      rim
+    );
+    add(
+      name,
+      inside(
+        lensFace(roundedRect(glassSize, glassSize, glassSize / 2)),
+        x,
+        0,
+        LENS_RISE + 0.01
+      ),
+      lensGlass
+    );
+    add(
+      `${name} cap`,
+      inside(dome(glassSize / 2, 0.05), x, 0, LENS_RISE + 0.02),
+      lensCap
+    );
   };
-  lens('Ultrawide camera', c.ultrawide.x, c.ultrawide.barrel, c.ultrawide.glass);
-  add('Main camera halo', inside(ring(c.main.halo / 2, c.main.halo / 2 - 0.4), c.main.x, 0, 0.06), faint);
+  lens(
+    'Ultrawide camera',
+    c.ultrawide.x,
+    c.ultrawide.barrel,
+    c.ultrawide.glass
+  );
+  add(
+    'Main camera halo',
+    inside(ring(c.main.halo / 2, c.main.halo / 2 - 0.4), c.main.x, 0, 0.06),
+    faint
+  );
   lens('Main camera', c.main.x, c.main.barrel, c.main.glass);
   // The telephoto looks through a periscope: a tall glass window in a rounded surround.
   const [sw, sh, sr] = c.telephoto.surround;
   const [gw, gh, gr] = c.telephoto.glass;
-  add('Telephoto surround', inside(new ShapeGeometry(roundedRect(sw, sh, sr), 16), c.telephoto.x, 0, 0.06), surround);
-  add('Telephoto rim', inside(new ShapeGeometry(roundedRect(gw + 0.5, gh + 0.5, gr + 0.25), 16), c.telephoto.x, 0, 0.08), rim);
-  add('Telephoto camera', inside(lensFace(roundedRect(gw, gh, gr)), c.telephoto.x, 0, 0.1), telephotoGlass);
-  add('Spectral sensor', inside(new ShapeGeometry(roundedRect(c.spectral.size, c.spectral.size, 0.15), 4), c.spectral.x, c.spectral.up, 0.06), faint);
-  add('Back microphone', inside(circle(c.microphone.diameter / 2), c.microphone.x, c.microphone.up, 0.06), barrel);
+  add(
+    'Telephoto surround',
+    inside(
+      new ShapeGeometry(roundedRect(sw, sh, sr), 16),
+      c.telephoto.x,
+      0,
+      0.06
+    ),
+    surround
+  );
+  add(
+    'Telephoto rim',
+    inside(
+      new ShapeGeometry(roundedRect(gw + 0.5, gh + 0.5, gr + 0.25), 16),
+      c.telephoto.x,
+      0,
+      0.08
+    ),
+    rim
+  );
+  add(
+    'Telephoto camera',
+    inside(lensFace(roundedRect(gw, gh, gr)), c.telephoto.x, 0, 0.1),
+    telephotoGlass
+  );
+  add(
+    'Spectral sensor',
+    inside(
+      new ShapeGeometry(roundedRect(c.spectral.size, c.spectral.size, 0.15), 4),
+      c.spectral.x,
+      c.spectral.up,
+      0.06
+    ),
+    faint
+  );
+  add(
+    'Back microphone',
+    inside(
+      circle(c.microphone.diameter / 2),
+      c.microphone.x,
+      c.microphone.up,
+      0.06
+    ),
+    barrel
+  );
   for (const x of c.autofocus.x) {
-    add('Autofocus window', inside(circle(c.autofocus.diameter / 2), x, c.autofocus.up, 0.06), faint);
+    add(
+      'Autofocus window',
+      inside(circle(c.autofocus.diameter / 2), x, c.autofocus.up, 0.06),
+      faint
+    );
   }
-  add('Flash', at(circle(c.flash.diameter / 2), c.flash.x, c.flash.up, 0.02), diffuser);
-  add('Flash ring', at(ring(c.flash.diameter * 0.36, c.flash.diameter * 0.3), c.flash.x, c.flash.up, 0.04), diffuserRing);
-  add('Flash LED', at(circle(c.flash.led / 2), c.flash.x, c.flash.up, 0.05), led);
-  add('Sensor rim', at(circle(c.sensor.diameter / 2), c.sensor.x, c.sensor.up, 0.02), sensorRim);
-  add('Sensor', at(circle(c.sensor.diameter / 2 - 0.3), c.sensor.x, c.sensor.up, 0.04), sensorGlass);
+  add(
+    'Flash',
+    at(circle(c.flash.diameter / 2), c.flash.x, c.flash.up, 0.02),
+    diffuser
+  );
+  add(
+    'Flash ring',
+    at(
+      ring(c.flash.diameter * 0.36, c.flash.diameter * 0.3),
+      c.flash.x,
+      c.flash.up,
+      0.04
+    ),
+    diffuserRing
+  );
+  add(
+    'Flash LED',
+    at(circle(c.flash.led / 2), c.flash.x, c.flash.up, 0.05),
+    led
+  );
+  add(
+    'Sensor rim',
+    at(circle(c.sensor.diameter / 2), c.sensor.x, c.sensor.up, 0.02),
+    sensorRim
+  );
+  add(
+    'Sensor',
+    at(circle(c.sensor.diameter / 2 - 0.3), c.sensor.x, c.sensor.up, 0.04),
+    sensorGlass
+  );
 
   // Power and volume on the right edge, the power key above.
   const k = spec.keys;
@@ -345,19 +503,33 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     // A pill standing proud of the flat side, its edges rounded, in a thin dark seam.
     const y = spec.height / 2 - key.fromTop - key.length / 2;
     const bevel = 0.25;
-    const geometry = new ExtrudeGeometry(roundedRect(KEY_THICKNESS - 2 * bevel, key.length - 2 * bevel, KEY_THICKNESS / 2 - bevel), {
-      depth: k.proud,
-      bevelEnabled: true,
-      bevelThickness: bevel,
-      bevelSize: bevel,
-      bevelSegments: 4,
-      curveSegments: 16,
-    });
+    const geometry = new ExtrudeGeometry(
+      roundedRect(
+        KEY_THICKNESS - 2 * bevel,
+        key.length - 2 * bevel,
+        KEY_THICKNESS / 2 - bevel
+      ),
+      {
+        depth: k.proud,
+        bevelEnabled: true,
+        bevelThickness: bevel,
+        bevelSize: bevel,
+        bevelSegments: 4,
+        curveSegments: 16,
+      }
+    );
     // Shape x across the side, y along it; a quarter turn about Y extrudes it out of the side.
     geometry.rotateY(Math.PI / 2);
     geometry.translate(spec.width / 2 - k.proud / 2 - 0.1, y, 0);
     add(name, geometry, metal);
-    const seam = new ShapeGeometry(roundedRect(KEY_THICKNESS + 0.4, key.length + 0.4, KEY_THICKNESS / 2 + 0.2), 16);
+    const seam = new ShapeGeometry(
+      roundedRect(
+        KEY_THICKNESS + 0.4,
+        key.length + 0.4,
+        KEY_THICKNESS / 2 + 0.2
+      ),
+      16
+    );
     seam.rotateY(Math.PI / 2);
     seam.translate(spec.width / 2 + 0.01, y, 0);
     add(`${name} seam`, seam, black);
@@ -369,7 +541,11 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
     geometry.translate(x, (bottom ? -1 : 1) * (spec.height / 2 + 0.02), 0);
     return geometry;
   };
-  add('USB-C port', onEdge(new ShapeGeometry(roundedRect(8.4, 2.6, 1.3), 16), 0, true), black);
+  add(
+    'USB-C port',
+    onEdge(new ShapeGeometry(roundedRect(8.4, 2.6, 1.3), 16), 0, true),
+    black
+  );
   for (const x of [-18, -15.6, -13.2, -10.8, 10.8, 13.2, 15.6, 18]) {
     add('Speaker hole', onEdge(circle(0.55), x, true), black);
   }
@@ -378,7 +554,13 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
   // Antenna lines across the frame, near each corner.
   for (const y of [spec.height / 2 - 16, -spec.height / 2 + 16]) {
     for (const x of [-spec.width / 2, spec.width / 2]) {
-      const band = new RoundedBoxGeometry(0.3, 1.1, spec.depth - 2 * e + 0.2, 1, 0.1);
+      const band = new RoundedBoxGeometry(
+        0.3,
+        1.1,
+        spec.depth - 2 * e + 0.2,
+        1,
+        0.1
+      );
       band.translate(x, y, 0);
       add('Antenna line', band, antenna);
     }
@@ -395,10 +577,28 @@ export function createPixelModel({finish = 'obsidian', backDecal}: PixelModelOpt
  */
 export function createStudio(): Scene {
   const studio = new Scene();
-  studio.add(new Mesh(new BoxGeometry(10, 10, 10), new MeshBasicMaterial({color: new Color().setScalar(STUDIO.wall), side: BackSide})));
-  const panel = (width: number, height: number, x: number, y: number, z: number, power: number, round = false) => {
+  studio.add(
+    new Mesh(
+      new BoxGeometry(10, 10, 10),
+      new MeshBasicMaterial({
+        color: new Color().setScalar(STUDIO.wall),
+        side: BackSide,
+      })
+    )
+  );
+  const panel = (
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    z: number,
+    power: number,
+    round = false
+  ) => {
     const light = new Mesh(
-      round ? new CircleGeometry(width / 2, 48) : new PlaneGeometry(width, height),
+      round
+        ? new CircleGeometry(width / 2, 48)
+        : new PlaneGeometry(width, height),
       new MeshBasicMaterial({color: new Color().setScalar(power), side: 2})
     );
     light.position.set(x, y, z);
@@ -457,8 +657,17 @@ function stadiumPath(width: number, height: number, x: number): Path {
 }
 
 /** A flat disc at depth `z`, facing the front, or the back when `backward`. */
-function disc(radius: number, z: number, x: number, y: number, backward = false): BufferGeometry {
-  const geometry = new ShapeGeometry(roundedRect(radius * 2, radius * 2, radius), 32);
+function disc(
+  radius: number,
+  z: number,
+  x: number,
+  y: number,
+  backward = false
+): BufferGeometry {
+  const geometry = new ShapeGeometry(
+    roundedRect(radius * 2, radius * 2, radius),
+    32
+  );
   if (backward) geometry.rotateY(Math.PI);
   geometry.translate(x, y, z);
   return geometry;
@@ -483,7 +692,15 @@ function ring(outer: number, inner: number): BufferGeometry {
  * highlights as the phone turns. `at` turns it to face the back.
  */
 function dome(radius: number, flatness: number): BufferGeometry {
-  const geometry = new SphereGeometry(radius, 48, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+  const geometry = new SphereGeometry(
+    radius,
+    48,
+    12,
+    0,
+    Math.PI * 2,
+    0,
+    Math.PI / 2
+  );
   geometry.rotateX(Math.PI / 2);
   geometry.scale(1, 1, flatness);
   return geometry;
@@ -499,8 +716,16 @@ const LENS_RISE = 0.4;
  * An open cone from a circle of radius `outer` at height `low` to one of radius `inner` at
  * `high`, facing +Z, in the XY plane.
  */
-function funnel(outer: number, low: number, inner: number, high: number): BufferGeometry {
-  const geometry = new LatheGeometry([new Vector2(outer, low), new Vector2(inner, high)], 64);
+function funnel(
+  outer: number,
+  low: number,
+  inner: number,
+  high: number
+): BufferGeometry {
+  const geometry = new LatheGeometry(
+    [new Vector2(outer, low), new Vector2(inner, high)],
+    64
+  );
   // The lathe turns about Y; a quarter turn about X stands its height along +Z.
   geometry.rotateX(Math.PI / 2);
   // Shade it as a steep cone, the way a lens barrel's bevel catches the light, though it is
@@ -510,7 +735,12 @@ function funnel(outer: number, low: number, inner: number, high: number): Buffer
   const tilt = (50 * Math.PI) / 180;
   for (let i = 0; i < position.count; i++) {
     const angle = Math.atan2(position.getY(i), position.getX(i));
-    normal.setXYZ(i, Math.cos(angle) * Math.sin(tilt), Math.sin(angle) * Math.sin(tilt), Math.cos(tilt));
+    normal.setXYZ(
+      i,
+      Math.cos(angle) * Math.sin(tilt),
+      Math.sin(angle) * Math.sin(tilt),
+      Math.cos(tilt)
+    );
   }
   return geometry;
 }
@@ -554,9 +784,10 @@ function lensCoating(): DataTexture {
       const iris = Math.max(0, 1 - Math.abs(r - 0.32) / 0.06) * 0.25;
       const blue = Math.max(0, 1 - r / 0.07) * 0.8;
       const i = (y * size + x) * 4;
-      data[i] = 9 + violet * 120 + teal * 35 + iris * 20 + blue * 30 | 0;
-      data[i + 1] = 10 + violet * 55 + teal * 95 + iris * 25 + blue * 45 | 0;
-      data[i + 2] = 24 + violet * 165 + teal * 125 + iris * 70 + blue * 200 | 0;
+      data[i] = (9 + violet * 120 + teal * 35 + iris * 20 + blue * 30) | 0;
+      data[i + 1] = (10 + violet * 55 + teal * 95 + iris * 25 + blue * 45) | 0;
+      data[i + 2] =
+        (24 + violet * 165 + teal * 125 + iris * 70 + blue * 200) | 0;
       data[i + 3] = 255;
     }
   }
@@ -602,7 +833,7 @@ function satinGrain(): DataTexture {
   let seed = 9;
   for (let i = 0; i < size * size; i++) {
     seed = (seed * 16807) % 2147483647;
-    const value = 215 + ((seed / 2147483647) * 40) | 0;
+    const value = (215 + (seed / 2147483647) * 40) | 0;
     data.set([value, value, value, 255], i * 4);
   }
   const texture = new DataTexture(data, size, size);
@@ -611,4 +842,3 @@ function satinGrain(): DataTexture {
   texture.needsUpdate = true;
   return texture;
 }
-

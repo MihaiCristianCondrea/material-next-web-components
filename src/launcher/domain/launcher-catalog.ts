@@ -23,6 +23,11 @@ export interface LauncherCatalog {
   readonly defaultFavorites: readonly LauncherItemId[];
   /** The admin redirects section, in order. Never edited by the visitor. */
   readonly redirects: readonly LauncherItemId[];
+  /**
+   * Maps an id stored by an earlier version of this catalog to its current
+   * one, or returns undefined to keep it as it is.
+   */
+  readonly migrate?: (id: string) => string | undefined;
 }
 
 /** The most favorites kept, visible and hidden together. */
@@ -36,10 +41,13 @@ export const createLauncherCatalog = ({
   items,
   defaultFavorites = [],
   redirects = [],
+  migrate,
 }: {
   items: ReadonlyArray<LauncherItem | LauncherItemInput>;
   defaultFavorites?: readonly string[];
   redirects?: readonly string[];
+  /** Renames stored ids when the catalog's ids change. */
+  migrate?: (id: string) => string | undefined;
 }): LauncherCatalog => {
   const ids = new Set<string>();
   const hrefs = new Set<string>();
@@ -58,6 +66,7 @@ export const createLauncherCatalog = ({
     items: unique,
     defaultFavorites: known(defaultFavorites),
     redirects: known(redirects),
+    ...(migrate ? {migrate} : {}),
   };
 };
 

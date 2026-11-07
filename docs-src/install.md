@@ -52,7 +52,7 @@ import type {MaterialNextExpressiveTabBar} from 'material-next-web-components/ex
 
 ## What the library provides, and what you provide
 
-**The library provides** the custom elements, their styles (in shadow DOM), the Material Web components they use (imported for you), and the marketing hub's controllers, device art and badge images.
+**The library provides** the custom elements, their styles (in shadow DOM), the Material Web components they use (imported for you), and the marketing hub's controllers, the 3D phone (built on three.js, a dependency), device art and badge images.
 
 **You provide:**
 

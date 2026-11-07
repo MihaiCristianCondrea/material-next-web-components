@@ -15,13 +15,16 @@ export const styles = css`
     position: relative;
     display: block;
     flex-shrink: 0;
-    width: 469px;
-    height: 992px;
-    --_screen-left: 18.24px;
-    --_screen-top: 17.92px;
+    width: 465.23px;
+    height: 988.76px;
+    --_screen-left: 17.61px;
+    --_screen-top: 15.79px;
     --_screen-width: 430px;
     --_screen-height: 957px;
-    --_screen-radius: 34.5px;
+    --_screen-radius: 49.8px;
+    --_camera-top: 30.97px;
+    --_camera-size: 21.86px;
+    --_body-radius: 74.1px;
   }
 
   :host([device='pixel_9_pro_fold']) {
@@ -93,5 +96,46 @@ export const styles = css`
     width: var(--_screen-width) !important;
     height: var(--_screen-height) !important;
     border-radius: var(--_screen-radius);
+  }
+
+  .stage {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .phone {
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .body {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--_body-radius);
+    transform-style: preserve-3d;
+  }
+
+  .body--drawn {
+    background: #050608;
+    box-shadow: inset 0 0 0 5px var(--_frame);
+  }
+
+  .body .screen {
+    backface-visibility: hidden;
+  }
+
+  .camera {
+    position: absolute;
+    z-index: 10;
+    top: calc(var(--_camera-top) - var(--_camera-size) / 2);
+    left: calc(50% - var(--_camera-size) / 2);
+    width: var(--_camera-size);
+    height: var(--_camera-size);
+    border-radius: 50%;
+    background: #020203;
+    box-shadow: 0 0 0 3.6px #0c0d10;
+    pointer-events: none;
   }
 `;

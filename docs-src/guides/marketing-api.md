@@ -108,6 +108,19 @@ App Toolkit's window sizes and adaptive shell rules, in dp (1dp = 1 CSS px).
 | `SHELL_POLICY`, `NAV_WIDTHS`, `LIST_DETAIL`                          | The breakpoints (rail from 600, expanded rail from 840, permanent drawer from 1200, list and detail from 600), the rail and drawer widths, and the list pane's 38% with its 24dp separator.                      |
 | `WindowSpec`, `WindowName`, `DeviceName`, `ShellLayout`, `ShellMode` | Their types.                                                                                                                                                                                                     |
 
+## The phone
+
+The Pixel 9 Pro XL that `<mnw-device-frame>` draws in 3D, as plain data (no three.js).
+
+| Export               |                                                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `PIXEL_9_PRO_XL`     | Its outside in millimetres: 76.6 × 162.8 × 8.5, the display, the front camera, the camera bar and its cameras, the keys.         |
+| `PIXEL_FINISHES`     | Each finish's colours as `0xRRGGBB`: `frame`, the camera bar's top (`bar`) and side walls (`side`), and the back glass (`back`). |
+| `PIXEL_FINISH_NAMES` | `['obsidian', 'porcelain', 'hazel', 'rose-quartz']`.                                                                             |
+| `PixelFinish`        | Their type.                                                                                                                      |
+
+The three.js model itself is `material-next-web-components/marketing/ui/pixel-model.js`: `createPixelModel({finish, backDecal})` returns the phone as a three.js group in millimetres, display towards +Z, and `createStudio()` the light it is tuned under. It is not part of `marketing.js`, so a hub that never draws the phone never loads three.js. See [Device frame](../../examples/device-frame/#the-3d-model).
+
 ## Data
 
 | Export                                                                        |                                                                                                                                                                                                      |
