@@ -555,3 +555,20 @@ suite('device frame', () => {
     assert.equal(PIXEL_FINISH_NAMES.length, 4);
   });
 });
+
+suite('a moving phone', () => {
+  test('is drawn to a canvas while its pose keeps changing, then settles', async () => {
+    const el = await fixture<MaterialNextDeviceFrame>(
+      html`<mnw-device-frame><div></div></mnw-device-frame>`
+    );
+    await el.updateComplete;
+    for (const yaw of [4, 8, 12]) {
+      el.yaw = yaw;
+      await el.updateComplete;
+    }
+    assert.exists(el.shadowRoot!.querySelector('canvas.phone'));
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    await el.updateComplete;
+    assert.notExists(el.shadowRoot!.querySelector('canvas.phone'));
+  });
+});

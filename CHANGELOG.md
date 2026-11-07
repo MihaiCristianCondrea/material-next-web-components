@@ -10,9 +10,9 @@ Last updated: November 7, 2026.
 
 ### Added
 
-- `<mnw-device-frame>` draws the Pixel 9 Pro XL in 3D, built in three.js from Google's published measurements and product photos. `finish` picks Obsidian, Porcelain, Hazel or Rose Quartz; `yaw` and `pitch` turn the phone, the live screen turning with it; `logo` puts a mark on the back, none by default. Every frame on a page shares one WebGL context and one picture per pose. Until it is drawn, and without WebGL, the frame draws the phone's outline in CSS; `updateComplete` waits for the picture.
+- `<mnw-device-frame>` draws the Pixel 9 Pro XL in 3D, built in three.js from Google's published measurements and product photos. `finish` picks Obsidian, Porcelain, Hazel or Rose Quartz; `yaw` and `pitch` turn the phone, the live screen turning with it; `logo` puts a mark on the back, none by default. Every frame on a page shares one WebGL context and one picture per pose. A pose that keeps changing, such as a turn driven by scroll, is drawn straight into a canvas each animation frame without encoding a picture, and sharp again 280 ms after it settles; an off-screen phone is not drawn. Until it is drawn, and without WebGL, the frame draws the phone's outline in CSS; `updateComplete` waits for the picture.
 - `PIXEL_9_PRO_XL`, `PIXEL_FINISHES`, `PIXEL_FINISH_NAMES` and `PixelFinish` in `marketing.js`: the phone's measurements and finishes as plain data.
-- The phone as a three.js object for your own scenes: `createPixelModel()` and `createStudio()` in `marketing/ui/pixel-model.js`.
+- The phone as a three.js object for your own scenes: `createPixelModel()`, `createStudio()` and `disposePixelModel()` in `marketing/ui/pixel-model.js`. Its parts are joined by material, 23 draw calls for about 45,000 triangles.
 - A launcher catalog can carry `migrate`, to rename ids it stored before.
 
 ### Changed

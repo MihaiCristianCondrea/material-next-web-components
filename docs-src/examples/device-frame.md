@@ -54,6 +54,29 @@ The phone is drawn once per finish and angle and shared by every frame on the pa
 
 three.js is a dependency of this package and loads only when a phone is drawn, as a separate chunk.
 
+### A phone that moves
+
+Set `yaw` and `pitch` as often as you like, for example from a scroll handler that turns the phone in as it arrives. The frame keeps that cheap:
+
+- **Still:** a pose is drawn once, as a sharp picture at the screen's density, and every frame showing it shares it. The page keeps the 12 most recent pictures.
+- **Moving:** when the pose changes again within 280 ms, the frame stops making pictures and draws the phone straight into a canvas, once per animation frame, at one device pixel per CSS pixel. Changes within one frame are drawn once. Nothing is encoded or decoded while it moves.
+- **Settled:** 280 ms after the last change, the sharp picture replaces the canvas, which is freed.
+- **Off screen:** a moving phone is not drawn until it scrolls back into view.
+
+The phone is 23 draw calls and about 45,000 triangles, with one light probe made once per page. A page should still move one phone at a time; several still phones cost nothing after their first picture.
+
+```js
+// Scroll progress from 0 to 1 turns the phone in from three quarters to head on.
+const progress = Math.min(
+  1,
+  Math.max(0, -section.getBoundingClientRect().top / section.offsetHeight)
+);
+frame.yaw = -40 * (1 - progress);
+frame.pitch = 8 * (1 - progress);
+```
+
+Head on, a settled phone's screen is not transformed, so text stays sharp; while turned or moving it is a CSS 3D layer.
+
 ### The 3D model
 
 The same phone is available as a three.js object for your own scenes, from `material-next-web-components/marketing/ui/pixel-model.js`:
@@ -62,6 +85,7 @@ The same phone is available as a three.js object for your own scenes, from `mate
 import {
   createPixelModel,
   createStudio,
+  disposePixelModel,
 } from 'material-next-web-components/marketing/ui/pixel-model.js';
 
 const phone = createPixelModel({finish: 'porcelain'}); // a Group, in millimetres, display towards +Z
@@ -70,7 +94,10 @@ scene.environment = new PMREMGenerator(renderer).fromScene(
   0.02
 ).texture;
 scene.add(phone);
+// Later: scene.remove(phone); disposePixelModel(phone);
 ```
+
+For a scroll-driven scene of your own, render only when the pose or the size changes (never in an idle loop), cap the renderer's pixel ratio at 2, lower it while the phone moves, and stop rendering while the canvas is off screen. `disposePixelModel(phone)` frees every geometry, material and texture the model made; the `backDecal` texture stays yours. `createPixelModel({merge: false})` keeps every part its own named mesh, for inspecting it; the default joins the parts that share a material.
 
 `createStudio()` is the light the materials are tuned under: a bright studio with a black flag in front and a dark floor. `backDecal: {texture}` puts a mark on the back, as a white-on-transparent mask. The measurements are `PIXEL_9_PRO_XL`, exported from `marketing.js` with the finishes' colours (`PIXEL_FINISHES`).
 

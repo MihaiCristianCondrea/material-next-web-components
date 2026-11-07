@@ -29,6 +29,7 @@ import {
   Vector2,
 } from 'three';
 import {RoundedBoxGeometry} from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import {mergeGeometries} from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import {
   PIXEL_9_PRO_XL,
   PIXEL_FINISHES,
@@ -48,6 +49,12 @@ export interface PixelModelOptions {
    * so it suits every finish.
    */
   backDecal?: BackDecal;
+  /**
+   * Joins the parts that share a material into one mesh, which halves the draw calls. Default
+   * `true`; `false` keeps every part its own named mesh, for inspecting the model. `Display` and
+   * `Camera bar` always stay their own meshes.
+   */
+  merge?: boolean;
 }
 
 /** A mark on the back glass for {@link PixelModelOptions.backDecal}. */
@@ -70,6 +77,7 @@ export interface BackDecal {
 export function createPixelModel({
   finish = 'obsidian',
   backDecal,
+  merge = true,
 }: PixelModelOptions = {}): Group {
   const spec = PIXEL_9_PRO_XL;
   const colours = PIXEL_FINISHES[finish];
@@ -253,6 +261,8 @@ export function createPixelModel({
       clearcoatRoughness: 0.2,
       depthWrite: false,
     });
+    // The host owns the mark's texture: disposePixelModel() leaves it.
+    print.userData.hostTexture = backDecal.texture;
     add('Back decal', decal, print);
   }
 
@@ -565,7 +575,73 @@ export function createPixelModel({
       add('Antenna line', band, antenna);
     }
   }
+  if (merge) mergeByMaterial(phone);
   return phone;
+}
+
+/**
+ * Frees what `createPixelModel()` made for a phone: every geometry, material and texture, except
+ * the `backDecal` texture, which belongs to the host. Remove the phone from its scene first.
+ */
+export function disposePixelModel(phone: Group) {
+  const textures = new Set<Texture>();
+  phone.traverse((node) => {
+    if (!(node instanceof Mesh)) return;
+    node.geometry.dispose();
+    for (const material of [node.material].flat() as Material[]) {
+      for (const value of Object.values(material)) {
+        if (value instanceof Texture && value !== material.userData.hostTexture)
+          textures.add(value);
+      }
+      material.dispose();
+    }
+  });
+  for (const texture of textures) texture.dispose();
+}
+
+/** Parts that keep their own mesh, for hosts that find them by name. */
+const KEPT = new Set(['Display', 'Camera bar']);
+
+/**
+ * Replaces the meshes that share a material with one mesh holding all their triangles. Every part
+ * is built in place, without a transform of its own, so their geometries join as they are.
+ */
+function mergeByMaterial(phone: Group) {
+  const byMaterial = new Map<Material, Mesh[]>();
+  for (const child of [...phone.children]) {
+    if (
+      !(child instanceof Mesh) ||
+      KEPT.has(child.name) ||
+      Array.isArray(child.material)
+    )
+      continue;
+    const list = byMaterial.get(child.material) ?? [];
+    list.push(child);
+    byMaterial.set(child.material, list);
+  }
+  for (const [material, meshes] of byMaterial) {
+    if (meshes.length < 2) continue;
+    const parts = meshes.map((mesh) => {
+      const geometry = mesh.geometry.index
+        ? mesh.geometry.toNonIndexed()
+        : mesh.geometry.clone();
+      geometry.clearGroups();
+      return geometry;
+    });
+    const merged = mergeGeometries(parts);
+    for (const part of parts) part.dispose();
+    if (!merged) continue;
+    for (const mesh of meshes) {
+      phone.remove(mesh);
+      mesh.geometry.dispose();
+    }
+    const mesh = new Mesh(merged, material);
+    mesh.name = meshes
+      .map((m) => m.name)
+      .filter((n, i, all) => all.indexOf(n) === i)
+      .join(', ');
+    phone.add(mesh);
+  }
 }
 
 /**

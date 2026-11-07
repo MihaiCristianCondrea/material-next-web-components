@@ -119,7 +119,7 @@ The Pixel 9 Pro XL that `<mnw-device-frame>` draws in 3D, as plain data (no thre
 | `PIXEL_FINISH_NAMES` | `['obsidian', 'porcelain', 'hazel', 'rose-quartz']`.                                                                             |
 | `PixelFinish`        | Their type.                                                                                                                      |
 
-The three.js model itself is `material-next-web-components/marketing/ui/pixel-model.js`: `createPixelModel({finish, backDecal})` returns the phone as a three.js group in millimetres, display towards +Z, and `createStudio()` the light it is tuned under. It is not part of `marketing.js`, so a hub that never draws the phone never loads three.js. See [Device frame](../../examples/device-frame/#the-3d-model).
+The three.js model itself is `material-next-web-components/marketing/ui/pixel-model.js`: `createPixelModel({finish, backDecal})` returns the phone as a three.js group in millimetres, display towards +Z, `createStudio()` the light it is tuned under, and `disposePixelModel(phone)` frees it. It is not part of `marketing.js`, so a hub that never draws the phone never loads three.js. See [Device frame](../../examples/device-frame/#the-3d-model).
 
 ## Data
 
