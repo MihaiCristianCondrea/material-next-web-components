@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pixel model: photo match</title>
+    <!-- Prototype review page: one perspective render of the model's back, posed to compare with a
+         product photo. Run `npx tsc`, serve the parent folder of this repository and open
+         /material-next-web-components/dev/pixel-model-match.html. Query parameters, in millimetres in
+         the model's own axes: eye=x,y,z and at=x,y,z for the camera, fov, size=width,height, finish,
+         and env=room to light it with three.js's room instead of the model's studio. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../node_modules/three/build/three.module.js",
+          "three/examples/jsm/": "../node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      body { margin: 0; background: #f3f2ee; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import {
+        ACESFilmicToneMapping, Color, PerspectiveCamera, PMREMGenerator, Scene, SRGBColorSpace, Vector3, WebGLRenderer,
+      } from 'three';
+      import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+      import {createPixelModel, createStudio} from '../dist/marketing/ui/pixel-model.js';
+
+      const params = new URLSearchParams(location.search);
+      const numbers = (key, fallback) => (params.get(key) ?? fallback).split(',').map(Number);
+      const [width, height] = numbers('size', '800,600');
+
+      const renderer = new WebGLRenderer({antialias: true, preserveDrawingBuffer: true});
+      renderer.setSize(width, height);
+      renderer.outputColorSpace = SRGBColorSpace;
+      renderer.toneMapping = ACESFilmicToneMapping;
+      document.body.append(renderer.domElement);
+
+      const scene = new Scene();
+      scene.background = new Color(0xf3f2ee);
+      const light = params.get('env') === 'room' ? new RoomEnvironment() : createStudio();
+      scene.environment = new PMREMGenerator(renderer).fromScene(light, 0.02).texture;
+
+      // The back faces the viewer at +Z, so the studio lights it as it lights the display head on.
+      const model = createPixelModel({finish: params.get('finish') ?? 'obsidian'});
+      model.rotation.y = Math.PI;
+      scene.add(model);
+
+      // Eye and target are given in the model's own axes; the half turn above flips x and z.
+      const turned = ([x, y, z]) => [-x, y, -z];
+      const camera = new PerspectiveCamera(Number(params.get('fov') ?? 24), width / height, 20, 3000);
+      camera.position.set(...turned(numbers('eye', '170,80,-110')));
+      camera.lookAt(new Vector3(...turned(numbers('at', '8,48,-4'))));
+      renderer.render(scene, camera);
+      document.title = 'done';
+    </script>
+  </body>
+</html>

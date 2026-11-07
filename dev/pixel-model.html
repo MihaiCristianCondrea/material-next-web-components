@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pixel model: comparison</title>
+    <!-- Prototype review page. Run `npx tsc`, then serve the parent folder of this repository and open
+         /material-next-web-components/dev/pixel-model.html?reference=<url of a .glb to compare with>. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../node_modules/three/build/three.module.js",
+          "three/examples/jsm/": "../node_modules/three/examples/jsm/"
+        }
+      }
+    </script>
+    <style>
+      body { margin: 0; background: #eceae4; font: 14px system-ui, sans-serif; color: #222; }
+      .grid { display: grid; grid-template-columns: 120px repeat(4, 320px); gap: 8px; padding: 12px; }
+      .grid > div { display: flex; align-items: center; }
+      canvas { width: 320px; height: 420px; background: #f5f3ee; border-radius: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="grid" id="grid"></div>
+    <script type="module">
+      import {
+        ACESFilmicToneMapping, Box3, Color, Group, Mesh, PerspectiveCamera, PMREMGenerator, Scene, SRGBColorSpace,
+        Vector3, WebGLRenderer, DirectionalLight, CanvasTexture, SRGBColorSpace as SRGB,
+      } from 'three';
+      import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+      import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+      import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
+      import {createPixelModel, createStudio} from '../dist/marketing/ui/pixel-model.js';
+
+      const params = new URLSearchParams(location.search);
+
+      // ?decal=<font url> draws a "G" in that font as the back mark, the way a host passes its own
+      // artwork; the model itself ships without one.
+      async function letterDecal(fontUrl) {
+        const font = new FontFace('Decal', `url(${fontUrl})`, {weight: '700'});
+        document.fonts.add(await font.load());
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 512;
+        const g = canvas.getContext('2d');
+        // A white mask, the letter scaled to fill the square.
+        g.font = '700 512px Decal';
+        const m = g.measureText('G');
+        const w = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+        const h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+        const scale = 512 / Math.max(w, h);
+        g.setTransform(scale, 0, 0, scale, 256 - ((m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2) * scale, 256 + ((m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2) * scale);
+        g.fillStyle = '#fff';
+        g.fillText('G', 0, 0);
+        const texture = new CanvasTexture(canvas);
+        return {texture};
+      }
+      const decalFont = params.get('decal');
+            const finish = params.get('finish') ?? 'obsidian';
+      const poses = [
+        ['Front', 0, 0],
+        ['Three quarters', 0.55, -0.12],
+        ['Back', Math.PI, 0],
+        ['Camera bar', Math.PI + 0.75, 0.28],
+      ];
+
+      async function reference(url) {
+        const draco = new DRACOLoader().setDecoderPath('../node_modules/three/examples/jsm/libs/draco/gltf/');
+        const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(url);
+        const phone = gltf.scene;
+        let screenY = 0;
+        phone.traverse((node) => {
+          if (node instanceof Mesh && [node.material].flat().some((m) => m.name === 'GP9XL_Screen')) {
+            screenY = new Box3().setFromObject(node).getCenter(new Vector3()).y;
+          }
+        });
+        const bounds = new Box3().setFromObject(phone);
+        const centre = bounds.getCenter(new Vector3());
+        phone.position.sub(centre);
+        const upright = new Group();
+        upright.add(phone);
+        upright.rotation.x = screenY >= centre.y ? Math.PI / 2 : -Math.PI / 2;
+        const rightWayUp = new Group();
+        rightWayUp.add(upright);
+        rightWayUp.rotation.z = Math.PI;
+        rightWayUp.scale.setScalar(1000);
+        return rightWayUp;
+      }
+
+      // One WebGL context for every pose: each is drawn, then copied into its own 2D canvas.
+      const gl = document.createElement('canvas');
+      const renderer = new WebGLRenderer({canvas: gl, antialias: true, preserveDrawingBuffer: true});
+      renderer.setPixelRatio(2);
+      renderer.setSize(320, 420, false);
+      renderer.outputColorSpace = SRGBColorSpace;
+      renderer.toneMapping = ACESFilmicToneMapping;
+      const environment = new PMREMGenerator(renderer).fromScene(params.get('env') === 'room' ? new RoomEnvironment() : createStudio(), 0.02).texture;
+
+      function render(model, yaw, tilt) {
+        const scene = new Scene();
+        scene.background = new Color(0xf5f3ee);
+        scene.environment = environment;
+        const key = new DirectionalLight(0xffffff, Number(params.get('key') ?? 0));
+        key.position.set(-200, 300, 400);
+        scene.add(key);
+        const turntable = new Group();
+        turntable.add(model);
+        turntable.rotation.set(tilt, yaw, 0);
+        scene.add(turntable);
+        const camera = new PerspectiveCamera(18, 320 / 420, 50, 2000);
+        camera.position.set(0, 0, 640);
+        renderer.render(scene, camera);
+        const canvas = document.createElement('canvas');
+        canvas.width = gl.width;
+        canvas.height = gl.height;
+        canvas.getContext('2d').drawImage(gl, 0, 0);
+        return canvas;
+      }
+
+      const grid = document.getElementById('grid');
+      const row = async (label, make) => {
+        const title = document.createElement('div');
+        title.textContent = label;
+        grid.append(title);
+        for (const [, yaw, tilt] of poses) grid.append(render(await make(), yaw, tilt));
+      };
+      const header = document.createElement('div');
+      grid.append(header);
+      for (const [name] of poses) {
+        const cell = document.createElement('div');
+        cell.textContent = name;
+        grid.append(cell);
+      }
+      for (const each of (params.get('finishes') ?? finish).split(',')) {
+        const backDecal = decalFont ? await letterDecal(decalFont) : undefined;
+        await row(`Ours (${each})`, async () => createPixelModel({finish: each, backDecal}));
+      }
+      const url = params.get('reference');
+      if (url) await row('Reference', () => reference(url));
+      document.title = 'done';
+    </script>
+  </body>
+</html>

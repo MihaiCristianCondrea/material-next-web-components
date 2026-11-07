@@ -1,6 +1,14 @@
 # Changelog
 
-Last updated: October 29, 2026.
+Last updated: November 7, 2026.
+
+---
+
+# Unreleased
+
+### Added
+
+- A Pixel 9 Pro XL built in three.js from Google's published measurements and product photos, with the studio light it is tuned under. It carries no logo unless the host passes one. It is not a package export yet; the 3D device component that will use it comes next. three.js is a development dependency for now.
 
 ---
 

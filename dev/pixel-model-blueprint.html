@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pixel model: blueprint</title>
+    <!-- Prototype review page: our model and a reference .glb rendered flat-on at the same scale
+         (8 px per millimetre), side by side and overlaid, front, back and right edge. -->
+    <script type="importmap">
+      {"imports": {"three": "../node_modules/three/build/three.module.js", "three/examples/jsm/": "../node_modules/three/examples/jsm/"}}
+    </script>
+    <style>
+      body { margin: 0; background: #fff; font: 14px system-ui, sans-serif; }
+      .row { display: flex; gap: 12px; padding: 12px; align-items: flex-start; }
+      figure { margin: 0; } figcaption { padding: 4px 0; }
+    </style>
+  </head>
+  <body>
+    <div id="out"></div>
+    <script type="module">
+      import {
+        ACESFilmicToneMapping, Box3, Color, Group, Mesh, OrthographicCamera, PMREMGenerator, Scene, SRGBColorSpace,
+        Vector3, WebGLRenderer, CanvasTexture,
+      } from 'three';
+      import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+      import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+      import {DRACOLoader} from 'three/examples/jsm/loaders/DRACOLoader.js';
+      import {createPixelModel, createStudio, PIXEL_9_PRO_XL} from '../dist/marketing/ui/pixel-model.js';
+
+      const PX_PER_MM = Number(new URLSearchParams(location.search).get('pxmm') ?? 8);
+      const params = new URLSearchParams(location.search);
+      const finish = params.get('finish') ?? 'obsidian';
+
+      // The reference, stood up like ours and scaled to Google's published height.
+      async function reference(url) {
+        const draco = new DRACOLoader().setDecoderPath('../node_modules/three/examples/jsm/libs/draco/gltf/');
+        const phone = (await new GLTFLoader().setDRACOLoader(draco).loadAsync(url)).scene;
+        // Lying flat: the display at y = 0, the back towards +y, the camera end towards -z.
+        const frame = new Group();
+        frame.add(phone);
+        // Euler order XYZ turns about Z first: the half turn puts the back towards -y, then a
+        // quarter turn about X puts it towards -Z, the display towards +Z and the camera end up.
+        frame.rotation.x = Math.PI / 2;
+        frame.rotation.z = Math.PI;
+        const holder = new Group();
+        holder.add(frame);
+        holder.updateMatrixWorld(true);
+        const box = new Box3().setFromObject(holder);
+        const scale = PIXEL_9_PRO_XL.height / (box.max.y - box.min.y) * 1;
+        holder.scale.setScalar(scale);
+        holder.updateMatrixWorld(true);
+        const centre = new Box3().setFromObject(holder).getCenter(new Vector3());
+        holder.position.sub(centre);
+        const outer = new Group();
+        outer.add(holder);
+        outer.userData.scale = scale;
+        return outer;
+      }
+
+      const gl = document.createElement('canvas');
+      const renderer = new WebGLRenderer({canvas: gl, antialias: true, preserveDrawingBuffer: true, alpha: true});
+      renderer.outputColorSpace = SRGBColorSpace;
+      renderer.toneMapping = ACESFilmicToneMapping;
+      const environment = new PMREMGenerator(renderer).fromScene(params.get('env') === 'room' ? new RoomEnvironment() : createStudio(), 0.02).texture;
+
+      const views = {front: [0, 0], back: [0, Math.PI], right: [0, -Math.PI / 2], top: [Math.PI / 2, 0]};
+      function shot(model, view, w = 96, h = 172) {
+        renderer.setSize(w * PX_PER_MM, h * PX_PER_MM, false);
+        const scene = new Scene();
+        scene.environment = environment;
+        const turntable = new Group();
+        turntable.add(model);
+        const [x, y] = views[view];
+        turntable.rotation.set(x, y, 0);
+        scene.add(turntable);
+        const camera = new OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -500, 500);
+        camera.position.z = 200;
+        renderer.setClearColor(0x000000, 0);
+        renderer.render(scene, camera);
+        const canvas = document.createElement('canvas');
+        canvas.width = gl.width;
+        canvas.height = gl.height;
+        canvas.getContext('2d').drawImage(gl, 0, 0);
+        turntable.remove(model);
+        return canvas;
+      }
+
+      function overlay(a, b) {
+        const c = document.createElement('canvas');
+        c.width = a.width; c.height = a.height;
+        const g = c.getContext('2d');
+        g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height);
+        g.globalAlpha = 0.5; g.drawImage(a, 0, 0); g.drawImage(b, 0, 0);
+        return c;
+      }
+
+      // ?decal=<font url> draws a "G" in that font as the back mark, as the dev comparison page does.
+      async function letterDecal(fontUrl) {
+        const font = new FontFace('Decal', `url(${fontUrl})`, {weight: '700'});
+        document.fonts.add(await font.load());
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 512;
+        const g = canvas.getContext('2d');
+        // A white mask, the letter scaled to fill the square.
+        g.font = '700 512px Decal';
+        const m = g.measureText('G');
+        const w = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+        const h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
+        const scale = 512 / Math.max(w, h);
+        g.setTransform(scale, 0, 0, scale, 256 - ((m.actualBoundingBoxRight - m.actualBoundingBoxLeft) / 2) * scale, 256 + ((m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2) * scale);
+        g.fillStyle = '#fff';
+        g.fillText('G', 0, 0);
+        const texture = new CanvasTexture(canvas);
+        return {texture};
+      }
+            const backDecal = params.get('decal') ? await letterDecal(params.get('decal')) : undefined;
+      const ours = createPixelModel({finish, backDecal});
+      const ref = params.get('reference') ? await reference(params.get('reference')) : null;
+      const out = document.getElementById('out');
+      for (const view of (params.get('views') ?? 'front,back,right').split(',')) {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const a = shot(ours, view);
+        const b = ref && shot(ref, view);
+        const shots = b ? [[`ours ${view}`, a], [`reference ${view}`, b], ['overlay', overlay(a, b)]] : [[`ours ${view}`, a]];
+        for (const [label, canvas] of shots) {
+          canvas.dataset.view = view;
+          const fig = document.createElement('figure');
+          const cap = document.createElement('figcaption');
+          cap.textContent = label;
+          canvas.style.width = `${canvas.width}px`;
+          fig.append(cap, canvas);
+          row.append(fig);
+        }
+        out.append(row);
+      }
+      document.title = 'done';
+    </script>
+  </body>
+</html>
