@@ -4,7 +4,7 @@
  */
 
 /**
- * Material Next app shell: the frame of an application (a navigation drawer,
+ * Material-Next app shell: the frame of an application (a navigation drawer,
  * a top app bar and the screen) for admin consoles and other web apps.
  *
  *   domain/  layout policies and the current destination: pure

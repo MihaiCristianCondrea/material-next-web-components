@@ -576,6 +576,13 @@ export function createPixelModel({
     }
   }
   if (merge) mergeByMaterial(phone);
+  // Transparent layers share one position, so draw them back to front by
+  // name: the bar's shadow and the back mark, the lens caps, the window glass.
+  for (const child of phone.children) {
+    if (/shadow|decal/i.test(child.name)) child.renderOrder = 1;
+    else if (/cap/i.test(child.name)) child.renderOrder = 2;
+    else if (/window glass/i.test(child.name)) child.renderOrder = 3;
+  }
   return phone;
 }
 

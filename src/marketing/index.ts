@@ -4,7 +4,7 @@
  */
 
 /**
- * Material Next marketing: a ready-made marketing hub for Android apps built
+ * Material-Next marketing: a ready-made marketing hub for Android apps built
  * with App Toolkit. The app keeps its screens (Lit templates translated from
  * Compose), its palettes, its assets and one product identity; this module
  * provides the hub and the Android preview around them.

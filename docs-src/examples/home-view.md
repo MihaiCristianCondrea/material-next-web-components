@@ -14,7 +14,7 @@ order: 40
 
 `<mnw-home>` is a complete landing view for a component library's documentation: an introduction, a notice card, the headline with a tagline, and a **Get started** button that links to `docs-href`. Its second view, the examples view, shows the expressive tab bar, the app showcase and a code block with their own navigation and table of contents.
 
-Its copy describes Material Next itself, so it suits Material Next's own pages and prototypes. For your product's landing page, compose the standalone components instead.
+Its copy describes Material-Next itself, so it suits Material-Next's own pages and prototypes. For your product's landing page, compose the standalone components instead.
 
 ## Live demo
 

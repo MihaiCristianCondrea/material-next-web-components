@@ -64,5 +64,5 @@ title: Material Design web components for Lit
 
 <section class="home-section" aria-labelledby="status">
 <h2 id="status">Status</h2>
-<p>Material Next is at version 0.2. The code block is stable; the other elements are experimental and can change between minor versions until 1.0, and the documentation layout elements are internal candidates. The <a href="./roadmap/">roadmap</a> lists each part's status.</p>
+<p>Material-Next is at version 0.2. The code block is stable; the other elements are experimental and can change between minor versions until 1.0, and the documentation layout elements are internal candidates. The <a href="./roadmap/">roadmap</a> lists each part's status.</p>
 </section>

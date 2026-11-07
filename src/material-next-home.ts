@@ -37,7 +37,7 @@ export class MaterialNextHome extends LitElement {
 
   /** Main hero headline. */
   @property()
-  headline = 'material-next-web-components';
+  headline = 'Material-Next Web Components';
 
   @state()
   private activeView: 'home' | 'examples' = 'home';
@@ -138,7 +138,7 @@ export class MaterialNextHome extends LitElement {
           <section id="examples-overview" class="example-panel">
             <h2>Examples</h2>
             <p>
-              Browse reusable Material Next Web Components with separated
+              Browse reusable Material-Next Web Components with separated
               library navigation and page contents.
             </p>
           </section>

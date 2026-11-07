@@ -1,6 +1,7 @@
 // Site-wide navigation and the groups of the component catalog.
 module.exports = {
-  name: 'Material Next',
+  name: 'Material-Next',
+  fullName: 'Material-Next Web Components',
   packageName: 'material-next-web-components',
   repository:
     'https://github.com/MihaiCristianCondrea/material-next-web-components',

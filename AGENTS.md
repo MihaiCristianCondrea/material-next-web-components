@@ -1,4 +1,4 @@
-# Material Next Web Components: agent guide
+# Material-Next Web Components: agent guide
 
 Lit 3 custom elements on Material Web 2, published to npm as `material-next-web-components`. Read this before
 changing the library; the README and the documentation site cover usage.

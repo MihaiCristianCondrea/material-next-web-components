@@ -19,11 +19,11 @@ order: 50
 
 Favorites persist in `localStorage` under one key, so every product served from the same origin shares them. The panel never offers the page you are on: entries matching `current-product`, `exclude` or this page's URL are hidden. A hidden favorite keeps its place for the pages where it shows.
 
-Without a `catalog`, the launcher shows a neutral starting set: Material Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, each at its public address. It names no one's own products. An app passes its own catalog with its products, admin consoles and links; see [Your own catalog](#your-own-catalog).
+Without a `catalog`, the launcher shows a neutral starting set: Material-Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, each at its public address. It names no one's own products. An app passes its own catalog with its products, admin consoles and links; see [Your own catalog](#your-own-catalog).
 
 ## Live demo
 
-{% demo "product-launcher" "The first launcher uses the default catalog and hides Material Next, the current product. The second gets a custom catalog; its Pocket Notes entries are hidden on Pocket Notes' page. Both save to demo-only storage keys." "column" %}
+{% demo "product-launcher" "The first launcher uses the default catalog and hides Material-Next, the current product. The second gets a custom catalog; its Pocket Notes entries are hidden on Pocket Notes' page. Both save to demo-only storage keys." "column" %}
 
 ### Colors
 
@@ -51,7 +51,7 @@ Import the module and place the element in an app bar's trailing area:
 ></mnw-product-launcher>
 ```
 
-The icons for the default entries (Material Next, Google Play, GitHub, Play Console, Firebase, AdMob, Cloudflare) ship in `assets/marketing/launcher/`, with the Android Insider and Apps Metadata icons (`asset:launcher/android-insider.svg`, `asset:launcher/apps-metadata.svg`) for the catalogs that list them; other products bring their own `image` URLs. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
+The icons for the default entries (Material-Next, Google Play, GitHub, Play Console, Firebase, AdMob, Cloudflare) ship in `assets/marketing/launcher/`, with the Android Insider and Apps Metadata icons (`asset:launcher/android-insider.svg`, `asset:launcher/apps-metadata.svg`) for the catalogs that list them; other products bring their own `image` URLs. Copy them with `npx mnw-marketing-assets public/material-next`, or point `configureMarketingAssets({base})` at where you serve them. An entry whose image fails to load shows its Material Symbol instead.
 
 ### Dark mode
 
@@ -59,7 +59,7 @@ The panel, favorites card, hover surfaces, edit controls and monochrome artwork 
 `color-scheme`. This also works while the panel is open. Leave **Follow color palette** off for
 Google's light and dark colors, or turn it on to use the host's Material roles.
 
-Material Next's `applyColorTheme()` sets the scheme for light, dark and system modes. If a host owns
+Material-Next's `applyColorTheme()` sets the scheme for light, dark and system modes. If a host owns
 its theme, set `color-scheme: light`, `dark` or `light dark` on its root along with its color tokens.
 
 ### Icon artwork

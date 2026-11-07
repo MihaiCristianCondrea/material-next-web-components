@@ -22,7 +22,7 @@ module.exports = function (data) {
     0,
     site.topLevel.findIndex((link) => isActive(page.url, link))
   );
-  const pageTitle = title ? `${title} · Material Next` : 'Material Next';
+  const pageTitle = title ? `${title} · ${site.name}` : site.fullName;
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -63,7 +63,7 @@ module.exports = function (data) {
       <mnw-docs-top-app-bar slot="nav">
         <a slot="leading" class="brand" href="${to('/')}">
           <img class="brand-mark" src="${to('/logo.svg')}" alt="" width="32" height="32">
-          <span class="brand-title">Material Next</span>
+          <span class="brand-title">${escapeHtml(site.name)}</span>
         </a>
         <div class="site-nav">
           <span class="site-tab-indicator" aria-hidden="true"></span>

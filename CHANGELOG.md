@@ -14,12 +14,13 @@ Last updated: November 7, 2026.
 - `PIXEL_9_PRO_XL`, `PIXEL_FINISHES`, `PIXEL_FINISH_NAMES` and `PixelFinish` in `marketing.js`: the phone's measurements and finishes as plain data.
 - The phone as a three.js object for your own scenes: `createPixelModel()`, `createStudio()` and `disposePixelModel()` in `marketing/ui/pixel-model.js`. Its parts are joined by material, 23 draw calls for about 45,000 triangles.
 - A launcher catalog can carry `migrate`, to rename ids it stored before.
+- The name is Material-Next Web Components in full and Material-Next for short, everywhere: the site, its app manifest, the logo, the home view and the default launcher entry.
 
 ### Changed
 
 - three.js is a dependency. It loads, as its own chunk, only when a phone is drawn.
 - The phone frame is 465.23 × 988.76 (was 469 × 992), with the display's rounder 49.8px corners and the camera where Google's device art has it, to match the 3D phone. The window is still 430 × 957.
-- The default launcher catalog names no one's own products: Material Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, at their public addresses. Apps pass their own catalog.
+- The default launcher catalog names no one's own products: Material-Next, Google Play and GitHub as favorites, and Play Console, Firebase, AdMob and Cloudflare as redirects, at their public addresses. Apps pass their own catalog.
 - The prototype page's `data-ready`, which capture scripts wait for, also waits for the phone's picture.
 
 ### Removed
@@ -212,13 +213,13 @@ The 0.0.8 release did not publish (its tag's package.json still said 0.0.7); 0.0
 
 ### Security
 
-- Code scanning now skips `references/`, the read-only upstream snapshots, and build output. Their alerts were in code Material Next does not ship or run.
+- Code scanning now skips `references/`, the read-only upstream snapshots, and build output. Their alerts were in code Material-Next does not ship or run.
 
 # October 27, 2026
 
 **Version:** `0.0.1`
 
-The first release of Material Next: Material 3 Expressive web components built on Lit and Material Web.
+The first release of Material-Next: Material 3 Expressive web components built on Lit and Material Web.
 
 - **Documentation elements**: product home, app showcase (from the public apps metadata API), code blocks, expressive section tabs, docs shell, page, navigation and table of contents. Each element has its own import and TypeScript declarations.
 - **App shell**: a permanent or closed modal navigation drawer, one navigation tree, routing events for host-owned navigation and unsaved-change guards, and a drawer footer with Light, Dark and System themes and Privacy Policy and Code of Conduct links.

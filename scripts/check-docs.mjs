@@ -509,7 +509,7 @@ await check(
     if (before.some((title) => /Admin|Insider|Metadata|profile/.test(title)))
       throw new Error(`a personal entry is still offered: ${before.join(', ')}`);
     if (
-      before.includes('Material Next') ||
+      before.includes('Material-Next') ||
       before.join() !== 'Google Play,GitHub'
     )
       throw new Error(`the current product shows: ${before.join(', ')}`);

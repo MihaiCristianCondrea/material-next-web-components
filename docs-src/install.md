@@ -3,7 +3,7 @@ layout: docs.11ty.cjs
 sidebar: false
 title: Install
 heading: Install
-description: Add Material Next to a project, import the modules you use, and load the fonts the components expect.
+description: Add Material-Next to a project, import the modules you use, and load the fonts the components expect.
 ---
 
 ## Package
@@ -46,7 +46,7 @@ import type {MaterialNextExpressiveTabBar} from 'material-next-web-components/ex
 <mnw-code-block
   language="ts"
   copy
-  code="console.log('Hello, Material Next');"
+  code="console.log('Hello, Material-Next');"
 ></mnw-code-block>
 ```
 
@@ -73,7 +73,7 @@ import type {MaterialNextExpressiveTabBar} from 'material-next-web-components/ex
 />
 ```
 
-Material Web's own components read `--md-ref-typeface-brand` and `--md-ref-typeface-plain`; set them to Google Sans Flex so the controls inside Material Next match its text:
+Material Web's own components read `--md-ref-typeface-brand` and `--md-ref-typeface-plain`; set them to Google Sans Flex so the controls inside Material-Next match its text:
 
 ```css
 :root {
@@ -84,7 +84,7 @@ Material Web's own components read `--md-ref-typeface-brand` and `--md-ref-typef
 
 ## Scrollbars
 
-Importing a Material Next component enables palette-aware scrollbars on the
+Importing a Material-Next component enables palette-aware scrollbars on the
 page and inside components. On fine-pointer devices they use a thin thumb in
 `--md-sys-color-primary` over a transparent track, following local palettes and
 light/dark themes. Touch devices keep their native scrollbars; high-contrast

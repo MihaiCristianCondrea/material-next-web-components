@@ -13,7 +13,7 @@ description: What is stable, what is experimental, and what comes next.
 | Code block           | `material-next-web-components/code-block.js`         | Stable             | Breaking changes only in a major version, from the first release.                                |
 | Expressive tab bar   | `material-next-web-components/expressive-tab-bar.js` | Experimental       | One sliding selection pill; links or JavaScript routing through `navigate`.                      |
 | App showcase         | `material-next-web-components/app-showcase.js`       | Experimental       | Reads any endpoint in the documented shapes.                                                     |
-| Home view            | `material-next-web-components/material-next-home.js` | Experimental       | Material Next's own landing view; most copy is fixed.                                            |
+| Home view            | `material-next-web-components/material-next-home.js` | Experimental       | Material-Next's own landing view; most copy is fixed.                                            |
 | Marketing hub        | `material-next-web-components/marketing.js`          | Experimental       | Elements, controllers, embed API, the 3D phone, from Android Insider's and Smart Cleaner's hubs. |
 | App shell            | `material-next-web-components/app-shell.js`          | Experimental       | Modal and permanent drawers; the app owns routing. Rail and bottom bar not yet.                  |
 | Product launcher     | `material-next-web-components/launcher.js`           | Experimental       | Editable favorites in local storage, admin redirects, a neutral default catalog.                 |

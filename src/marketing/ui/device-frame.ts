@@ -67,6 +67,8 @@ const density = () =>
 type Renderer = typeof import('./pixel-render.js');
 let renderer: Promise<Renderer> | undefined;
 const loadRenderer = () => (renderer ??= import('./pixel-render.js'));
+/** The renderer once loaded, so a moving frame draws without waiting a microtask. */
+let renderModule: Renderer | undefined;
 
 const hex = (colour: number) => `#${colour.toString(16).padStart(6, '0')}`;
 
@@ -131,7 +133,6 @@ export class MaterialNextDeviceFrame extends LitElement {
   @state() private moving = false;
   @state() private extent = extent(0, 0, 2400);
   private painted: Promise<unknown> = Promise.resolve();
-  private lastPose = -Infinity;
   private settleTimer?: ReturnType<typeof setTimeout>;
   private frameRequest = 0;
   private visible = true;
@@ -161,25 +162,34 @@ export class MaterialNextDeviceFrame extends LitElement {
   }
 
   override willUpdate(changed: PropertyValues<this>) {
-    if (this.device !== 'pixel_9_pro_xl') return;
+    if (this.device !== 'pixel_9_pro_xl') {
+      this.stopMoving();
+      return;
+    }
     const has = (name: string) =>
       changed.has(name as keyof MaterialNextDeviceFrame);
     const look = ['device', 'finish', 'logo'].some(has);
     const pose = ['yaw', 'pitch', 'perspective'].some(has);
     if (!look && !pose) return;
-    const now = performance.now();
     // A pose that changes again soon after the last is moving: draw it
     // straight to a canvas each frame, and the sharp picture once it settles.
-    const keepsMoving =
-      pose && !look && this.hasUpdated && now - this.lastPose < SETTLE;
-    if (pose) this.lastPose = now;
+    // Once drawn, any pose change after the first picture starts moving: a
+    // single change settles 280 ms later, so a scroll's first frame never
+    // makes a sharp picture it would throw away.
+    const keepsMoving = pose && !look && this.hasUpdated && !!this.picture;
     if (keepsMoving || (this.moving && !look)) this.move();
     else this.paint();
   }
 
   protected override async getUpdateComplete() {
-    const done = await super.getUpdateComplete();
-    await this.painted;
+    let done = await super.getUpdateComplete();
+    // The picture arrives in a second update; wait for that one too.
+    let painted: Promise<unknown>;
+    do {
+      painted = this.painted;
+      await painted;
+      done = (await super.getUpdateComplete()) && done;
+    } while (painted !== this.painted);
     return done;
   }
 
@@ -221,7 +231,12 @@ export class MaterialNextDeviceFrame extends LitElement {
     const painted = loadRenderer()
       .then(({renderPixel}) => renderPixel(request))
       .then(
-        (picture) => {
+        async (picture) => {
+          if (this.painted !== painted) return;
+          // Decoded before it replaces the moving canvas, so nothing blinks.
+          const image = new Image();
+          image.src = picture;
+          await image.decode().catch(() => {});
           if (this.painted !== painted) return;
           this.extent = box;
           this.picture = picture;
@@ -248,6 +263,19 @@ export class MaterialNextDeviceFrame extends LitElement {
     this.settleTimer = setTimeout(() => this.paint(), SETTLE);
   }
 
+  override updated() {
+    // Drawn in the update that changed the pose, before the browser paints,
+    // so the phone and the screen over it never drift a frame apart.
+    if (this.moving) void this.drawFrame();
+  }
+
+  private stopMoving() {
+    clearTimeout(this.settleTimer);
+    cancelAnimationFrame(this.frameRequest);
+    this.frameRequest = 0;
+    this.moving = false;
+  }
+
   private requestFrame() {
     if (this.frameRequest || !this.visible) return;
     this.frameRequest = requestAnimationFrame(() => {
@@ -264,12 +292,17 @@ export class MaterialNextDeviceFrame extends LitElement {
       this.requestFrame();
       return;
     }
-    const render = await loadRenderer();
+    const render = renderModule ?? (renderModule = await loadRenderer());
     const request = this.request(MOVING_RATIO);
-    if (!render.drawPixel(request, canvas)) {
-      // The finish is still loading: draw as soon as it is there.
-      await render.preparePixel(request.finish, request.logo).catch(() => {});
+    if (render.drawPixel(request, canvas)) return;
+    // The finish is still loading: draw once it is there. If it cannot load
+    // (no WebGL, a broken logo), stop moving and keep the outline.
+    try {
+      await render.preparePixel(request.finish, request.logo);
       this.requestFrame();
+    } catch {
+      this.stopMoving();
+      this.picture = undefined;
     }
   }
 

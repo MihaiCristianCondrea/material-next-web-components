@@ -16,7 +16,7 @@ export const DEFAULT_LAUNCHER_ITEMS = [
   launcherItem({
     kind: 'web',
     key: 'material-next',
-    title: 'Material Next',
+    title: 'Material-Next',
     subtitle: 'Web components',
     href: 'https://mihaicristiancondrea.github.io/material-next-web-components/',
     icon: 'web',

@@ -8,7 +8,7 @@ import {customElement} from 'lit/decorators.js';
 import {styles} from './docs-shell-styles.js';
 
 /**
- * Application shell for Material Next documentation pages: a navigation slot,
+ * Application shell for Material-Next documentation pages: a navigation slot,
  * the main landmark and a footer, in a full-height column.
  *
  * @slot nav - Top app bar, usually an `mnw-docs-top-app-bar`.

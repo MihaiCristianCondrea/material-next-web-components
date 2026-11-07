@@ -4,7 +4,7 @@
  */
 
 /**
- * Material Next theme: Material 3 color schemes from one source color, a
+ * Material-Next theme: Material 3 color schemes from one source color, a
  * reusable HCT color picker, and theme controls that remember a visitor's
  * choice.
  *

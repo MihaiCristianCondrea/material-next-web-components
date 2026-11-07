@@ -1,6 +1,6 @@
-# material-next-web-components
+# Material-Next Web Components
 
-Material-inspired Lit custom elements for product views, documentation pages, navigation, and code presentation.
+Material Design web components for product pages, documentation and Android app marketing hubs, built with Lit and Material Web.
 
 ## Links
 
@@ -37,7 +37,7 @@ import 'material-next-web-components/code-block.js';
 
 ```html
 <mnw-code-block language="ts" copy>
-  <template>console.log('Hello Material Next');</template>
+  <template>console.log('Hello Material-Next');</template>
 </mnw-code-block>
 ```
 
@@ -142,7 +142,7 @@ npm run smoke:exports
 
 ## Scrollbars
 
-Material Next themes page and component scrollbars with the current
+Material-Next themes page and component scrollbars with the current
 `--md-sys-color-primary` by default, with a thin thumb and transparent track on
 fine-pointer devices. Palettes and light/dark themes update the thumb without
 extra setup. `--mnw-scrollbar-thumb` overrides its color; forced-color mode uses

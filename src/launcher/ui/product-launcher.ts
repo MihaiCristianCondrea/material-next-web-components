@@ -63,7 +63,7 @@ const listAttribute = {
  * The current product is never offered: entries matching `current-product`,
  * `exclude` or this page's URL are hidden, and a hidden favorite keeps its
  * place for the pages where it shows. Without a `catalog` the launcher lists
- * Material Next and the public developer consoles (DEFAULT_LAUNCHER_CATALOG);
+ * Material-Next and the public developer consoles (DEFAULT_LAUNCHER_CATALOG);
  * an app passes its own catalog with its products and links.
  *
  * @fires launcher-change - `{favoriteIds}`: Done or reset committed favorites (hidden ones included).

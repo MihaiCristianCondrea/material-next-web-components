@@ -9,7 +9,7 @@ module.exports = class {
       sidebar: false,
       title: 'Changelog',
       heading: 'Changelog',
-      description: 'Material Next changes, maintained in one changelog.',
+      description: 'Material-Next changes, maintained in one changelog.',
       permalink: 'changelog/index.html',
     };
   }
